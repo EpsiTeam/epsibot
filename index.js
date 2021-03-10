@@ -77,6 +77,11 @@ bot.on("message", msg => {
 
 	let {command} = getCommand(args);
 
+	// This command does not exist
+	if (!command) {
+		return;
+	}
+
 	if (!isOwner && command.ownerOnly) {
 		msg.channel.send(embed("tu n'as pas le droit de faire cette commande", id, "RED"))
 		.catch(error => {
