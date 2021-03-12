@@ -1,26 +1,29 @@
 {
-  "name": "epsibot",
-  "version": "1.0.0",
-  "description": "Light discord bot for epsilon needs",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@gitlab.com/Wyzedix/epsibot.git"
-  },
-  "author": "EpsiTeam",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://gitlab.com/Wyzedix/epsibot/issues"
-  },
-  "homepage": "https://gitlab.com/Wyzedix/epsibot#readme",
-  "dependencies": {
-    "discord.js": "^12.5.1",
-    "epsicommands": "gitlab:Wyzedix/epsicommands",
-    "epsilist": "gitlab:Wyzedix/epsilist",
-    "epsilogging": "gitlab:Wyzedix/epsilogging",
-    "epsimpleembed": "gitlab:Wyzedix/epsimpleembed"
-  }
+	"name": "epsibot",
+	"version": "1.1.0",
+	"description": "Light discord bot for epsilon needs",
+	"main": "index.js",
+	"scripts": {
+		"start": "node index.js",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+ssh://git@gitlab.com/Wyzedix/epsibot.git"
+	},
+	"author": "EpsiTeam",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://gitlab.com/Wyzedix/epsibot/issues"
+	},
+	"homepage": "https://gitlab.com/Wyzedix/epsibot#readme",
+	"dependencies": {
+		"discord.js": "^12.5.1",
+		"epsicommands": "gitlab:Wyzedix/epsicommands",
+		"epsilist": "gitlab:Wyzedix/epsilist",
+		"epsilogging": "gitlab:Wyzedix/epsilogging",
+		"epsimpleembed": "gitlab:Wyzedix/epsimpleembed",
+		"knex": "^0.95.2",
+		"sqlite3": "^5.0.2"
+	}
 }

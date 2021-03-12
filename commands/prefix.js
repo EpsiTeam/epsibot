@@ -1,0 +1,54 @@
+const epsimpleembed = require("epsimpleembed");
+const basePrefix = require("../config.json").prefix;
+
+module.exports = {
+	help(pre) {
+		return {
+			short: "Change le prefix",
+			long: "Permet de changer le prefix d'Epsibot sur ce serveur",
+			usage: `\`${pre}prefix <new_prefix>\`\n\`${pre}prefix ;\``
+		};
+	},
+
+	adminOnly: true,
+
+	async execute(msg, args, prefix) {
+		let newPrefix = args.join(" ");
+
+		if (newPrefix === prefix) {
+			return msg.channel.send(epsimpleembed("ceci est déjà le prefix actuel de ce serveur", msg.author.id, "YELLOW"));
+		}
+
+		let server = msg.guild.id;
+
+		// Returning to base prefix
+		if (newPrefix === basePrefix) {
+			properties.serverPrefix.delete(server);
+
+			await db.delete().from("ServerPrefix").where({
+				ServerID: server
+			});
+		// Going from base prefix to a new one
+		} else if (prefix === basePrefix) {
+			properties.serverPrefix.set(server, newPrefix);
+
+			await db.insert({
+				ServerID: server,
+				Prefix: newPrefix
+			}).into("ServerPrefix");
+		// Changing from a special prefix to another one
+		} else {
+			properties.serverPrefix.set(server, newPrefix);
+
+			await db.update({
+				Prefix: newPrefix
+			}).from("ServerPrefix").where({
+				ServerID: server
+			});
+		}
+
+		log("PREFIX", `Changing prefix to ${newPrefix} for server ${server}`);
+
+		return msg.channel.send(epsimpleembed(`le prefix a été changé, fais \`${newPrefix}help\` pour tester`, msg.author.id, "GREEN"));
+	}
+}

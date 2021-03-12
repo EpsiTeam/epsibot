@@ -1,3 +1,4 @@
 node_modules/
 logs/
 credential.json
+db.sqlite3

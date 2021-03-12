@@ -1,17 +1,19 @@
-const embed = require("epsimpleembed");
+const epsimpleembed = require("epsimpleembed");
 
 module.exports = {
-	alias: ["owner"],
+	alias: ["isowner"],
 
-	help: {
-		short: "Êtes vous un owner d'Epsibot",
-		long: "Vérifiez avec cette commande si vous êtes un owner",
-		usage: `${prefix}am_i_an_owner`
+	help(pre) {
+		return {
+			short: "Êtes vous un owner d'Epsibot",
+			long: "Vérifiez avec cette commande si vous êtes un owner",
+			usage: `\`${pre}am_i_an_owner\``
+		};
 	},
 
 	ownerOnly: true,
 
 	execute(msg) {
-		return msg.channel.send(embed("C'est oui !"));
+		return msg.channel.send(epsimpleembed("C'est oui !"));
 	}
 }
