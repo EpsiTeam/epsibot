@@ -1,9 +1,11 @@
 module.exports = {
-	am_i_an_owner: require("./am_i_an_owner"),
-
 	am_i_an_admin: require("./am_i_an_admin"),
+
+	am_i_an_owner: require("./am_i_an_owner"),
 
 	prefix: require("./prefix"),
 
-	subcmd: require("./subcmd")
+	purge: require("./purge"),
+
+	subcmd: require("./subcmd") // TODO remove
 }

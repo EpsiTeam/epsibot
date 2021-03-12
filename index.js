@@ -111,3 +111,7 @@ bot.on("message", msg => {
 
 	command.execute(msg, args, prefix).catch(err => log("ERROR", err));
 });
+
+bot.on("rateLimit", rateLimit => {
+	log("WARN", `Currently rate limited for ${rateLimit.timeout}ms | Limit: ${rateLimit.limit} | Request limited: ${rateLimit.method}`);
+});
