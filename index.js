@@ -10,8 +10,12 @@ const dbConfig = require("./knexfile");
 global.log = require("epsilogging")(config.development, 13, 55);
 // Create db function
 global.db = knex(dbConfig);
+// Global properties, accessible everywhere in the code
 global.properties = {
-	serverPrefix: new Map() // ServerID => Prefix
+	// ServerID => Prefix
+	serverPrefix: new Map(),
+	// ServerID => (CommandName => commandObj)
+	serverCommand: new Map()
 };
 
 log("STARTUP", `Epsibot v${process.env.npm_package_version}`);
@@ -40,7 +44,7 @@ const status = {
 // Bot instance
 global.bot = new Discord.Client({presence: status});
 
-require("./utils/startupSelection")(log).then(() => {
+require("./utils/startupSelection")().then(() => {
 	log("STARTUP", "Startup selections finished, logging to discord");
 	bot.login(token);
 });
@@ -67,13 +71,10 @@ bot.on("message", msg => {
 	let content = msg.content.toLowerCase();
 
 	// Checking if it's a command
-	let isCommand = false;
-	if (content.startsWith(prefix)) {
-		content = content.slice(prefix.length);
-		isCommand = true;
-	} else if (content.startsWith(prefix + " ")) {
+	if (content.startsWith(prefix + " ")) {
 		content = content.slice(prefix.length + 1);
-		isCommand = true;
+	} else if (content.startsWith(prefix)) {
+		content = content.slice(prefix.length);
 	} else {
 		// If this is not a command, we GET THE FUCK OUTTA HERE
 		return;
@@ -81,6 +82,7 @@ bot.on("message", msg => {
 
 	// Splitting arguments
 	let args = content.split(/ +/);
+	let firstArg = args[0];
 
 	const id = msg.author.id;
 
@@ -90,28 +92,44 @@ bot.on("message", msg => {
 
 	// This command does not exist
 	if (!command) {
-		return;
+		// Maybe there is a custom command for this server?
+		const customCommands = properties.serverCommand.get(msg.guild.id);
+		// No custom command
+		if (!customCommands) {
+			return;
+		}
+		
+		command = customCommands.get(firstArg);
+
+		// There is a custom command for this server, but not this one
+		if (!command) {
+			return;
+		}
 	}
 
 	let canBeExecuted =
-		config.owners.includes(id) || ( // owner => free pass
-			!command.ownerOnly && ( // ownerOnly => no pass
-				!command.adminOnly || // not adminOnly => pass
-				msg.member.hasPermission("ADMINISTRATOR") // adminOnly + admin perm => pass
+		// owner => free pass
+		config.owners.includes(id) || (
+			// ownerOnly => no pass
+			!command.ownerOnly && (
+				// not adminOnly => pass
+				!command.adminOnly ||
+				// adminOnly + admin perm => pass
+				msg.member.hasPermission("ADMINISTRATOR")
 			)
 		);
 
 	if (!canBeExecuted) {
-		msg.channel.send(embed("tu n'as pas le droit de faire cette commande", id, "RED"))
-		.catch(error => {
-			log("ERROR", error);
-		});
 		return;
 	}
 
-	command.execute(msg, args, prefix).catch(err => log("ERROR", err));
+	command.execute(msg, args, prefix).then(() => {
+		if (command.autoDelete) {
+			return msg.delete();
+		}
+	}).catch(err => log("ERROR", err));
 });
 
 bot.on("rateLimit", rateLimit => {
-	log("WARN", `Currently rate limited for ${rateLimit.timeout}ms | Limit: ${rateLimit.limit} | Request limited: ${rateLimit.method}`);
+	log("WARN", `Rate limited for ${rateLimit.timeout}ms | Limit: ${rateLimit.limit} | Request: ${rateLimit.route}`);
 });

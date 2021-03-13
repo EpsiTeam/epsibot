@@ -7,5 +7,5 @@ module.exports = {
 
 	purge: require("./purge"),
 
-	subcmd: require("./subcmd") // TODO remove
+	command: require("./command")
 }

@@ -1,6 +1,6 @@
 {
 	"name": "epsibot",
-	"version": "2.1.0",
+	"version": "1.1.0",
 	"description": "Light discord bot for epsilon needs",
 	"main": "index.js",
 	"scripts": {
@@ -20,6 +20,7 @@
 	"dependencies": {
 		"discord.js": "^12.5.1",
 		"epsicommands": "gitlab:Wyzedix/epsicommands",
+		"epsiconfirm": "gitlab:Wyzedix/epsiconfirm",
 		"epsilist": "gitlab:Wyzedix/epsilist",
 		"epsilogging": "gitlab:Wyzedix/epsilogging",
 		"epsimpleembed": "gitlab:Wyzedix/epsimpleembed",
