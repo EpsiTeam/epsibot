@@ -19,11 +19,11 @@
 	"homepage": "https://gitlab.com/Wyzedix/epsibot#readme",
 	"dependencies": {
 		"discord.js": "^12.5.1",
-		"epsicommands": "gitlab:Wyzedix/epsicommands",
-		"epsiconfirm": "gitlab:Wyzedix/epsiconfirm",
-		"epsilist": "gitlab:Wyzedix/epsilist",
-		"epsilogging": "gitlab:Wyzedix/epsilogging",
-		"epsimpleembed": "gitlab:Wyzedix/epsimpleembed",
+		"epsicommands": "github:epsiteam/epsicommands",
+		"epsiconfirm": "github:epsiteam/epsiconfirm",
+		"epsilist": "github:epsiteam/epsilist",
+		"epsilogging": "github:epsiteam/epsilogging",
+		"epsimpleembed": "github:epsiteam/epsimpleembed",
 		"knex": "^0.95.2",
 		"sqlite3": "^5.0.2"
 	}
