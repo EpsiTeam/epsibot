@@ -27,15 +27,16 @@ module.exports = {
 		let commands = properties.serverCommand.get(server);
 		let overwrite = false;
 		if (commands && commands.has(cmdName)) {
-			try {
-				overwrite = await epsiconfirm({originMsg: msg}, {
-					title,
-					desc: `${msg.author}, la commande \`${prefix}${cmdName}\` existe déjà, voulez vous la remplacer ?`,
-					color: "YELLOW"
-				});
-			} catch (e) {
+			overwrite = await epsiconfirm({originMsg: msg}, {
+				title,
+				desc: `${msg.author}, la commande \`${prefix}${cmdName}\` existe déjà, voulez vous la remplacer ?`,
+				color: "YELLOW"
+			});
+
+			if (overwrite === undefined) {
 				return msg.channel.send(epsimpleembed("pas de réponse, je prends ça pour un non", msg.author.id, "YELLOW"));
 			}
+
 			if (!overwrite) {
 				return msg.channel.send(epsimpleembed("je touche à rien alors !", msg.author.id, "GREEN"));
 			}
@@ -57,26 +58,18 @@ module.exports = {
 		const cmdResponse = msg.content.substr(startPos);
 
 		// Should this command be only for admins?
-		let adminOnly;
-		try {
-			adminOnly = await epsiconfirm({originMsg: msg}, {
-				title,
-				desc: "Est-ce que cette commande est réservée aux admins ?"
-			});
-		} catch (e) {
-			adminOnly = false;
-		}
+		let adminOnly = await epsiconfirm({originMsg: msg}, {
+			title,
+			desc: "Est-ce que cette commande est réservée aux admins ?",
+			timeoutResponse: false
+		});
 
 		// Should this command auto delete the calling message?
-		let autoDelete;
-		try {
-			autoDelete = await epsiconfirm({originMsg: msg}, {
-				title,
-				desc: "Est-ce que le message qui appelle la commande doit être supprimé automatiquement ?"
-			});
-		} catch (e) {
-			autoDelete = false;
-		}
+		let autoDelete = await epsiconfirm({originMsg: msg}, {
+			title,
+			desc: "Est-ce que le message qui appelle la commande doit être supprimé automatiquement ?",
+			timeoutResponse: false
+		});
 
 		// Inserting into DB
 		if (!overwrite) {
