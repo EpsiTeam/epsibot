@@ -2,7 +2,6 @@
 const Discord = require("discord.js");
 const knex = require("knex");
 
-const embed = require("epsimpleembed");
 // Load config
 const config = require("./config.json");
 const dbConfig = require("./knexfile");
@@ -18,7 +17,7 @@ global.properties = {
 	serverCommand: new Map()
 };
 
-log("STARTUP", `Epsibot v${process.env.npm_package_version}`);
+log("STARTUP", `Epsibot v${process.env.npm_package_version} - ${config.development ? "DEV" : "PROD"}`);
 
 // Load token
 let token;
