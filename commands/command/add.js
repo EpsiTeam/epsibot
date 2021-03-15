@@ -20,6 +20,10 @@ module.exports = {
 		}
 
 		const cmdName = args[0];
+
+		if (cmdName.length > 90)
+			return msg.channel.send(epsimpleembed("le nom de la commande est trop long (90 caractères maximum)", msg.author.id, "RED"));
+
 		let title = `Ajout de la commande !${cmdName}`;
 		const server = msg.guild.id;
 
@@ -118,6 +122,6 @@ module.exports = {
 
 		log("COMMAND A", `Added command ${prefix}${cmdName} for server ${server}`);
 
-		return msg.channel.send(epsimpleembed(`La commande \`${prefix}${cmdName}\` a été ajouté avec succès.\n\n__Réponse de la commande:__ ${cmdResponse}\n__Admin only:__ ${adminOnly ? "Oui" : "Non"}\n__Auto delete:__ ${autoDelete ? "Oui" : "Non"}`));
+		return msg.channel.send(epsimpleembed(`La commande \`${prefix}${cmdName}\` a été ajouté avec succès.\n\n__Réponse de la commande:__ ${cmdResponse}\n__Admin only:__ ${adminOnly ? "Oui" : "Non"}\n__Auto delete:__ ${autoDelete ? "Oui" : "Non"}`, null, "GREEN"));
 	}
 }

@@ -1,6 +1,11 @@
 const epsimpleembed = require("epsimpleembed");
 const epsilist = require("epsilist");
 
+const elmtByPage = 3;
+const cmdWidth = 10;
+const responseWidth = 23;
+const maxResponseWidth = 9 * responseWidth;
+
 module.exports = {
 	alias: ["l"],
 
@@ -22,9 +27,16 @@ module.exports = {
 		let header = ["Commande", "Réponse", "Admin", "Delete"];
 		let data = [];
 		for (let [name, command] of commands) {
+			let response = command.response.replaceAll("\n", "\\n");
+
+			if (response.length > maxResponseWidth) {
+				response = response.substring(0, maxResponseWidth - 3);
+				response += "...";
+			}
+			
 			data.push([
 				name,
-				command.response,
+				response,
 				command.adminOnly ? "Oui" : "Non",
 				command.autoDelete ? "Oui" : "Non"
 			]);
@@ -37,9 +49,11 @@ module.exports = {
 
 		let tableConfig = {
 			columns: {
+				0: {
+					width: cmdWidth
+				},
 				1: {
-					width: 20,
-					wrapWord: true
+					width: responseWidth
 				}
 			}
 		}
@@ -50,7 +64,8 @@ module.exports = {
 			log,
 			embedMsg,
 			header,
-			tableConfig
+			tableConfig,
+			elmtByPage
 		})
 	}
 }
