@@ -6,7 +6,7 @@ const knex = require("knex");
 const config = require("./config.json");
 const dbConfig = require("./knexfile");
 // Create log function
-global.log = require("epsilogging")(config.development, 13, 55);
+global.log = require("epsilogging")(config.development, config.logTypeWidth, config.logMsgWidth);
 // Create db function
 global.db = knex(dbConfig);
 // Global properties, accessible everywhere in the code
