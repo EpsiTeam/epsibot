@@ -13,7 +13,7 @@ module.exports = {
 
 	ownerOnly: true,
 
-	execute(msg) {
+	execute({msg}) {
 		return msg.channel.send(epsimpleembed("C'est oui !"));
 	}
 }
