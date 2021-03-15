@@ -12,7 +12,7 @@ module.exports = {
 
 	adminOnly: true,
 
-	async execute(msg, args, prefix) {
+	async execute({msg, args, prefix, db, log, serverPrefix}) {
 		let newPrefix = args.join(" ");
 
 		if (newPrefix === prefix) {
@@ -23,14 +23,14 @@ module.exports = {
 
 		// Returning to base prefix
 		if (newPrefix === basePrefix) {
-			properties.serverPrefix.delete(server);
+			serverPrefix.delete(server);
 
 			await db.delete().from("ServerPrefix").where({
 				ServerID: server
 			});
 		// Going from base prefix to a new one
 		} else if (prefix === basePrefix) {
-			properties.serverPrefix.set(server, newPrefix);
+			serverPrefix.set(server, newPrefix);
 
 			await db.insert({
 				ServerID: server,
@@ -38,7 +38,7 @@ module.exports = {
 			}).into("ServerPrefix");
 		// Changing from a special prefix to another one
 		} else {
-			properties.serverPrefix.set(server, newPrefix);
+			serverPrefix.set(server, newPrefix);
 
 			await db.update({
 				Prefix: newPrefix

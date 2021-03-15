@@ -1,5 +1,5 @@
 const epsimpleembed = require("epsimpleembed");
-const epsiconfirm = require("epsiconfirm")(log);
+const epsiconfirm = require("epsiconfirm");
 
 module.exports = {
 	alias: ["a"],
@@ -14,7 +14,7 @@ module.exports = {
 
 	adminOnly: true,
 
-	async execute(msg, args, prefix) {
+	async execute({msg, args, prefix, db, log, serverCommand}) {
 		if (args.length < 2) {
 			return msg.channel.send(epsimpleembed("il faut indiquer le nom de la commande personnalisée et sa réponse !\n\n__Utilisation:__\n" + this.help(prefix).usage));
 		}
@@ -22,12 +22,14 @@ module.exports = {
 		const cmdName = args[0];
 		let title = `Ajout de la commande !${cmdName}`;
 		const server = msg.guild.id;
-		
+
 		// Check if this command already exist (maybe overwrite it)
-		let commands = properties.serverCommand.get(server);
+		let commands = serverCommand.get(server);
 		let overwrite = false;
 		if (commands && commands.has(cmdName)) {
-			overwrite = await epsiconfirm({originMsg: msg}, {
+			overwrite = await epsiconfirm({
+				originMsg: msg,
+				log,
 				title,
 				desc: `${msg.author}, la commande \`${prefix}${cmdName}\` existe déjà, voulez vous la remplacer ?`,
 				color: "YELLOW"
@@ -58,14 +60,18 @@ module.exports = {
 		const cmdResponse = msg.content.substr(startPos);
 
 		// Should this command be only for admins?
-		let adminOnly = await epsiconfirm({originMsg: msg}, {
+		let adminOnly = await epsiconfirm({
+			originMsg: msg,
+			log,
 			title,
 			desc: "Est-ce que cette commande est réservée aux admins ?",
 			timeoutResponse: false
 		});
 
 		// Should this command auto delete the calling message?
-		let autoDelete = await epsiconfirm({originMsg: msg}, {
+		let autoDelete = await epsiconfirm({
+			originMsg: msg,
+			log,
 			title,
 			desc: "Est-ce que le message qui appelle la commande doit être supprimé automatiquement ?",
 			timeoutResponse: false
@@ -94,13 +100,13 @@ module.exports = {
 		// Updating maps
 		if (!commands) {
 			commands = new Map();
-			properties.serverCommand.set(server, commands);
+			serverCommand.set(server, commands);
 		}
 		commands.set(cmdName, {
 			adminOnly,
 			autoDelete,
 			response: cmdResponse,
-			execute(msg, args) {
+			execute({msg, args}) {
 				let argResponse = this.response;
 				for (let i = 0; i < 5; i++) {
 					argResponse = argResponse.replace(`$${i}`, args[i]);

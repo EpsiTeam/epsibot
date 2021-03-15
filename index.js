@@ -1,21 +1,16 @@
 // External modules
 const Discord = require("discord.js");
-const knex = require("knex");
 
 // Load config
 const config = require("./config.json");
-const dbConfig = require("./knexfile");
 // Create log function
-global.log = require("epsilogging")(config.development, config.logTypeWidth, config.logMsgWidth);
+const log = require("epsilogging")(config.development, config.logTypeWidth, config.logMsgWidth);
 // Create db function
-global.db = knex(dbConfig);
-// Global properties, accessible everywhere in the code
-global.properties = {
-	// ServerID => Prefix
-	serverPrefix: new Map(),
-	// ServerID => (CommandName => commandObj)
-	serverCommand: new Map()
-};
+const db = require("knex")(require("./knexfile"));
+// ServerID => Prefix
+const serverPrefix = new Map();
+// ServerID => (CommandName => commandObj)
+const serverCommand = new Map();
 
 log("STARTUP", `Epsibot v${process.env.npm_package_version} - ${config.development ? "DEV" : "PROD"}`);
 
@@ -30,20 +25,28 @@ try {
 }
 
 // Loading commands and creating getCommand function
-const basePrefix = config.prefix;
 const getCommand = require("epsicommands")(require("./commands"), config.owners, log);
 
 // Bot status
+const basePrefix = config.prefix;
 const status = {
 	activity: {
 		type: "PLAYING",
 		name: `v${process.env.npm_package_version} | ${basePrefix}help`
 	}
 };
-// Bot instance
-global.bot = new Discord.Client({presence: status});
+if (!process.env.npm_package_version)
+	log("STARTUP", "There is no npm version, are you sure you started epsibot with 'npm start' and not 'node index.js'?");
 
-require("./utils/startupSelection")().then(() => {
+// Bot instance
+const bot = new Discord.Client({presence: status});
+
+require("./utils/startupSelection")({
+	db,
+	log,
+	serverPrefix,
+	serverCommand
+}).then(() => {
 	log("STARTUP", "Startup selections finished, logging to discord");
 	bot.login(token);
 });
@@ -64,7 +67,7 @@ bot.on("message", msg => {
 		return;
 	
 	// Getting prefix for this server
-	let prefix = properties.serverPrefix.get(msg.guild.id) || basePrefix;
+	let prefix = serverPrefix.get(msg.guild.id) || basePrefix;
 
 	// Retrieve message content
 	let content = msg.content.toLowerCase();
@@ -81,9 +84,7 @@ bot.on("message", msg => {
 
 	// Splitting arguments
 	let args = content.split(/ +/);
-	let firstArg = args[0];
-
-	const id = msg.author.id;
+	const firstArg = args[0];
 
 	log("COMMAND", `"${msg.content}" called by ${msg.member.displayName}`);
 
@@ -92,7 +93,7 @@ bot.on("message", msg => {
 	// This command does not exist
 	if (!command) {
 		// Maybe there is a custom command for this server?
-		const customCommands = properties.serverCommand.get(msg.guild.id);
+		const customCommands = serverCommand.get(msg.guild.id);
 		// No custom command
 		if (!customCommands) {
 			return;
@@ -108,7 +109,7 @@ bot.on("message", msg => {
 
 	let canBeExecuted =
 		// owner => free pass
-		config.owners.includes(id) || (
+		config.owners.includes(msg.author.id) || (
 			// ownerOnly => no pass
 			!command.ownerOnly && (
 				// not adminOnly => pass
@@ -122,7 +123,15 @@ bot.on("message", msg => {
 		return;
 	}
 
-	command.execute(msg, args, prefix).then(() => {
+	command.execute({
+		msg,
+		args,
+		prefix,
+		db,
+		log,
+		serverPrefix,
+		serverCommand
+	}).then(() => {
 		if (command.autoDelete) {
 			return msg.delete();
 		}
@@ -130,5 +139,5 @@ bot.on("message", msg => {
 });
 
 bot.on("rateLimit", rateLimit => {
-	log("WARN", `Rate limited for ${rateLimit.timeout}ms | Limit: ${rateLimit.limit} | Request: ${rateLimit.route}`);
+	log("RATE LIMIT", `For ${rateLimit.timeout}ms | Limit: ${rateLimit.limit} | ${rateLimit.route}`);
 });

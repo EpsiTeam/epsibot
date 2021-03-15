@@ -1,5 +1,4 @@
 const epsimpleembed = require("epsimpleembed");
-const epsiconfirm = require("epsiconfirm")(log);
 
 module.exports = {
 	alias: ["r", "delete", "d"],
@@ -14,7 +13,7 @@ module.exports = {
 
 	adminOnly: true,
 
-	async execute(msg, args, prefix) {
+	async execute({msg, args, prefix, db, log, serverCommand}) {
 		const cmdToRemove = args[0];
 		const server = msg.guild.id;
 		const id = msg.author.id;
@@ -23,7 +22,7 @@ module.exports = {
 			return msg.channel.send(epsimpleembed("il faut me donner la commande à retirer pour que je puisse le faire", id, "RED"));
 		}
 
-		let serverCmd = properties.serverCommand.get(server);
+		let serverCmd = serverCommand.get(server);
 
 		if (!serverCmd) {
 			return msg.channel.send(epsimpleembed("il n'y a aucune commande personnalisée sur ce serveur", id, "RED"));
@@ -38,7 +37,7 @@ module.exports = {
 		// Deleting from maps
 		serverCmd.delete(cmdToRemove);
 		if (!serverCmd.size) {
-			properties.serverCommand.delete(server);
+			serverCommand.delete(server);
 		}
 
 		// Deleting from DB

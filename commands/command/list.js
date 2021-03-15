@@ -1,5 +1,5 @@
 const epsimpleembed = require("epsimpleembed");
-const epsilist = require("epsilist")(log);
+const epsilist = require("epsilist");
 
 module.exports = {
 	alias: ["l"],
@@ -12,8 +12,8 @@ module.exports = {
 		};
 	},
 
-	execute(msg) {
-		let commands = properties.serverCommand.get(msg.guild.id);
+	execute({msg, log, serverCommand}) {
+		let commands = serverCommand.get(msg.guild.id);
 
 		if (!commands || !commands.size) {
 			return msg.channel.send(epsimpleembed("il n'y a aucune commande personnalisée sur ce serveur", msg.author.id, "YELLOW"));
@@ -46,8 +46,8 @@ module.exports = {
 
 		return epsilist({
 			data,
-			originMsg: msg
-		}, {
+			originMsg: msg,
+			log,
 			embedMsg,
 			header,
 			tableConfig

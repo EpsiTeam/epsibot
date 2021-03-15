@@ -11,7 +11,7 @@ module.exports = {
 
 	adminOnly: true,
 
-	async execute(msg, args, prefix) {
+	async execute({msg, args, prefix, log}) {
 		const usage = `\n\n__Utilisation:__:\n${this.help(prefix).usage}`;
 
 		if (!args.length) {

@@ -11,7 +11,9 @@ module.exports = {
 
 	ownerOnly: true,
 
-	async execute(msg) {
+	async execute({msg, log}) {
+		log("KILL", `${msg.member.displayName} killed the bot!`);
+
 		await msg.channel.send(epsimpleembed("Au revoir, monde cruel...", null, "RED"));
 
 		process.exit();

@@ -1,8 +1,13 @@
-module.exports = () => {
+module.exports = ({
+	db,
+	log,
+	serverPrefix,
+	serverCommand
+}) => {
 	let selections = [
 		db.select().from("ServerPrefix").then(lines => {
 			for (let line of lines) {
-				properties.serverPrefix.set(line.ServerID, line.Prefix);
+				serverPrefix.set(line.ServerID, line.Prefix);
 			}
 		
 			log("STARTUP", `${lines.length} prefixes loaded`);
@@ -16,18 +21,18 @@ module.exports = () => {
 				const server = line.ServerID;
 
 				// Maybe there was already a map for this server
-				let commands = properties.serverCommand.get(server);
+				let commands = serverCommand.get(server);
 				if (!commands) {
 					// Maybe not
 					commands = new Map();
-					properties.serverCommand.set(server, commands);
+					serverCommand.set(server, commands);
 				}
 
 				commands.set(line.CommandName, {
 					adminOnly: line.AdminOnly,
 					autoDelete: line.AutoDelete,
 					response: line.CommandResponse,
-					execute(msg, args) {
+					execute({msg, args}) {
 						let argResponse = this.response;
 						for (let i = 0; i < 5; i++) {
 							argResponse = argResponse.replace(`$${i}`, args[i]);
