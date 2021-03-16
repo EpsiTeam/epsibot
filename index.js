@@ -70,7 +70,7 @@ bot.on("message", msg => {
 	let prefix = serverPrefix.get(msg.guild.id) || basePrefix;
 
 	// Retrieve message content
-	let content = msg.content.toLowerCase();
+	let content = msg.content;
 
 	// Checking if it's a command
 	if (content.startsWith(prefix + " ")) {
@@ -83,7 +83,8 @@ bot.on("message", msg => {
 	}
 
 	// Splitting arguments
-	let args = content.split(/ +/);
+	let args = content.toLowerCase().split(/ +/);
+	let baseArgs = content.split(/ +/);
 	const firstArg = args[0];
 
 	log("COMMAND", `"${msg.content}" called by ${msg.member.displayName}`);
@@ -126,6 +127,7 @@ bot.on("message", msg => {
 	command.execute({
 		msg,
 		args,
+		baseArgs,
 		prefix,
 		db,
 		log,
