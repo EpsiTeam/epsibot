@@ -1,3 +1,5 @@
+const customCommand = require("./customCommand");
+
 module.exports = ({
 	db,
 	log,
@@ -28,19 +30,11 @@ module.exports = ({
 					serverCommand.set(server, commands);
 				}
 
-				commands.set(line.CommandName, {
+				commands.set(line.CommandName, customCommand({
 					adminOnly: line.AdminOnly,
 					autoDelete: line.AutoDelete,
-					response: line.CommandResponse,
-					execute({msg, args}) {
-						let argResponse = this.response;
-						for (let i = 0; i < 5; i++) {
-							argResponse = argResponse.replace(`$${i}`, args[i]);
-						}
-
-						return msg.channel.send(argResponse);
-					}
-				});
+					response: line.CommandResponse
+				}));
 			}
 
 			log("STARTUP", `${lines.length} custom commands loaded`);

@@ -1,5 +1,6 @@
 const epsimpleembed = require("epsimpleembed");
 const epsiconfirm = require("epsiconfirm");
+const customCommand = require("../../utils/customCommand");
 
 module.exports = {
 	alias: ["a"],
@@ -106,19 +107,11 @@ module.exports = {
 			commands = new Map();
 			serverCommand.set(server, commands);
 		}
-		commands.set(cmdName, {
+		commands.set(cmdName, customCommand({
 			adminOnly,
 			autoDelete,
-			response: cmdResponse,
-			execute({msg, args}) {
-				let argResponse = this.response;
-				for (let i = 0; i < 5; i++) {
-					argResponse = argResponse.replace(`$${i}`, args[i]);
-				}
-
-				return msg.channel.send(argResponse);
-			}
-		});
+			response: cmdResponse
+		}));
 
 		log("COMMAND A", `Added command ${prefix}${cmdName} for server ${server}`);
 
