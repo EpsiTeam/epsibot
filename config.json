@@ -1,5 +1,5 @@
 {
-	"development": false,
+	"development": true,
 	"prefix": "!",
 	"owners": [
 		"243425339768832000",
@@ -7,5 +7,5 @@
 	],
 
 	"logTypeWidth": 13,
-	"logMsgWidth": 100
+	"logMsgWidth": 40
 }
