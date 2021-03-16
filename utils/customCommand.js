@@ -8,14 +8,17 @@ module.exports = ({
 		autoDelete,
 		response,
 
-		execute({msg, args}) {
+		execute({msg, baseArgs}) {
+			// Remove the command name from baseArgs
+			baseArgs.shift();
+
 			let resp = this.response;
 			let currentArg = 0;
 			let quotedArg = "";
 			let quote = false;
 
-			while (args.length) {
-				let arg = args.shift();
+			while (baseArgs.length) {
+				let arg = baseArgs.shift();
 
 				// Manage quoted arguments
 				// Start of a quoted argument
@@ -35,15 +38,15 @@ module.exports = ({
 				}
 
 				// The argument is malformed, we'll do our best to fix it
-				if (!args.length && quote) {
+				if (!baseArgs.length && quote) {
 					arg = quotedArg.slice(0, quotedArg.length - 1);
+					quote = false;
 				}
 
 				// Replace if one of those
 				// - not a quoted argument
 				// - quoted argument finished
-				// - quoted argument not finished, but no more args
-				if (!quotedArg || !args.length) {
+				if (!quote) {
 					// regex that search for $currentArg, but only
 					// where there is not a number just after.
 					// So when we search for $1, $10 is omited
