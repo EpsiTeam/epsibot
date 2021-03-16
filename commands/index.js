@@ -9,5 +9,7 @@ module.exports = {
 
 	prefix: require("./prefix"),
 
-	purge: require("./purge")
+	purge: require("./purge"),
+
+	reboot: require("./reboot")
 }

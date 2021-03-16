@@ -11,11 +11,14 @@ module.exports = {
 
 	ownerOnly: true,
 
-	async execute({msg, log}) {
+	execute({msg, log}) {
 		log("KILL", `${msg.member.displayName} killed the bot!`);
 
-		await msg.channel.send(epsimpleembed("Au revoir, monde cruel...", null, "RED"));
-
-		process.exit();
+		return msg.channel.send(epsimpleembed("Au revoir, monde cruel...", null, "RED")).then(() => {
+			process.exit();
+		}).catch(err => {
+			log("KILL", `Impossible to send message but killing anyway: ${err}`);
+			process.exit();
+		});
 	}
 }
