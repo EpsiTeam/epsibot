@@ -7,10 +7,14 @@ const config = require("./config.json");
 const log = require("epsilogging")(config.development, config.logTypeWidth, config.logMsgWidth);
 // Create db function
 const db = require("knex")(require("./knexfile"));
-// ServerID => Prefix
+// serverID => prefix
 const serverPrefix = new Map();
-// ServerID => (CommandName => commandObj)
+// serverID => (commandName => commandObj)
 const serverCommand = new Map();
+// deleted messages that we don't want to be logged
+const deletedMsgToIgnore = new Set();
+// serverID => channelID
+const serverLog = new Map();
 
 log("STARTUP", `Epsibot v${process.env.npm_package_version} - ${config.development ? "DEV" : "PROD"}`);
 
@@ -45,7 +49,8 @@ require("./utils/startupSelection")({
 	db,
 	log,
 	serverPrefix,
-	serverCommand
+	serverCommand,
+	serverLog
 }).then(() => {
 	log("STARTUP", "Startup selections finished, logging to discord");
 	bot.login(token);
@@ -132,9 +137,12 @@ bot.on("message", msg => {
 		db,
 		log,
 		serverPrefix,
-		serverCommand
+		serverCommand,
+		deletedMsgToIgnore,
+		serverLog
 	}).then(() => {
 		if (command.autoDelete) {
+			deletedMsgToIgnore.add(msg.id);
 			return msg.delete();
 		}
 	}).catch(err => log("ERROR", err));
@@ -143,3 +151,89 @@ bot.on("message", msg => {
 bot.on("rateLimit", rateLimit => {
 	log("RATE LIMIT", `For ${rateLimit.timeout}ms | Limit: ${rateLimit.limit} | ${rateLimit.route}`);
 });
+
+bot.on("guildMemberAdd", member => {
+	const channelID = serverLog.get(msg.guild.id);
+	if (!channelID) return;
+	const channel = bot.channels.resolve(channelID);
+	if (!channel) return;
+
+	channel.send({
+		embed: {
+			title: "Nouveau membre",
+			thumbnail: {
+				url: member.user.displayAvatarURL()
+			},
+			description: `${member} est arrivé sur le serveur`,
+			color: "GREEN"
+		}
+	}).catch(e => log("ERROR", e));
+})
+
+bot.on("guildMemberRemove", member => {
+	const channelID = serverLog.get(msg.guild.id);
+	if (!channelID) return;
+	const channel = bot.channels.resolve(channelID);
+	if (!channel) return;
+
+	channel.send({
+		embed: {
+			title: "Un membre est parti",
+			thumbnail: {
+				url: member.user.displayAvatarURL()
+			},
+			description: `${member} a quitté le serveur`,
+			color: "RED"
+		}
+	}).catch(e => log("ERROR", e));
+})
+
+bot.on("messageUpdate", (oldMsg, msg) => {
+	if (msg.author.bot) return;
+
+	const channelID = serverLog.get(msg.guild.id);
+	if (!channelID) return;
+	const channel = bot.channels.resolve(channelID);
+	if (!channel) return;
+
+	channel.send({
+		embed: {
+			title: "Message modifié",
+			thumbnail: {
+				url: msg.author.displayAvatarURL()
+			},
+			description: `${msg.member} a modifié son message dans ${msg.channel}:\n\n__Avant:__\n${oldMsg.content}\n\n__Après:__\n${msg.content}`,
+			color: "BLUE"
+		}
+	}).catch(e => log("ERROR", e));
+})
+
+bot.on("messageDelete", msg => {
+	if (msg.author.bot) return;
+
+	if (deletedMsgToIgnore.has(msg.id)) {
+		deletedMsgToIgnore.delete(msg.id);
+		return;
+	}
+
+	const channelID = serverLog.get(msg.guild.id);
+	if (!channelID) return;
+	const channel = bot.channels.resolve(channelID);
+	if (!channel) return;
+
+	let msgAttachment = "";
+	if (msg.attachments.size > 0) {
+		msgAttachment = `\n__Ce message contenait un fichier:__ ${msg.attachments.first().url}`
+	}
+	
+	channel.send({
+		embed: {
+			title: "Message supprimé",
+			thumbnail: {
+				url: msg.author.displayAvatarURL()
+			},
+			description: `Un message de ${msg.member} a été supprimé dans ${msg.channel}:\n\n${msg.content}${msgAttachment}`,
+			color: "ORANGE"
+		}
+	}).catch(e => log("ERROR", e));
+})

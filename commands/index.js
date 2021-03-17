@@ -7,6 +7,8 @@ module.exports = {
 
 	kill: require("./kill"),
 
+	log: require("./log"),
+
 	prefix: require("./prefix"),
 
 	purge: require("./purge"),

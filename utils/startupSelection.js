@@ -4,7 +4,8 @@ module.exports = ({
 	db,
 	log,
 	serverPrefix,
-	serverCommand
+	serverCommand,
+	serverLog
 }) => {
 	let selections = [
 		db.select().from("ServerPrefix").then(lines => {
@@ -40,6 +41,14 @@ module.exports = ({
 			log("STARTUP", `${lines.length} custom commands loaded`);
 		}).catch(err => {
 			log("ERROR", err);
+		}),
+
+		db.select().from("ServerLog").then(lines => {
+			for (let line of lines) {
+				serverLog.set(line.ServerID, line.ChannelID);
+			}
+
+			log("STARTUP", `${lines.length} channel logs loaded`);
 		})
 	];
 

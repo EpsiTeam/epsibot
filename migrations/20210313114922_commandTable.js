@@ -1,8 +1,8 @@
 exports.up = function(knex) {
 	return knex.schema
 		.createTable("ServerCommand", table => {
-			table.string("ServerID", 2000);
-			table.string("CommandName");
+			table.string("ServerID");
+			table.string("CommandName", 2000);
 			table.boolean("AdminOnly")
 				.defaultTo(0);
 			table.boolean("AutoDelete")
