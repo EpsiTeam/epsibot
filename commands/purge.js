@@ -11,29 +11,43 @@ module.exports = {
 
 	adminOnly: true,
 
-	async execute({msg, args, prefix, log}) {
+	async execute({msg, args, prefix, log, deletedMsgToIgnore}) {
 		const usage = `\n\n__Utilisation:__:\n${this.help(prefix).usage}`;
+		const channel = msg.channel;
 
 		if (!args.length) {
-			return msg.channel.bulkDelete(2);
+			return channel.bulkDelete(2);
 		}
 
 		if (args.length === 1) {
 			let nbToDel = parseInt(args[0], 10);
 			if (isNaN(nbToDel)) {
-				return msg.channel.send(epsimpleembed("le premier argument doit être un nombre" + usage, msg.author.id, "RED"))
+				return channel.send(epsimpleembed("le premier argument doit être un nombre" + usage, msg.author.id, "RED"))
 			}
 
 			nbToDel++; // Because there is also the !purge to delete
+			//deletedMsgToIgnore.add(msg.id); // Don't want to log this
 
-			log("PURGE", `Purging ${nbToDel} messages in channel ${msg.channel.id}`);
+			log("PURGE", `Purging ${nbToDel} messages in channel ${channel.id}`);
 
-			while (nbToDel > 100) {
-				await msg.channel.bulkDelete(100);
-				nbToDel -= 100;
+			while (nbToDel > 0) {
+				let currentDel = Math.min(nbToDel, 100);
+				let msgToDel = await channel.messages.fetch({
+					limit: currentDel
+				});
+				if (msgToDel.size === 1) {
+					// If there is only onde message to delete,
+					// we don't want to use bulkDelete as this will
+					// trigger the event messageDeleted
+					msgToDel = msgToDel.first()
+					deletedMsgToIgnore.add(msgToDel.id);
+					await msgToDel.delete();
+				} else {
+					await channel.bulkDelete(currentDel);
+				}
+				
+				nbToDel -= currentDel;
 			}
-
-			await msg.channel.bulkDelete(nbToDel);
 
 			log("PURGE", "Purge finished");
 		} else {
@@ -43,24 +57,30 @@ module.exports = {
 			const nbToPurge = nbParsed.find(e => !isNaN(e));
 	
 			if (!userToPurge || !nbToPurge) {
-				return msg.channel.send(epsimpleembed("mauvaise utilisation de la commande" + usage, msg.author.id, "RED"));
+				return channel.send(epsimpleembed("mauvaise utilisation de la commande" + usage, msg.author.id, "RED"));
 			}
 
-			log("PURGE", `Trying to purge ${nbToPurge} messages from ${userToPurge.username}`);
+			log("PURGE", `Trying to purge ${nbToPurge} messages from ${userToPurge.username} in channel ${channel.id}`);
 	
 			// Deleting the called command
+			deletedMsgToIgnore.add(msg.id);
 			await msg.delete();
 	
 			// Getting last messages of this channel
-			let lastMessages = await msg.channel.messages.fetch({
+			let lastMessages = await channel.messages.fetch({
 				limit: 100
 			});
 	
 			lastMessages = lastMessages.filter(m => m.author.id === userToPurge.id);
 			msgToDelete = lastMessages.array().slice(0, nbToPurge);
 
-			await msg.channel.bulkDelete(msgToDelete);
-	
+			if (msgToDelete.length === 1) {
+				deletedMsgToIgnore.add(msgToDelete[0].id);
+				await msgToDelete[0].delete();
+			} else {
+				await channel.bulkDelete(msgToDelete);
+			}
+			
 			log("PURGE", `${msgToDelete.length} messages from ${userToPurge.username} purged`);
 		}
 	}
