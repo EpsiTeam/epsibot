@@ -191,6 +191,8 @@ bot.on("guildMemberRemove", member => {
 bot.on("messageUpdate", (oldMsg, msg) => {
 	if (msg.author.bot) return;
 
+	if (oldMsg.content === msg.content) return;
+
 	const channelID = serverLog.get(msg.guild.id);
 	if (!channelID) return;
 	const channel = bot.channels.resolve(channelID);
