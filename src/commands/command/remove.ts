@@ -1,19 +1,28 @@
-const epsimpleembed = require("epsimpleembed");
+import {Command} from "epsicommands/built/types";
+import EpsibotParams from "../../epsibotParams";
+import epsimpleembed from "epsimpleembed";
 
-module.exports = {
+const cmd: Command<EpsibotParams> = {
+	name: "remove",
+	
 	alias: ["r", "delete", "d"],
 
 	help(pre) {
 		return {
 			short: "Retire une commande personnalisée",
 			long: "Permet de retirer une commande personnalisée sur ce serveur",
-			usage: `\`${pre}command remove <command>\`\n\`${pre}command remove test\` => retire la commande \`${pre}test\``
+			usage:
+`\`${pre}command remove <command>\`
+\`${pre}command remove test\` => retire la commande \`${pre}test\``
 		};
 	},
 
 	adminOnly: true,
 
-	async execute({msg, args, prefix, db, log, serverCommand}) {
+	async execute({msg, args, prefix}, {db, log, serverCommand}) {
+		if (!msg.guild)
+			return; // Shouldn't happen
+		
 		const cmdToRemove = args[0];
 		const server = msg.guild.id;
 		const id = msg.author.id;
@@ -28,16 +37,18 @@ module.exports = {
 			return msg.channel.send(epsimpleembed("il n'y a aucune commande personnalisée sur ce serveur", id, "RED"));
 		}
 
-		let command = serverCmd.get(cmdToRemove);
+		let cmdExist = serverCmd.find(cmd => cmd.name === cmdToRemove) !== undefined;
 
-		if (!command) {
+		if (!cmdExist) {
 			return msg.channel.send(epsimpleembed(`la commande personnalisée \`${prefix}${cmdToRemove}\` n'existe pas`, id, "RED"));
 		}
 
 		// Deleting from maps
-		serverCmd.delete(cmdToRemove);
-		if (!serverCmd.size) {
+		serverCmd = serverCmd.filter(cmd => cmd.name !== cmdToRemove);
+		if (!serverCmd.length) {
 			serverCommand.delete(server);
+		} else {
+			serverCommand.set(server, serverCmd);
 		}
 
 		// Deleting from DB
@@ -51,3 +62,5 @@ module.exports = {
 		return msg.channel.send(epsimpleembed(`la commande \`${prefix}${cmdToRemove}\` a été supprimée`, id, "GREEN"));
 	}
 }
+
+export default cmd;

@@ -1,7 +1,11 @@
-const epsiconfirm = require("epsiconfirm");
-const epsimpleembed = require("epsimpleembed")
+import {Command} from "epsicommands/built/types";
+import EpsibotParams from "../epsibotParams";
+import epsimpleembed from "epsimpleembed";
+import epsiconfirm from "epsiconfirm";
 
-module.exports = {
+const cmd: Command<EpsibotParams> = {
+	name: "log",
+	
 	help(pre) {
 		return {
 			short: "Active les logs de ce serveur",
@@ -14,7 +18,10 @@ module.exports = {
 
 	adminOnly: true,
 
-	async execute({msg, args, db, log, serverLog}) {
+	async execute({msg, args}, {db, log, serverLog}) {
+		if (!msg.guild)
+			return; // This shouldn't happen
+
 		if (args[0] === "off") {
 			if (!serverLog.delete(msg.guild.id)) {
 				return msg.channel.send(epsimpleembed("les logs n'était déjà pas activés sur ce serveur", msg.author.id, "YELLOW"));
@@ -59,3 +66,5 @@ module.exports = {
 		return msg.channel.send(epsimpleembed("les logs sont activés dans ce channel", msg.author.id, "GREEN"));
 	}
 }
+
+export default cmd;

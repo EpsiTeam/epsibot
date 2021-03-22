@@ -1,19 +1,30 @@
-const epsimpleembed = require("epsimpleembed");
+import {Command} from "epsicommands/built/types";
+import EpsibotParams from "../epsibotParams";
+import epsimpleembed from "epsimpleembed";
+import {DMChannel, Message} from "discord.js";
 
-module.exports = {
+const cmd: Command<EpsibotParams> = {
+	name: "purge",
+
 	help(pre) {
 		return {
 			short: "Purge des messages",
 			long: "Purge les n derniers messages dans le salon actuel",
-			usage: `\`${pre}purge 10\` => purge les 10 derniers messages du salon\n\`${pre}purge 5 @user\` => purge les 5 derniers messages de @user dans ce salon\n\`${pre}purge @user 5\` => purge les 5 derniers messages de @user dans ce salon`
+			usage:
+`\`${pre}purge 10\` => purge les 10 derniers messages du salon
+\`${pre}purge 5 @user\` => purge les 5 derniers messages de @user dans ce salon
+\`${pre}purge @user 5\` => purge les 5 derniers messages de @user dans ce salon`
 		};
 	},
 
 	adminOnly: true,
 
-	async execute({msg, args, prefix, log, deletedMsgToIgnore}) {
+	async execute({msg, args, prefix}, {log, deletedMsgToIgnore}) {
 		const usage = `\n\n__Utilisation:__:\n${this.help(prefix).usage}`;
 		const channel = msg.channel;
+
+		if (channel instanceof DMChannel)
+			return Promise.resolve(); // No purge on delete
 
 		if (!args.length) {
 			return channel.bulkDelete(2);
@@ -32,14 +43,15 @@ module.exports = {
 
 			while (nbToDel > 0) {
 				let currentDel = Math.min(nbToDel, 100);
-				let msgToDel = await channel.messages.fetch({
+				let msgsToDel = await channel.messages.fetch({
 					limit: currentDel
 				});
-				if (msgToDel.size === 1) {
-					// If there is only onde message to delete,
+				
+				if (msgsToDel.size === 1) {
+					// If there is only one message to delete,
 					// we don't want to use bulkDelete as this will
 					// trigger the event messageDeleted
-					msgToDel = msgToDel.first()
+					let msgToDel = msgsToDel.first() as Message;
 					deletedMsgToIgnore.add(msgToDel.id);
 					await msgToDel.delete();
 				} else {
@@ -72,7 +84,7 @@ module.exports = {
 			});
 	
 			lastMessages = lastMessages.filter(m => m.author.id === userToPurge.id);
-			msgToDelete = lastMessages.array().slice(0, nbToPurge);
+			let msgToDelete = lastMessages.array().slice(0, nbToPurge);
 
 			if (msgToDelete.length === 1) {
 				deletedMsgToIgnore.add(msgToDelete[0].id);
@@ -85,3 +97,5 @@ module.exports = {
 		}
 	}
 }
+
+export default cmd;

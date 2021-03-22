@@ -1,8 +1,12 @@
-const epsimpleembed = require("epsimpleembed");
-const epsiconfirm = require("epsiconfirm");
-const customCommand = require("../../utils/customCommand");
+import {Command} from "epsicommands/built/types";
+import EpsibotParams from "../../epsibotParams";
+import epsimpleembed from "epsimpleembed";
+import epsiconfirm from "epsiconfirm";
+import customCommand from "./customCommand";
 
-module.exports = {
+const cmd: Command<EpsibotParams> = {
+	name: "add",
+
 	alias: ["a"],
 
 	help(pre) {
@@ -15,7 +19,10 @@ module.exports = {
 
 	adminOnly: true,
 
-	async execute({msg, args, prefix, db, log, serverCommand}) {
+	async execute({msg, args, prefix}, {db, log, serverCommand}) {
+		if (!msg.guild)
+			return;
+
 		if (args.length < 2) {
 			return msg.channel.send(epsimpleembed("il faut indiquer le nom de la commande personnalisée et sa réponse !\n\n__Utilisation:__\n" + this.help(prefix).usage));
 		}
@@ -31,7 +38,8 @@ module.exports = {
 		// Check if this command already exist (maybe overwrite it)
 		let commands = serverCommand.get(server);
 		let overwrite = false;
-		if (commands && commands.has(cmdName)) {
+		let cmdExist = commands?.find(cmd => cmd.name === cmdName) !== undefined;
+		if (commands && cmdExist) {
 			overwrite = await epsiconfirm({
 				originMsg: msg,
 				log,
@@ -104,10 +112,11 @@ module.exports = {
 
 		// Updating maps
 		if (!commands) {
-			commands = new Map();
+			commands = [];
 			serverCommand.set(server, commands);
 		}
-		commands.set(cmdName, customCommand({
+		commands.push(customCommand({
+			name: cmdName,
 			adminOnly,
 			autoDelete,
 			response: cmdResponse
@@ -115,6 +124,13 @@ module.exports = {
 
 		log("COMMAND A", `Added command ${prefix}${cmdName} for server ${server}`);
 
-		return msg.channel.send(epsimpleembed(`La commande \`${prefix}${cmdName}\` a été ajouté avec succès.\n\n__Réponse de la commande:__ ${cmdResponse}\n__Admin only:__ ${adminOnly ? "Oui" : "Non"}\n__Auto delete:__ ${autoDelete ? "Oui" : "Non"}`, null, "GREEN"));
+		return msg.channel.send(epsimpleembed(
+`La commande \`${prefix}${cmdName}\` a été ajouté avec succès.
+
+__Réponse de la commande:__ ${cmdResponse}
+__Admin only:__ ${adminOnly ? "Oui" : "Non"}
+__Auto delete:__ ${autoDelete ? "Oui" : "Non"}`, null, "GREEN"));
 	}
 }
+
+export default cmd;

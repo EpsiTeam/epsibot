@@ -1,1 +1,2 @@
 config.json merge=ours
+built/* linguist-detectable=false

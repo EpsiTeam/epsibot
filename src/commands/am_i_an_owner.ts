@@ -1,6 +1,10 @@
-const epsimpleembed = require("epsimpleembed");
+import {Command} from "epsicommands/built/types";
+import EpsibotParams from "../epsibotParams";
+import epsimpleembed from "epsimpleembed";
 
-module.exports = {
+const cmd: Command<EpsibotParams> = {
+	name: "am_i_an_owner",
+
 	alias: ["isowner"],
 
 	help(pre) {
@@ -16,4 +20,6 @@ module.exports = {
 	execute({msg}) {
 		return msg.channel.send(epsimpleembed("C'est oui !"));
 	}
-}
+};
+
+export default cmd;

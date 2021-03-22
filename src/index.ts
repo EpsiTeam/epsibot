@@ -1,51 +1,50 @@
 // External modules
-const Discord = require("discord.js");
+import {Client, PresenceData} from "discord.js";
+import knex from "knex";
+import logLoader from "epsilogging";
+import commandLoader from "epsicommands";
 
-// Load config
-const config = require("./config.json");
+// Internal modules
+import {CustomCommand} from "./epsibotParams";
+import config from "./config.json";
+import dbConfig from "./knexfile";
+import credential from "./credential.json";
+import commands from "./commands";
+import startupSelection from "./utils/startupSelection";
+
 // Create log function
-const log = require("epsilogging")(config.development, config.logTypeWidth, config.logMsgWidth);
+const log = logLoader(config.development, config.logTypeWidth, config.logMsgWidth);
 // Create db function
-const db = require("knex")(require("./knexfile"));
+const db = knex(dbConfig);
 // serverID => prefix
-const serverPrefix = new Map();
+const serverPrefix = new Map<string, string>();
 // serverID => (commandName => commandObj)
-const serverCommand = new Map();
+const serverCommand = new Map<string, CustomCommand[]>();
 // deleted messages that we don't want to be logged
-const deletedMsgToIgnore = new Set();
+const deletedMsgToIgnore = new Set<string>();
 // serverID => channelID
-const serverLog = new Map();
+const serverLog = new Map<string, string>();
 
+if (!process.env.npm_package_version)
+	log("STARTUP", "There is no npm version, are you sure you started epsibot with 'npm start' and not 'node index.js'?");
 log("STARTUP", `Epsibot v${process.env.npm_package_version} - ${config.development ? "DEV" : "PROD"}`);
 
-// Load token
-let token;
-try {
-	const credential = require("./credential.json");
-	token = credential.token;
-} catch (err) {
-	log("STARTUP ERROR", "It looks like there is no credential.json file (or it's malformed). Copy the file credential_example.json, rename it and put the bot token in it");
-	process.exit();
-}
-
 // Loading commands and creating getCommand function
-const getCommand = require("epsicommands")(require("./commands"), config.owners, log);
+const getCommand = commandLoader(commands, config.owners, log);
 
 // Bot status
 const basePrefix = config.prefix;
-const status = {
+const status: PresenceData = {
 	activity: {
 		type: "PLAYING",
 		name: `v${process.env.npm_package_version} | ${basePrefix}help`
 	}
 };
-if (!process.env.npm_package_version)
-	log("STARTUP", "There is no npm version, are you sure you started epsibot with 'npm start' and not 'node index.js'?");
 
 // Bot instance
-const bot = new Discord.Client({presence: status});
+const bot = new Client({presence: status});
 
-require("./utils/startupSelection")({
+startupSelection({
 	db,
 	log,
 	serverPrefix,
@@ -53,11 +52,11 @@ require("./utils/startupSelection")({
 	serverLog
 }).then(() => {
 	log("STARTUP", "Startup selections finished, logging to discord");
-	bot.login(token);
+	bot.login(credential.token);
 });
 
 bot.on("ready", () => {
-	log("STARTUP", `Logged as ${bot.user.tag} in ${bot.guilds.cache.size} servers`);
+	log("STARTUP", `Logged as ${bot.user?.tag} in ${bot.guilds.cache.size} servers`);
 
 	log("STARTED", "Configuration finished, ready to received messages");
 });
@@ -68,11 +67,11 @@ bot.on("message", msg => {
 		return;
 
 	// We don't care about DMs
-	if (!msg.guild)
+	if (!msg.guild || !msg.member)
 		return;
 	
 	// Getting prefix for this server
-	let prefix = serverPrefix.get(msg.guild.id) || basePrefix;
+	let prefix = serverPrefix.get(msg.guild.id) ?? basePrefix;
 
 	// Retrieve message content
 	let content = msg.content;
@@ -105,7 +104,7 @@ bot.on("message", msg => {
 			return;
 		}
 		
-		command = customCommands.get(firstArg);
+		command = customCommands.find(cmd => cmd.name === firstArg);
 
 		// There is a custom command for this server, but not this one
 		if (!command) {
@@ -128,12 +127,13 @@ bot.on("message", msg => {
 	if (!canBeExecuted) {
 		return;
 	}
-
-	command.execute({
+	const executable = command;
+	executable.execute({
 		msg,
 		args,
 		baseArgs,
-		prefix,
+		prefix
+	}, {
 		db,
 		log,
 		serverPrefix,
@@ -141,10 +141,11 @@ bot.on("message", msg => {
 		deletedMsgToIgnore,
 		serverLog
 	}).then(() => {
-		if (command.autoDelete) {
+		if (executable.autoDelete) {
 			deletedMsgToIgnore.add(msg.id);
 			return msg.delete();
 		}
+		return;
 	}).catch(err => log("ERROR", err));
 });
 
@@ -153,10 +154,10 @@ bot.on("rateLimit", rateLimit => {
 });
 
 bot.on("guildMemberAdd", member => {
-	const channelID = serverLog.get(msg.guild.id);
+	const channelID = serverLog.get(member.guild.id);
 	if (!channelID) return;
 	const channel = bot.channels.resolve(channelID);
-	if (!channel) return;
+	if (!channel || !channel.isText()) return;
 
 	channel.send({
 		embed: {
@@ -171,16 +172,16 @@ bot.on("guildMemberAdd", member => {
 })
 
 bot.on("guildMemberRemove", member => {
-	const channelID = serverLog.get(msg.guild.id);
+	const channelID = serverLog.get(member.guild.id);
 	if (!channelID) return;
 	const channel = bot.channels.resolve(channelID);
-	if (!channel) return;
+	if (!channel || !channel.isText()) return;
 
 	channel.send({
 		embed: {
 			title: "Un membre est parti",
 			thumbnail: {
-				url: member.user.displayAvatarURL()
+				url: member.user?.displayAvatarURL()
 			},
 			description: `${member} a quitté le serveur`,
 			color: "RED"
@@ -189,6 +190,7 @@ bot.on("guildMemberRemove", member => {
 })
 
 bot.on("messageUpdate", (oldMsg, msg) => {
+	if (!msg.author || !msg.guild) return;
 	if (msg.author.bot) return;
 
 	if (oldMsg.content === msg.content) return;
@@ -196,7 +198,7 @@ bot.on("messageUpdate", (oldMsg, msg) => {
 	const channelID = serverLog.get(msg.guild.id);
 	if (!channelID) return;
 	const channel = bot.channels.resolve(channelID);
-	if (!channel) return;
+	if (!channel || !channel.isText()) return;
 
 	channel.send({
 		embed: {
@@ -211,6 +213,7 @@ bot.on("messageUpdate", (oldMsg, msg) => {
 })
 
 bot.on("messageDelete", msg => {
+	if (!msg.author || !msg.guild) return;
 	if (msg.author.bot) return;
 
 	if (deletedMsgToIgnore.has(msg.id)) {
@@ -221,11 +224,12 @@ bot.on("messageDelete", msg => {
 	const channelID = serverLog.get(msg.guild.id);
 	if (!channelID) return;
 	const channel = bot.channels.resolve(channelID);
-	if (!channel) return;
+	if (!channel || !channel.isText()) return;
 
 	let msgAttachment = "";
-	if (msg.attachments.size > 0) {
-		msgAttachment = `\n__Ce message contenait un fichier:__ ${msg.attachments.first().url}`
+	const firstAttachment = msg.attachments.first();
+	if (firstAttachment) {
+		msgAttachment = `\n__Ce message contenait un fichier:__ ${firstAttachment.url}`
 	}
 	
 	channel.send({

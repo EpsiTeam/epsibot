@@ -1,12 +1,31 @@
-module.exports = ({
-	adminOnly = false,
-	autoDelete = false,
-	response = ""
-}) => {
-	return {
+import {CustomCommand} from "../../epsibotParams";
+
+interface CustomCommandParams {
+	name: string,
+	adminOnly: boolean,
+	autoDelete: boolean,
+	response: string
+}
+
+const customCommand = ({
+	name,
+	adminOnly,
+	autoDelete,
+	response 
+}: CustomCommandParams) => {
+	const cmd: CustomCommand = {
+		name,
 		adminOnly,
 		autoDelete,
 		response,
+
+		help(pre) {
+			return {
+				short: `Commande ${name}`,
+				long: this.response,
+				usage: pre + name
+			}
+		},
 
 		execute({msg, baseArgs}) {
 			// Remove the command name from baseArgs
@@ -18,7 +37,7 @@ module.exports = ({
 			let quote = false;
 
 			while (baseArgs.length) {
-				let arg = baseArgs.shift();
+				let arg = baseArgs.shift() as string;
 
 				// Manage quoted arguments
 				// Start of a quoted argument
@@ -59,4 +78,8 @@ module.exports = ({
 			return msg.channel.send(resp);
 		}
 	}
+
+	return cmd;
 };
+
+export default customCommand;
