@@ -4,7 +4,7 @@
 	"description": "Light discord bot for epsilon needs",
 	"main": "built/index.js",
 	"scripts": {
-		"build": "rm -r built/ && tsc",
+		"build": "rm -rf built/ && tsc",
 		"start": "npm run build && node built/index.js",
 		"prod": "npm run build && NODE_ENV=production node built/index.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
