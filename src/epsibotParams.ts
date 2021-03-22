@@ -1,4 +1,5 @@
 import {Command} from "epsicommands/built/types";
+import {Config} from "./config";
 
 interface EpsibotParams {
 	db: any,
@@ -6,7 +7,8 @@ interface EpsibotParams {
 	serverPrefix: Map<string, string>,
 	serverCommand: Map<string, CustomCommand[]>,
 	deletedMsgToIgnore: Set<string>,
-	serverLog: Map<string, string>
+	serverLog: Map<string, string>,
+	config: Config
 }
 
 interface CustomCommand extends Command<EpsibotParams> {

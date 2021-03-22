@@ -6,14 +6,17 @@ import commandLoader from "epsicommands";
 
 // Internal modules
 import {CustomCommand} from "./epsibotParams";
-import config from "./config.json";
+import configLoader from "./config";
 import dbConfig from "./knexfile";
 import credential from "./credential.json";
 import commands from "./commands";
 import startupSelection from "./utils/startupSelection";
 
+// Get config
+const env = process.env.NODE_ENV || "development";
+const config = configLoader(env);
 // Create log function
-const log = logLoader(config.development, config.logTypeWidth, config.logMsgWidth);
+const log = logLoader(env === "development", config.logTypeWidth, config.logMsgWidth);
 // Create db function
 const db = knex(dbConfig);
 // serverID => prefix
@@ -27,7 +30,8 @@ const serverLog = new Map<string, string>();
 
 if (!process.env.npm_package_version)
 	log("STARTUP", "There is no npm version, are you sure you started epsibot with 'npm start' and not 'node index.js'?");
-log("STARTUP", `Epsibot v${process.env.npm_package_version} - ${config.development ? "DEV" : "PROD"}`);
+
+log("STARTUP", `Epsibot v${process.env.npm_package_version} - ${env === "development" ? "DEV" : "PROD"}`);
 
 // Loading commands and creating getCommand function
 const getCommand = commandLoader(commands, config.owners, log);
@@ -139,7 +143,8 @@ bot.on("message", msg => {
 		serverPrefix,
 		serverCommand,
 		deletedMsgToIgnore,
-		serverLog
+		serverLog,
+		config
 	}).then(() => {
 		if (executable.autoDelete) {
 			deletedMsgToIgnore.add(msg.id);

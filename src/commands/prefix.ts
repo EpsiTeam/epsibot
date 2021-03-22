@@ -1,7 +1,6 @@
 import {Command} from "epsicommands/built/types";
 import EpsibotParams from "../epsibotParams";
 import epsimpleembed from "epsimpleembed";
-import {prefix as basePrefix} from "../config.json";
 
 const cmd: Command<EpsibotParams> = {
 	name: "prefix",
@@ -16,7 +15,7 @@ const cmd: Command<EpsibotParams> = {
 
 	adminOnly: true,
 
-	async execute({msg, args, prefix}, {db, log, serverPrefix}) {
+	async execute({msg, args, prefix}, {db, log, serverPrefix, config}) {
 		if (!msg.guild)
 			return; // This shouldn't happen
 
@@ -29,14 +28,14 @@ const cmd: Command<EpsibotParams> = {
 		let server = msg.guild.id;
 
 		// Returning to base prefix
-		if (newPrefix === basePrefix) {
+		if (newPrefix === config.prefix) {
 			serverPrefix.delete(server);
 
 			await db.delete().from("ServerPrefix").where({
 				ServerID: server
 			});
 		// Going from base prefix to a new one
-		} else if (prefix === basePrefix) {
+		} else if (prefix === config.prefix) {
 			serverPrefix.set(server, newPrefix);
 
 			await db.insert({
