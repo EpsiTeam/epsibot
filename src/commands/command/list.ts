@@ -1,12 +1,17 @@
-const epsimpleembed = require("epsimpleembed");
-const epsilist = require("epsilist");
+import {Command} from "epsicommands/built/types";
+import EpsibotParams from "../../epsibotParams";
+import epsimpleembed from "epsimpleembed";
+import epsilist from "epsilist";
+import {MessageEmbed} from "discord.js";
 
 const elmtByPage = 3;
 const cmdWidth = 10;
 const responseWidth = 23;
 const maxResponseWidth = 9 * responseWidth;
 
-module.exports = {
+const cmd: Command<EpsibotParams> = {
+	name: "list",
+
 	alias: ["l"],
 
 	help(pre) {
@@ -17,17 +22,20 @@ module.exports = {
 		};
 	},
 
-	execute({msg, log, serverCommand}) {
+	execute({msg}, {log, serverCommand}) {
+		if (!msg.guild)
+			return Promise.resolve(); // Shouldn't happen
+
 		let commands = serverCommand.get(msg.guild.id);
 
-		if (!commands || !commands.size) {
+		if (!commands || !commands.length) {
 			return msg.channel.send(epsimpleembed("il n'y a aucune commande personnalisée sur ce serveur", msg.author.id, "YELLOW"));
 		}
 
 		let header = ["Commande", "Réponse", "Admin", "Delete"];
 		let data = [];
-		for (let [name, command] of commands) {
-			let response = command.response.replaceAll("\n", "\\n");
+		for (const command of commands) {
+			let response = command.response.replace(/\n/g, "\\n");
 
 			if (response.length > maxResponseWidth) {
 				response = response.substring(0, maxResponseWidth - 3);
@@ -35,17 +43,16 @@ module.exports = {
 			}
 			
 			data.push([
-				name,
+				command.name,
 				response,
 				command.adminOnly ? "Oui" : "Non",
 				command.autoDelete ? "Oui" : "Non"
 			]);
 		}
 
-		let embedMsg = {
-			color: "BLUE",
-			title: "Commandes personnalisées de ce serveur"
-		};
+		let embedMsg = new MessageEmbed();
+		embedMsg.setColor("BLUE");
+		embedMsg.setTitle("Commandes personnalisées de ce serveur");
 
 		let tableConfig = {
 			columns: {
@@ -69,3 +76,5 @@ module.exports = {
 		})
 	}
 }
+
+export default cmd;

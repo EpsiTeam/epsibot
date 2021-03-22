@@ -1,7 +1,10 @@
-const epsimpleembed = require("epsimpleembed");
-const basePrefix = require("../config.json").prefix;
+import {Command} from "epsicommands/built/types";
+import EpsibotParams from "../epsibotParams";
+import epsimpleembed from "epsimpleembed";
 
-module.exports = {
+const cmd: Command<EpsibotParams> = {
+	name: "prefix",
+
 	help(pre) {
 		return {
 			short: "Change le prefix",
@@ -12,7 +15,10 @@ module.exports = {
 
 	adminOnly: true,
 
-	async execute({msg, args, prefix, db, log, serverPrefix}) {
+	async execute({msg, args, prefix}, {db, log, serverPrefix, config}) {
+		if (!msg.guild)
+			return; // This shouldn't happen
+
 		let newPrefix = args.join(" ");
 
 		if (newPrefix === prefix) {
@@ -22,14 +28,14 @@ module.exports = {
 		let server = msg.guild.id;
 
 		// Returning to base prefix
-		if (newPrefix === basePrefix) {
+		if (newPrefix === config.prefix) {
 			serverPrefix.delete(server);
 
 			await db.delete().from("ServerPrefix").where({
 				ServerID: server
 			});
 		// Going from base prefix to a new one
-		} else if (prefix === basePrefix) {
+		} else if (prefix === config.prefix) {
 			serverPrefix.set(server, newPrefix);
 
 			await db.insert({
@@ -52,3 +58,5 @@ module.exports = {
 		return msg.channel.send(epsimpleembed(`le prefix a été changé, fais \`${newPrefix}help\` pour tester`, msg.author.id, "GREEN"));
 	}
 }
+
+export default cmd;

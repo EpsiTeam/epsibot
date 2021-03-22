@@ -17,10 +17,12 @@
 */
 
 // DB configuration
-module.exports = {
+const config = {
 	client: 'sqlite3',
 	connection: {
 		filename: './db.sqlite3'
 	},
 	useNullAsDefault: true
 };
+
+export default config;

@@ -1,7 +1,11 @@
-const epsiconfirm = require("epsiconfirm");
-const epsimpleembed = require("epsimpleembed");
+import {Command} from "epsicommands/built/types";
+import EpsibotParams from "../epsibotParams";
+import epsimpleembed from "epsimpleembed";
+import epsiconfirm from "epsiconfirm";
 
-module.exports = {
+const cmd: Command<EpsibotParams> = {
+	name: "reboot",
+	
 	help(pre) {
 		return {
 			short: "Reboot le bot",
@@ -14,7 +18,7 @@ module.exports = {
 
 	ownerOnly: true,
 
-	async execute({msg, log}) {
+	async execute({msg}, {log}) {
 		const confirm = await epsiconfirm({
 			originMsg: msg,
 			log,
@@ -27,7 +31,7 @@ module.exports = {
 
 		if (!confirm) return;
 
-		log("REBOOT", `${msg.member.displayName} rebooted the bot`);
+		log("REBOOT", `${msg.member?.displayName} rebooted the bot`);
 
 		return msg.channel.send(epsimpleembed("Le reboot est lancé", null, "GREEN")).catch(err => {
 			log("REBOOT", `Impossible to send message, but rebooting anyway: ${err}`);
@@ -38,10 +42,12 @@ module.exports = {
 const reboot = () => {
 	const proc = require("child_process");
 
-	proc.fork("index.js", {
+	proc.fork("built/index.js", {
 		detached: false,
 		stdio: "inherit"
 	});
 
 	process.exit();
 };
+
+export default cmd;

@@ -1,24 +1,31 @@
-const customCommand = require("./customCommand");
+import customCommand from "../commands/command/customCommand";
+import {CustomCommand} from "../epsibotParams";
 
-module.exports = ({
+interface SelectionParams {
+	db: any,
+	log: (t: string, m: string | Error) => void,
+	serverPrefix: Map<string, string>,
+	serverCommand: Map<string, CustomCommand[]>,
+	serverLog: Map<string, string>
+}
+
+const startupSelection = ({
 	db,
 	log,
 	serverPrefix,
 	serverCommand,
 	serverLog
-}) => {
+}: SelectionParams) => {
 	let selections = [
-		db.select().from("ServerPrefix").then(lines => {
+		db.select().from("ServerPrefix").then((lines: any[]) => {
 			for (let line of lines) {
 				serverPrefix.set(line.ServerID, line.Prefix);
 			}
 		
 			log("STARTUP", `${lines.length} prefixes loaded`);
-		}).catch(err => {
-			log("ERROR", err);
 		}),
 
-		db.select().from("ServerCommand").orderBy("ServerID").then(lines => {
+		db.select().from("ServerCommand").orderBy("ServerID").then((lines: any[]) => {
 			// Ordered by ServerID so we can create or update the map
 			for (let line of lines) {
 				const server = line.ServerID;
@@ -27,11 +34,12 @@ module.exports = ({
 				let commands = serverCommand.get(server);
 				if (!commands) {
 					// Maybe not
-					commands = new Map();
+					commands = [];
 					serverCommand.set(server, commands);
 				}
 
-				commands.set(line.CommandName, customCommand({
+				commands.push(customCommand({
+					name: line.CommandName,
 					adminOnly: line.AdminOnly,
 					autoDelete: line.AutoDelete,
 					response: line.CommandResponse
@@ -39,11 +47,9 @@ module.exports = ({
 			}
 
 			log("STARTUP", `${lines.length} custom commands loaded`);
-		}).catch(err => {
-			log("ERROR", err);
 		}),
 
-		db.select().from("ServerLog").then(lines => {
+		db.select().from("ServerLog").then((lines: any[]) => {
 			for (let line of lines) {
 				serverLog.set(line.ServerID, line.ChannelID);
 			}
@@ -52,5 +58,9 @@ module.exports = ({
 		})
 	];
 
-	return Promise.all(selections);
+	return Promise.all(selections).catch((err: Error) => {
+		log("ERROR", err);
+	});
 }
+
+export default startupSelection;
