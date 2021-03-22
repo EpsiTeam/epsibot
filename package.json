@@ -5,8 +5,7 @@
 	"main": "built/index.js",
 	"scripts": {
 		"build": "rm -rf built/ && tsc",
-		"knex": "knex --knexfile built/knexfile.js",
-		"migrate": "npm run knex migrate:latest",
+		"migrate": "knex migrate:latest",
 		"update": "npm run build && npm run migrate && npm up",
 		"start": "npm run build && node built/index.js",
 		"prod": "npm run build && NODE_ENV=production node built/index.js",
