@@ -7,7 +7,6 @@ import commandLoader from "epsicommands";
 // Internal modules
 import {CustomCommand} from "./epsibotParams";
 import configLoader from "./config";
-import dbConfig from "./knexfile";
 import credential from "./credential.json";
 import commands from "./commands";
 import startupSelection from "./utils/startupSelection";
@@ -18,6 +17,7 @@ const config = configLoader(env);
 // Create log function
 const log = logLoader(env === "development", config.logTypeWidth, config.logMsgWidth);
 // Create db function
+const dbConfig = require("../knexfile");
 const db = knex(dbConfig);
 // serverID => prefix
 const serverPrefix = new Map<string, string>();

@@ -5,6 +5,8 @@
 	"main": "built/index.js",
 	"scripts": {
 		"build": "rm -rf built/ && tsc",
+		"migrate": "knex migrate:latest",
+		"update": "npm run build && npm run migrate && npm up",
 		"start": "npm run build && node built/index.js",
 		"prod": "npm run build && NODE_ENV=production node built/index.js",
 		"test": "echo \"Error: no test specified\" && exit 1"

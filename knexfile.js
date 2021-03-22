@@ -25,4 +25,4 @@ const config = {
 	useNullAsDefault: true
 };
 
-export default config;
+module.exports = config;
