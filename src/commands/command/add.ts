@@ -32,23 +32,27 @@ const cmd: Command<EpsibotParams> = {
 		if (cmdName.length > 90)
 			return msg.channel.send(epsimpleembed("le nom de la commande est trop long (90 caractères maximum)", msg.author.id, "RED"));
 
-		let title = `Ajout de la commande !${cmdName}`;
+		const title = `Ajout de la commande !${cmdName}`;
 		const server = msg.guild.id;
 
 		// Check if this command already exist (maybe overwrite it)
 		let commands = serverCommand.get(server);
-		let overwrite = false;
-		let cmdExist = commands?.find(cmd => cmd.name === cmdName) !== undefined;
-		if (commands && cmdExist) {
+		let overwrite: boolean | null = false;
+		// index of the command to overwrite
+		const cmdToOverwriteIndex =
+			commands?.findIndex(cmd => cmd.name === cmdName) ?? -1;
+		
+		if (cmdToOverwriteIndex !== -1) {
 			overwrite = await epsiconfirm({
 				originMsg: msg,
 				log,
 				title,
 				desc: `${msg.author}, la commande \`${prefix}${cmdName}\` existe déjà, voulez vous la remplacer ?`,
-				color: "YELLOW"
+				color: "YELLOW",
+				timeoutResponse: null
 			});
 
-			if (overwrite === undefined) {
+			if (overwrite === null) {
 				return msg.channel.send(epsimpleembed("pas de réponse, je prends ça pour un non", msg.author.id, "YELLOW"));
 			}
 
@@ -91,15 +95,7 @@ const cmd: Command<EpsibotParams> = {
 		});
 
 		// Inserting into DB
-		if (!overwrite) {
-			await db("ServerCommand").insert({
-				ServerID: server,
-				CommandName: cmdName,
-				AdminOnly: adminOnly,
-				AutoDelete: autoDelete,
-				CommandResponse: cmdResponse
-			});
-		} else {
+		if (overwrite) {
 			await db("ServerCommand").update({
 				AdminOnly: adminOnly,
 				AutoDelete: autoDelete,
@@ -108,6 +104,14 @@ const cmd: Command<EpsibotParams> = {
 				ServerID: server,
 				CommandName: cmdName
 			});
+		} else {
+			await db("ServerCommand").insert({
+				ServerID: server,
+				CommandName: cmdName,
+				AdminOnly: adminOnly,
+				AutoDelete: autoDelete,
+				CommandResponse: cmdResponse
+			});
 		}
 
 		// Updating maps
@@ -115,14 +119,19 @@ const cmd: Command<EpsibotParams> = {
 			commands = [];
 			serverCommand.set(server, commands);
 		}
-		commands.push(customCommand({
+		const newCommand = customCommand({
 			name: cmdName,
 			adminOnly,
 			autoDelete,
 			response: cmdResponse
-		}));
-
-		log("COMMAND A", `Added command ${prefix}${cmdName} for server ${server}`);
+		});
+		if (overwrite) {
+			commands[cmdToOverwriteIndex] = newCommand;
+			log("COMMAND A", `Overwrited command ${prefix}${cmdName} for server ${server}`);
+		} else {
+			commands.push(newCommand);
+			log("COMMAND A", `Added command ${prefix}${cmdName} for server ${server}`);
+		}
 
 		return msg.channel.send(epsimpleembed(
 `La commande \`${prefix}${cmdName}\` a été ajouté avec succès.
