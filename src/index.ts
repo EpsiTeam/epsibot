@@ -19,6 +19,7 @@ const log = logLoader(env === "development", config.logTypeWidth, config.logMsgW
 // Create db function
 const dbConfig = require("../knexfile");
 const db = knex(dbConfig);
+
 // serverID => prefix
 const serverPrefix = new Map<string, string>();
 // serverID => (commandName => commandObj)

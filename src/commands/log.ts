@@ -27,7 +27,7 @@ const cmd: Command<EpsibotParams> = {
 				return msg.channel.send(epsimpleembed("les logs n'était déjà pas activés sur ce serveur", msg.author.id, "YELLOW"));
 			}
 
-			await db.delete().from("ServerLog").where({
+			await db("ServerLog").delete().where({
 				ServerID: msg.guild.id
 			});
 
@@ -49,16 +49,16 @@ const cmd: Command<EpsibotParams> = {
 		serverLog.set(msg.guild.id, msg.channel.id);
 
 		if (oldChannel) {
-			await db.update({
+			await db("ServerLog").update({
 				ChannelID: msg.channel.id
-			}).from("ServerLog").where({
+			}).where({
 				ServerID: msg.guild.id
 			});
 		} else {
-			await db.insert({
+			await db("ServerLog").insert({
 				ServerID: msg.guild.id,
 				ChannelID: msg.channel.id
-			}).into("ServerLog");
+			});
 		}
 
 		log("LOG", `Logs activated for server ${msg.guild.id} in channel ${msg.channel.id}`);

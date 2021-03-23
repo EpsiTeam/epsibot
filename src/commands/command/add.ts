@@ -92,19 +92,19 @@ const cmd: Command<EpsibotParams> = {
 
 		// Inserting into DB
 		if (!overwrite) {
-			await db.insert({
-				ServerId: server,
+			await db("ServerCommand").insert({
+				ServerID: server,
 				CommandName: cmdName,
 				AdminOnly: adminOnly,
 				AutoDelete: autoDelete,
 				CommandResponse: cmdResponse
-			}).into("ServerCommand");
+			});
 		} else {
-			await db.update({
+			await db("ServerCommand").update({
 				AdminOnly: adminOnly,
 				AutoDelete: autoDelete,
 				CommandResponse: cmdResponse
-			}).from("ServerCommand").where({
+			}).where({
 				ServerID: server,
 				CommandName: cmdName
 			});
