@@ -31,24 +31,24 @@ const cmd: Command<EpsibotParams> = {
 		if (newPrefix === config.prefix) {
 			serverPrefix.delete(server);
 
-			await db.delete().from("ServerPrefix").where({
+			await db("ServerPrefix").delete().where({
 				ServerID: server
 			});
 		// Going from base prefix to a new one
 		} else if (prefix === config.prefix) {
 			serverPrefix.set(server, newPrefix);
 
-			await db.insert({
+			await db("ServerPrefix").insert({
 				ServerID: server,
 				Prefix: newPrefix
-			}).into("ServerPrefix");
+			});
 		// Changing from a special prefix to another one
 		} else {
 			serverPrefix.set(server, newPrefix);
 
-			await db.update({
+			await db("ServerPrefix").update({
 				Prefix: newPrefix
-			}).from("ServerPrefix").where({
+			}).where({
 				ServerID: server
 			});
 		}

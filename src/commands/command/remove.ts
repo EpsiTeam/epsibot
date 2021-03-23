@@ -52,7 +52,7 @@ const cmd: Command<EpsibotParams> = {
 		}
 
 		// Deleting from DB
-		await db.delete().from("ServerCommand").where({
+		await db("ServerCommand").delete().where({
 			ServerID: server,
 			CommandName: cmdToRemove
 		});

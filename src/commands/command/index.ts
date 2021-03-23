@@ -8,8 +8,6 @@ import list from "./list";
 const subcmd: SubCommand<EpsibotParams> = {
 	name: "command",
 
-	alias: ["c"],
-
 	baseCommand: "list",
 
 	category: "Commandes personnalisées",
