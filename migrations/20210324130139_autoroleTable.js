@@ -1,16 +1,16 @@
 exports.up = function(knex) {
 	return knex.schema
-		.createTable("ServerLog", table => {
+		.createTable("ServerAutorole", table => {
 
 			table.string("ServerID")
 				.primary()
 
-			table.string("ChannelID")
+			table.string("RoleID")
 				.notNullable()
 		})
 }
 
 exports.down = function(knex) {
 	return knex.schema
-		.dropTable("ServerLog")
+		.dropTable("ServerAutorole")
 }

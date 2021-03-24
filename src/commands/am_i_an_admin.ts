@@ -1,6 +1,6 @@
-import {Command} from "epsicommands/built/types";
-import EpsibotParams from "../epsibotParams";
-import epsimpleembed from "epsimpleembed";
+import {Command} from "epsicommands/built/types"
+import EpsibotParams from "../types/epsibotParams"
+import epsimpleembed from "epsimpleembed"
 
 const cmd: Command<EpsibotParams> = {
 	name: "am_i_an_admin",
@@ -12,14 +12,14 @@ const cmd: Command<EpsibotParams> = {
 			short: "Êtes vous un admin sur ce serveur",
 			long: "Vérifiez avec cette commande si vous êtes un admin",
 			usage: `\`${pre}am_i_an_admin\``
-		};
+		}
 	},
 
 	adminOnly: true,
 
 	execute({msg}) {
-		return msg.channel.send(epsimpleembed("C'est oui !"));
+		return msg.channel.send(epsimpleembed("C'est oui !"))
 	}
-};
+}
 
-export default cmd;
+export default cmd

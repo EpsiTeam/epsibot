@@ -1,9 +1,9 @@
-import {SubCommand} from "epsicommands/built/types";
-import EpsibotParams from "../../epsibotParams";
+import {SubCommand} from "epsicommands/built/types"
+import EpsibotParams from "../../types/epsibotParams"
 
-import add from "./add";
-import remove from "./remove";
-import list from "./list";
+import add from "./add"
+import remove from "./remove"
+import list from "./list"
 
 const subcmd: SubCommand<EpsibotParams> = {
 	name: "command",
@@ -19,4 +19,4 @@ const subcmd: SubCommand<EpsibotParams> = {
 	]
 }
 
-export default subcmd;
+export default subcmd

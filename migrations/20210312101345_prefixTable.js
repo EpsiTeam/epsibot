@@ -1,14 +1,16 @@
 exports.up = function(knex) {
 	return knex.schema
 		.createTable("ServerPrefix", table => {
+
 			table.string("ServerID")
-				.primary();
+				.primary()
+
 			table.string("Prefix")
-				.notNullable();
-		});
-};
+				.notNullable()
+		})
+}
 
 exports.down = function(knex) {
 	return knex.schema
-		.dropTable("ServerPrefix");
-};
+		.dropTable("ServerPrefix")
+}
