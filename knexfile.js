@@ -5,6 +5,6 @@ const config = {
 		filename: './db.sqlite3'
 	},
 	useNullAsDefault: true
-};
+}
 
-module.exports = config;
+module.exports = config

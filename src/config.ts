@@ -1,7 +1,7 @@
 interface Config {
-	prefix: string,
-	owners: string[],
-	logTypeWidth: number,
+	prefix: string
+	owners: string[]
+	logTypeWidth: number
 	logMsgWidth: number
 }
 
@@ -17,7 +17,7 @@ const configLoader = (env: string): Config => {
 			
 				logTypeWidth: 13,
 				logMsgWidth: 100
-			};
+			}
 		default: // development
 			return {
 				prefix: "!",
@@ -28,9 +28,9 @@ const configLoader = (env: string): Config => {
 			
 				logTypeWidth: 13,
 				logMsgWidth: 40
-			};
+			}
 	}
 }
 
-export type {Config};
-export default configLoader;
+export type {Config}
+export default configLoader

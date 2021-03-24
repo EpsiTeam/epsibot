@@ -1,7 +1,7 @@
-import {Command} from "epsicommands/built/types";
-import EpsibotParams from "../epsibotParams";
-import epsimpleembed from "epsimpleembed";
-import epsiconfirm from "epsiconfirm";
+import {Command} from "epsicommands/built/types"
+import EpsibotParams from "../types/epsibotParams"
+import epsimpleembed from "epsimpleembed"
+import epsiconfirm from "epsiconfirm"
 
 const cmd: Command<EpsibotParams> = {
 	name: "reboot",
@@ -27,27 +27,27 @@ const cmd: Command<EpsibotParams> = {
 			color: "YELLOW",
 			timeout: 60000,
 			timeoutResponse: false
-		});
+		})
 
-		if (!confirm) return;
+		if (!confirm) return
 
-		log("REBOOT", `${msg.member?.displayName} rebooted the bot`);
+		log("REBOOT", `${msg.member?.displayName} rebooted the bot`)
 
 		return msg.channel.send(epsimpleembed("Le reboot est lancé", null, "GREEN")).catch(err => {
-			log("REBOOT", `Impossible to send message, but rebooting anyway: ${err}`);
-		}).then(() => reboot());
+			log("REBOOT", `Impossible to send message, but rebooting anyway: ${err}`)
+		}).then(() => reboot())
 	}
 }
 
 const reboot = () => {
-	const proc = require("child_process");
+	const proc = require("child_process")
 
 	proc.fork("built/index.js", {
 		detached: false,
 		stdio: "inherit"
-	});
+	})
 
-	process.exit();
-};
+	process.exit()
+}
 
-export default cmd;
+export default cmd

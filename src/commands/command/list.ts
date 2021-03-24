@@ -1,13 +1,13 @@
-import {Command} from "epsicommands/built/types";
-import EpsibotParams from "../../epsibotParams";
-import epsimpleembed from "epsimpleembed";
-import epsilist from "epsilist";
-import {MessageEmbed} from "discord.js";
+import {Command} from "epsicommands/built/types"
+import EpsibotParams from "../../types/epsibotParams"
+import epsimpleembed from "epsimpleembed"
+import epsilist from "epsilist"
+import {MessageEmbed} from "discord.js"
 
-const elmtByPage = 3;
-const cmdWidth = 10;
-const responseWidth = 23;
-const maxResponseWidth = 9 * responseWidth;
+const elmtByPage = 3
+const cmdWidth = 10
+const responseWidth = 23
+const maxResponseWidth = 9 * responseWidth
 
 const cmd: Command<EpsibotParams> = {
 	name: "list",
@@ -19,27 +19,30 @@ const cmd: Command<EpsibotParams> = {
 			short: "Liste les commandes personnalisées",
 			long: "Permet de lister toutes les commandes personnalisées de ce serveur",
 			usage: `\`${pre}command\``
-		};
+		}
 	},
 
 	execute({msg}, {log, serverCommand}) {
-		if (!msg.guild)
-			return Promise.resolve(); // Shouldn't happen
+		if (!msg.guild) return Promise.resolve() // Shouldn't happen
 
-		let commands = serverCommand.get(msg.guild.id);
+		let commands = serverCommand.get(msg.guild.id)
 
 		if (!commands || !commands.length) {
-			return msg.channel.send(epsimpleembed("il n'y a aucune commande personnalisée sur ce serveur", msg.author.id, "YELLOW"));
+			return msg.channel.send(epsimpleembed(
+				"il n'y a aucune commande personnalisée sur ce serveur",
+				msg.author.id,
+				"YELLOW"
+			))
 		}
 
-		let header = ["Commande", "Réponse", "Admin", "Delete"];
-		let data = [];
+		let header = ["Commande", "Réponse", "Admin", "Delete"]
+		let data = []
 		for (const command of commands) {
-			let response = command.response.replace(/\n/g, "\\n");
+			let response = command.response.replace(/\n/g, "\\n")
 
 			if (response.length > maxResponseWidth) {
-				response = response.substring(0, maxResponseWidth - 3);
-				response += "...";
+				response = response.substring(0, maxResponseWidth - 3)
+				response += "..."
 			}
 			
 			data.push([
@@ -47,12 +50,12 @@ const cmd: Command<EpsibotParams> = {
 				response,
 				command.adminOnly ? "Oui" : "Non",
 				command.autoDelete ? "Oui" : "Non"
-			]);
+			])
 		}
 
-		let embedMsg = new MessageEmbed();
-		embedMsg.setColor("BLUE");
-		embedMsg.setTitle("Commandes personnalisées de ce serveur");
+		let embedMsg = new MessageEmbed()
+		embedMsg.setColor("BLUE")
+		embedMsg.setTitle("Commandes personnalisées de ce serveur")
 
 		let tableConfig = {
 			columns: {
@@ -77,4 +80,4 @@ const cmd: Command<EpsibotParams> = {
 	}
 }
 
-export default cmd;
+export default cmd
