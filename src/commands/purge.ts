@@ -30,10 +30,23 @@ const cmd: Command<EpsibotParams> = {
 			return channel.bulkDelete(2)
 		}
 
+		if (args.length > 2) {
+			return epsimpleembed(
+				"il y a trop d'arguments" + usage,
+				msg.author.id,
+				"RED"
+			)
+		}
+
 		if (args.length === 1) {
+			// Purging a number of messages
 			let nbToDel = parseInt(args[0], 10)
 			if (isNaN(nbToDel)) {
-				return channel.send(epsimpleembed("le premier argument doit être un nombre" + usage, msg.author.id, "RED"))
+				return channel.send(epsimpleembed(
+					"le premier argument doit être un nombre" + usage,
+					msg.author.id,
+					"RED"
+				))
 			}
 
 			nbToDel++ // Because there is also the !purge to delete
@@ -46,7 +59,10 @@ const cmd: Command<EpsibotParams> = {
 					limit: currentDel
 				})
 				
-				if (msgsToDel.size === 1) {
+				if (msgsToDel.size === 0) {
+					// Not found anything? Nothing left to purge then
+					break;
+				} else if (msgsToDel.size === 1) {
 					// If there is only one message to delete,
 					// we don't want to use bulkDelete as this will
 					// trigger the event messageDeleted
@@ -62,20 +78,59 @@ const cmd: Command<EpsibotParams> = {
 
 			log("PURGE", "Purge finished")
 		} else {
+			// Purging a user
 
-			const userToPurge = msg.mentions.users.first()
+			// Finding where is the number
 			const nbParsed = args.map(e => parseInt(e, 10))
-			const nbToPurge = nbParsed.find(e => !isNaN(e))
-	
-			if (!userToPurge || !nbToPurge) {
-				return channel.send(epsimpleembed(
-					"mauvaise utilisation de la commande" + usage,
+			const indexNb = nbParsed.findIndex(e => !isNaN(e));
+
+			if (indexNb === -1) {
+				return msg.channel.send(epsimpleembed(
+					"je n'ai pas trouvé de nombre dans ta commande" + usage,
 					msg.author.id,
 					"RED"
 				))
 			}
 
-			log("PURGE", `Trying to purge ${nbToPurge} messages from ${userToPurge.username} in channel ${channel.id}`)
+			const nbToPurge = nbParsed[indexNb];
+
+			if (nbToPurge < 1) {
+				return msg.channel.send(epsimpleembed(
+					"le nombre de messages à purger doit être positif",
+					msg.author.id,
+					"RED"
+				))
+			}
+
+			// Getting the user to purge
+			const userToPurge = msg.mentions.users.first()
+			let usernameToPurge: string
+			let idToPurge: string
+			if (!userToPurge) {
+				// Try to get it from string
+				const userSearch = args[(indexNb === 0 ? 1 : 0)]
+				const members = await msg.guild?.members.fetch({
+					query: userSearch,
+					limit: 1
+				})
+				const member = members?.first()
+
+				if (!member) {
+					return msg.channel.send(epsimpleembed(
+						`je n'ai pas réussi à trouver l'utilisateur ${userSearch}${usage}`,
+						msg.author.id,
+						"RED"
+					))
+				}
+
+				idToPurge = member.id
+				usernameToPurge = member.displayName
+			} else {
+				idToPurge = userToPurge.id
+				usernameToPurge = userToPurge.username
+			}
+
+			log("PURGE", `Trying to purge ${nbToPurge} messages from ${usernameToPurge} in channel ${channel.id}`)
 	
 			// Deleting the called command
 			deletedMsgToIgnore.add(msg.id)
@@ -86,7 +141,7 @@ const cmd: Command<EpsibotParams> = {
 				limit: 100
 			})
 	
-			lastMessages = lastMessages.filter(m => m.author.id === userToPurge.id)
+			lastMessages = lastMessages.filter(m => m.author.id === idToPurge)
 			let msgToDelete = lastMessages.array().slice(0, nbToPurge)
 
 			if (msgToDelete.length === 1) {
@@ -96,7 +151,7 @@ const cmd: Command<EpsibotParams> = {
 				await channel.bulkDelete(msgToDelete)
 			}
 			
-			log("PURGE", `${msgToDelete.length} messages from ${userToPurge.username} purged`)
+			log("PURGE", `${msgToDelete.length} messages from ${usernameToPurge} purged`)
 		}
 	}
 }
