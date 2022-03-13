@@ -1,10 +1,10 @@
 // DB configuration
 const config = {
-	client: 'sqlite3',
+	client: "sqlite3",
 	connection: {
-		filename: './db.sqlite3'
+		filename: "./database.sqlite3"
 	},
 	useNullAsDefault: true
-}
+};
 
-module.exports = config
+export default config;

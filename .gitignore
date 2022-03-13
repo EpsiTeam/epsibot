@@ -1,5 +1,14 @@
+# Base
 node_modules/
+
+# Logs and binaries
 logs/
-credential.json
-db.sqlite3
 built/
+
+# Do not version database
+*.db
+*.db-shm
+*.db-wal
+
+# This contains secret
+.env

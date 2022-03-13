@@ -1,38 +1,37 @@
 {
 	"name": "epsibot",
-	"version": "1.4.0",
+	"version": "2.0.0",
 	"description": "Light discord bot for epsilon needs",
 	"main": "built/index.js",
 	"scripts": {
-		"clean": "rm -rf built/",
-		"prebuild": "npm run clean",
-		"build": "tsc",
+		"clean": "rm -rf built/ logs/",
+		"check": "npx eslint src/",
+		"fix": "npx eslint --fix src/",
+		"build": "rm -rf built/ && npm run check && tsc",
 		"migrate": "knex migrate:latest",
-		"preupdate": "npm up",
-		"update": "npm run migrate && npm run build",
-		"prestart": "npm run build",
-		"start": "node built/index.js",
-		"preprod": "npm run build",
-		"prod": "NODE_ENV=production node built/index.js",
+		"start": "npm run build && node -r dotenv/config built/main.js",
+		"start:builded": "node -r dotenv/config built/main.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"private": true,
 	"author": "EpsiTeam",
 	"license": "ISC",
+	"type": "module",
 	"dependencies": {
-		"discord.js": "^12.5.1",
-		"epsicommands": "epsiteam/epsicommands",
-		"epsiconfirm": "epsiteam/epsiconfirm",
-		"epsilist": "epsiteam/epsilist",
-		"epsilogging": "epsiteam/epsilogging",
-		"epsimpleembed": "epsiteam/epsimpleembed",
-		"knex": "^0.95.2",
-		"sqlite3": "^5.0.2"
+		"@discordjs/builders": "^0.12.0",
+		"@discordjs/rest": "^0.3.0",
+		"@types/node": "^17.0.21",
+		"better-sqlite3": "^7.5.0",
+		"discord-api-types": "^0.29.0",
+		"discord.js": "^13.6.0",
+		"dotenv": "^16.0.0",
+		"reflect-metadata": "^0.1.13",
+		"typeorm": "^0.2.45",
+		"typescript": "^4.6.2"
 	},
 	"devDependencies": {
-		"@types/node": "^14.14.35",
-		"@types/table": "^6.0.0",
-		"@types/ws": "^7.4.0",
-		"typescript": "^4.2.3"
+		"@typescript-eslint/eslint-plugin": "^5.14.0",
+		"@typescript-eslint/parser": "^5.14.0",
+		"eslint": "^8.11.0"
 	}
 }

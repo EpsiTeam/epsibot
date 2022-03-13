@@ -1,3 +1,3 @@
-Notre bobot à nous !
+WIP
 
-Il est beau non ?
+v2 - Now with slash commands!
