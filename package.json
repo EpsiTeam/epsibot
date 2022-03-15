@@ -7,8 +7,8 @@
 		"clean": "rm -rf built/ logs/",
 		"check": "npx eslint src/",
 		"fix": "npx eslint --fix src/",
-		"build": "rm -rf built/ && npm run check && tsc",
-		"migrate": "knex migrate:latest",
+		"build": "rm -rf built/ && npm run check && node_modules/typescript/bin/tsc",
+		"migrate": "node node_modules/typeorm/cli.js migration:run",
 		"start": "npm run build && node -r dotenv/config built/main.js",
 		"start:builded": "node -r dotenv/config built/main.js",
 		"test": "echo \"Error: no test specified\" && exit 1"

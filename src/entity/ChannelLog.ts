@@ -1,13 +1,21 @@
 import { Entity, Column, PrimaryColumn } from "typeorm";
 
+type logType = "userJoinLeave" | "messageDeleteModify"
+
 @Entity()
 export class ChannelLog {
-	@PrimaryColumn()
-		guildID: string;
+	constructor(guildId: string, logType: logType, channelId?: string) {
+		this.guildId = guildId;
+		this.logType = logType;
+		if (channelId) this.channelId = channelId;
+	}
 
 	@PrimaryColumn()
-		logType: "all";
+		guildId: string;
+
+	@PrimaryColumn()
+		logType: logType;
 
 	@Column()
-		channelID: string;
+		channelId: string;
 }

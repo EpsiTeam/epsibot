@@ -3,6 +3,10 @@ import { Routes } from "discord-api-types/v9";
 import { Command } from "./Command.js";
 import { CommandList } from "./CommandList.js";
 
+/**
+ * CommandManager is the class managing commands,
+ * used to register them to Discord and keeping a list of them.
+ */
 export class CommandManager {
 	private commandList: Command[];
 	/**
@@ -10,7 +14,7 @@ export class CommandManager {
 	 */
 	readonly commands: Map<string, Command>;
 
-	constructor(readonly test: string) {
+	constructor() {
 		this.commandList = CommandList.map(command => new command());
 
 		this.commands = new Map();

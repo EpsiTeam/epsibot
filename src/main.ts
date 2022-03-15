@@ -1,51 +1,32 @@
 import "reflect-metadata";
+
+import { checkStartup } from "./check-startup.js";
 import { Client, Intents } from "discord.js";
-import { CommandManager } from "./command/CommandManager.js";
 import { createConnection } from "typeorm";
+import { subscribeDiscordEvents } from "./subscribe-discord-events.js";
 
-if (!process.env.DISCORD_TOKEN) {
-	console.error("Missing a discord token");
-	process.exit();
-}
-const token = process.env.DISCORD_TOKEN;
+// Stopping node if there is unepected config
+checkStartup();
 
-createConnection().then(() => console.log("connection created"));
-
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
-const commandManager = new CommandManager("passing some variable");
-
-client.once("ready", async () => {
-	console.log("Ready!");
-
-	if (client.user === null) {
-		console.error("No client ID :/");
-		return;
+// This is a function that will call itself
+// Using this because we can't use async/await at top level
+(async () => {
+	try {
+		await createConnection();
+		console.log("DB connection created");
+	} catch (err) {
+		throw Error(`Failed to create DB connection: ${err}`);
 	}
 
-	const guildIds: string[] = [];
-	for (const guild of client.guilds.cache.values()) {
-		console.log(`On guild ${guild.name}`);
+	const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
-		guildIds.push(guild.id);
+	// Listening on Discord events, such as commands being sent
+	subscribeDiscordEvents(client);
+
+	try {
+		console.log("Logging in to Discord...");
+		await client.login(process.env.DISCORD_TOKEN);
+	} catch (err) {
+		throw Error(`Failed to log to Discord: ${err}`);
 	}
-
-	commandManager.registerCommands(client.user.id, guildIds);
-});
-
-client.on("interactionCreate", async interaction => {
-	console.log(interaction.type);
-
-	if (!interaction.isCommand()) return;
-
-	const command = commandManager.commands.get(interaction.commandName);
-
-	if (!command) {
-		console.log("Commande does not exist");
-		return;
-	}
-
-	console.log(interaction.commandName);
-	await command.execute(interaction);
-});
-
-client.login(token);
+})();
