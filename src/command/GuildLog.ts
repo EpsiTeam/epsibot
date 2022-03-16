@@ -54,13 +54,16 @@ export class GuildLog extends Command {
 		if (!interaction.guildId) throw Error("Guild ID not found, this is weird");
 		const channel = interaction.options.getChannel("channel", true);
 
+		if (channel.type !== "GUILD_TEXT") {
+			return interaction.reply({ content: `${channel} n'est pas un channel de type textuel, impossible d'y afficher des logs`, ephemeral: true });
+		}
+
 		const repo = getRepository(ChannelLog);
 		repo.save(new ChannelLog(interaction.guildId, "userJoinLeave", channel.id));
 
 		await interaction.reply({ content: `Les logs d'arrivés et de départs des membres sont désormais actif sur le channel ${channel}`, ephemeral: true });
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	async desactivateUserLog(interaction: CommandInteraction): Promise<void> {
 		if (!interaction.guildId) throw Error("Guild ID not found, this is weird");
 

@@ -1,5 +1,6 @@
 import { Client } from "discord.js";
 import { interactionCreate } from "./events/interaction.js";
+import { memberJoined, memberLeft } from "./events/member.js";
 import { ready } from "./events/ready.js";
 
 export function subscribeDiscordEvents(client: Client): void {
@@ -7,7 +8,13 @@ export function subscribeDiscordEvents(client: Client): void {
 		const commandManager = await ready(client);
 
 		client.on("interactionCreate", async (interaction) => {
-			interactionCreate(commandManager, interaction);
+			await interactionCreate(commandManager, interaction);
+		});
+		client.on("guildMemberAdd", async member => {
+			await memberJoined(member);
+		});
+		client.on("guildMemberRemove", async member => {
+			await memberLeft(member);
 		});
 
 		console.log("Epsibot fully ready");

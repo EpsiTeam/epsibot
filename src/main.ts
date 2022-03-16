@@ -18,7 +18,12 @@ checkStartup();
 		throw Error(`Failed to create DB connection: ${err}`);
 	}
 
-	const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+	const client = new Client({
+		intents: [
+			Intents.FLAGS.GUILDS,
+			Intents.FLAGS.GUILD_MEMBERS
+		]
+	});
 
 	// Listening on Discord events, such as commands being sent
 	subscribeDiscordEvents(client);
