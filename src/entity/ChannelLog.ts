@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryColumn } from "typeorm";
 
-type logType = "userJoinLeave" | "messageDeleteModify"
+type logType = "userJoinLeave" | "messageDelete"
 
 @Entity()
 export class ChannelLog {

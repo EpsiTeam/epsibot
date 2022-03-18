@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionData, ChatInputApplicationCommandData, CommandInteraction } from "discord.js";
+import { ApplicationCommandOptionData, ChatInputApplicationCommandData, CommandInteraction, PermissionFlags } from "discord.js";
 
 export abstract class Command implements ChatInputApplicationCommandData {
 	/**
@@ -22,6 +22,10 @@ export abstract class Command implements ChatInputApplicationCommandData {
 	 * Who can access to this command
 	 */
 	availableTo: "everyone" | "owner" = "everyone";
+	/**
+	 * The special permissions needed to execute this command
+	 */
+	needPermissions: PermissionFlags[] = [];
 
 	constructor(name: string, description: string) {
 		this.name = name;

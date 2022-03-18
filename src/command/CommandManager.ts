@@ -40,7 +40,8 @@ export class CommandManager {
 	async registerCommands(guilds: Guild[]): Promise<void> {
 		const promisesDeleteCommands: Promise<ApplicationCommand | null>[] = [];
 		const promisesCreateCommands: Promise<ApplicationCommand>[] = [];
-		const promisesUpdatePermissions: Promise<ApplicationCommandPermissions[]>[] = [];
+		const promisesUpdatePermissions:
+			Promise<ApplicationCommandPermissions[]>[] = [];
 
 		// We delete all commands on all guilds
 		for (const guild of guilds) {
@@ -75,11 +76,12 @@ export class CommandManager {
 			throw Error("Environment variable OWNERS is not set, this is not normal");
 		}
 		const owners = process.env.OWNERS.split(",");
-		const permissions: ApplicationCommandPermissionData[] = owners.map(owner => ({
-			id: owner,
-			type: "USER",
-			permission: true
-		}));
+		const permissions: ApplicationCommandPermissionData[] =
+			owners.map(owner => ({
+				id: owner,
+				type: "USER",
+				permission: true
+			}));
 
 		// Updating the permissions of the commands for owners
 		for (const guild of guilds) {
