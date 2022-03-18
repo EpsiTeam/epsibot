@@ -9,6 +9,8 @@ export class GuildLog extends Command {
 
 		this.availableTo = "owner";
 
+		this.needPermissions = ["ADMINISTRATOR"];
+
 		this.options = [{
 			type: "SUB_COMMAND_GROUP",
 			name: "user",
@@ -32,7 +34,14 @@ export class GuildLog extends Command {
 		}];
 	}
 
-	async execute(interaction: CommandInteraction): Promise<void> {
+	async execute(interaction: CommandInteraction<"cached">): Promise<void> {
+		if (!this.hasPermissions(interaction)) {
+			return interaction.reply({
+				content: "Cette commande est réservée au admins, peut-être qu'un jour tu le seras ?",
+				ephemeral: true
+			});
+		}
+
 		const group = interaction.options.getSubcommandGroup();
 
 		if (group === "user") {
@@ -49,7 +58,7 @@ export class GuildLog extends Command {
 		}
 	}
 
-	async activateUserLog(interaction: CommandInteraction): Promise<void> {
+	async activateUserLog(interaction: CommandInteraction<"cached">): Promise<void> {
 		if (!interaction.guildId) throw Error("Guild ID not found, this is weird");
 		const channel = interaction.options.getChannel("channel", true);
 
@@ -69,7 +78,7 @@ export class GuildLog extends Command {
 		});
 	}
 
-	async desactivateUserLog(interaction: CommandInteraction): Promise<void> {
+	async desactivateUserLog(interaction: CommandInteraction<"cached">): Promise<void> {
 		if (!interaction.guildId) throw Error("Guild ID not found, this is weird");
 
 		const repo = getRepository(ChannelLog);

@@ -22,12 +22,6 @@ export function subscribeDiscordEvents(client: Client): void {
 			await memberLeft(member);
 		});
 
-		// For tests
-		client.on("guildMemberUpdate", async (_old, newMember) => {
-			await memberJoined(newMember);
-			await memberLeft(newMember);
-		});
-
 		console.log("Epsibot fully ready");
 	});
 }

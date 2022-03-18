@@ -9,11 +9,16 @@ import { CommandManager } from "../command/CommandManager.js";
 export async function afterReady(client: Client) {
 	console.log("Logged to Discord");
 
-	const guilds: Guild[] = [];
-	for (const guild of client.guilds.cache.values()) {
-		guilds.push(guild);
+	// Fetching all guilds
+	const partialGuilds = await client.guilds.fetch();
+	const promisesGuilds: Promise<Guild>[] = [];
+	for (const partialGuild of partialGuilds.values()) {
+		promisesGuilds.push(
+			partialGuild.fetch()
+		);
 	}
-	console.log(`Connected on ${guilds.length} guilds`);
+	const guilds = await Promise.all(promisesGuilds);
+	console.log(`Connected on ${guilds.length} guilds, all in cache`);
 
 	const commandManager = new CommandManager();
 	try {
