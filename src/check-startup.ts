@@ -1,3 +1,7 @@
+/**
+ * Do some firsthand checks on the process (mainly environment variables)
+ * and exit is something is not correctly set
+ */
 export function checkStartup(): void {
 	const environmentVariables = [
 		"DISCORD_TOKEN",

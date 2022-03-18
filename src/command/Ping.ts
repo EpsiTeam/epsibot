@@ -3,10 +3,7 @@ import { Command } from "./Command.js";
 
 export class Ping extends Command {
 	constructor() {
-		super({
-			name: "ping",
-			description: "Juste pour les tests"
-		});
+		super("ping", "Juste pour les tests");
 	}
 
 	async execute(interaction: CommandInteraction): Promise<void> {

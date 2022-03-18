@@ -1,7 +1,6 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
+import { ApplicationCommandOptionData, ChatInputApplicationCommandData, CommandInteraction } from "discord.js";
 
-export abstract class Command {
+export abstract class Command implements ChatInputApplicationCommandData {
 	/**
 	 * Name of the command, users will be able to use /name
 	 */
@@ -11,24 +10,22 @@ export abstract class Command {
 	 * the list of commands
 	*/
 	readonly description: string;
-	readonly commandBuilder: SlashCommandBuilder;
+	/**
+	 * Type of the command, CHAT_INPUT being a slash command
+	 */
+	readonly type = "CHAT_INPUT";
+	/**
+	 * Options for this command (parameters, subcommand and so and so)
+	 */
+	options?: ApplicationCommandOptionData[];
+	/**
+	 * Who can access to this command
+	 */
+	availableTo: "everyone" | "owner" = "everyone";
 
-	constructor(commandInfo: {
-		name: string,
-		description: string
-	}) {
-		this.name = commandInfo.name;
-		this.description = commandInfo.description;
-		this.commandBuilder = new SlashCommandBuilder()
-			.setName(this.name)
-			.setDescription(this.description);
-	}
-
-	build() {
-		if (!this.name) throw Error("Can't register a command without a name");
-		if (!this.description) throw Error("Can't register a command without a description");
-
-		return this.commandBuilder.toJSON();
+	constructor(name: string, description: string) {
+		this.name = name;
+		this.description = description;
 	}
 
 	abstract execute(interaction: CommandInteraction): Promise<void>

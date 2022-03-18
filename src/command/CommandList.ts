@@ -1,11 +1,15 @@
+import { Command } from "./Command.js";
 import { GuildLog } from "./GuildLog.js";
 import { Ping } from "./Ping.js";
 
 /**
- * The list of non instantiated commands class.
- * CommandManager will read this list to create all commands.
+ * CommandManager will read this list to create all commands,
+ * so fill it when you want your command to be added to the bot
+ * @returns A list of instanciated commands
  */
-export const CommandList = [
-	Ping,
-	GuildLog
-];
+export function instanciateCommands(): Command[] {
+	return [
+		new Ping(),
+		new GuildLog()
+	];
+}

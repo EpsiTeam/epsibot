@@ -1,11 +1,16 @@
 import { Client } from "discord.js";
 import { interactionCreate } from "./events/interaction.js";
 import { memberJoined, memberLeft } from "./events/member.js";
-import { ready } from "./events/ready.js";
+import { afterReady } from "./events/after-ready.js";
 
+/**
+ * Will subscribe a bot to some Discord events
+ * @param client The bot that will listen to events
+ */
 export function subscribeDiscordEvents(client: Client): void {
+	// Waiting for the bot to be ready before doing anything
 	client.once("ready", async (client) => {
-		const commandManager = await ready(client);
+		const commandManager = await afterReady(client);
 
 		client.on("interactionCreate", async (interaction) => {
 			await interactionCreate(commandManager, interaction);
@@ -15,6 +20,12 @@ export function subscribeDiscordEvents(client: Client): void {
 		});
 		client.on("guildMemberRemove", async member => {
 			await memberLeft(member);
+		});
+
+		// For tests
+		client.on("guildMemberUpdate", async (_old, newMember) => {
+			await memberJoined(newMember);
+			await memberLeft(newMember);
 		});
 
 		console.log("Epsibot fully ready");
