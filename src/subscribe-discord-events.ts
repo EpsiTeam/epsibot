@@ -2,6 +2,7 @@ import { Client } from "discord.js";
 import { interactionCreate } from "./events/interaction.js";
 import { memberJoined, memberLeft } from "./events/member.js";
 import { afterReady } from "./events/after-ready.js";
+import { messageDelete } from "./events/message-delete.js";
 
 /**
  * Will subscribe a bot to some Discord events
@@ -20,6 +21,9 @@ export function subscribeDiscordEvents(client: Client): void {
 		});
 		client.on("guildMemberRemove", async member => {
 			await memberLeft(member);
+		});
+		client.on("messageDelete", async message => {
+			await messageDelete(message);
 		});
 
 		console.log("Epsibot fully ready");

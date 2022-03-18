@@ -44,7 +44,6 @@ export async function memberLeft(member: GuildMember | PartialGuildMember) {
 
 	const channelLog = await repo.findOne(new ChannelLog(guild.id, "userJoinLeave"));
 
-	// Should we display logs?
 	if (!channelLog) return;
 
 	const channel = await guild.channels.fetch(channelLog.channelId);

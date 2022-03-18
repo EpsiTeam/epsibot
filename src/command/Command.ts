@@ -37,6 +37,10 @@ export abstract class Command implements ChatInputApplicationCommandData {
 		this.description = description;
 	}
 
+	public get defaultPermission(): boolean {
+		return this.availableTo === "everyone";
+	}
+
 	/**
 	 * Will check the permissions of the member that executed a slash command
 	 * againt `this.needPermissions`

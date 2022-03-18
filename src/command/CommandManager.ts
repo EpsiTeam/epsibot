@@ -1,9 +1,4 @@
-import {
-	ApplicationCommand,
-	ApplicationCommandPermissions,
-	ApplicationCommandPermissionData,
-	Guild
-} from "discord.js";
+import { ApplicationCommandPermissionData, Guild } from "discord.js";
 import { Command } from "./Command.js";
 import { instanciateCommands } from "./CommandList.js";
 
@@ -38,38 +33,17 @@ export class CommandManager {
 	 * @param guilds The list of guilds to register slash commands
 	 */
 	async registerCommands(guilds: Guild[]): Promise<void> {
-		const promisesDeleteCommands: Promise<ApplicationCommand | null>[] = [];
-		const promisesCreateCommands: Promise<ApplicationCommand>[] = [];
-		const promisesUpdatePermissions:
-			Promise<ApplicationCommandPermissions[]>[] = [];
+		const promisesSetCommands: Promise<unknown>[] = [];
+		const promisesUpdatePermissions: Promise<unknown[]>[] = [];
 
-		// We delete all commands on all guilds
+		// Setting all commands
 		for (const guild of guilds) {
-			for (const [id] of await guild.commands.fetch()) {
-				promisesDeleteCommands.push(
-					guild.commands.delete(id)
-				);
-			}
+			promisesSetCommands.push(
+				guild.commands.set(this.commandList)
+			);
 		}
 		// Waiting for pending change
-		await Promise.all(promisesDeleteCommands);
-
-		// We create all commands on all guilds
-		for (const guild of guilds) {
-			for (const command of this.commandList) {
-				promisesCreateCommands.push(
-					guild.commands.create({
-						name: command.name,
-						description: command.description,
-						options: command.options,
-						type: command.type,
-						defaultPermission: command.availableTo === "everyone"
-					})
-				);
-			}
-		}
-		// Waiting for pending change
-		await Promise.all(promisesCreateCommands);
+		await Promise.all(promisesSetCommands);
 
 		// Creating the permissions object for owner reserved commands
 		if (!process.env.OWNERS) {
