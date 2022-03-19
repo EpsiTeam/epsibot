@@ -3,13 +3,13 @@ import { getRepository, Repository } from "typeorm";
 import { ChannelLog } from "../entity/ChannelLog.js";
 import { Command } from "./Command.js";
 
-enum GuildLogGroup {
+export enum GuildLogGroup {
 	user = "user",
 	deletedMessage = "deleted_message",
 	updatedMessage = "updated_message"
 }
 
-enum GuildLogSubcommand {
+export enum GuildLogSubcommand {
 	activate = "activate",
 	desactivate = "desactivate",
 	list = "list"
@@ -18,8 +18,6 @@ enum GuildLogSubcommand {
 export class GuildLog extends Command {
 	constructor() {
 		super("log", "Met en place des logs du serveur");
-
-		this.availableTo = "owner";
 
 		this.needPermissions = ["ADMINISTRATOR"];
 
@@ -93,7 +91,10 @@ export class GuildLog extends Command {
 	async execute(interaction: CommandInteraction<"cached">) {
 		if (!this.hasPermissions(interaction)) {
 			return interaction.reply({
-				content: "Cette commande est réservée au admins, peut-être qu'un jour tu le seras ?",
+				embeds: [{
+					title: "Cette commande est réservée au admins, peut-être qu'un jour tu le seras ?",
+					color: "RED"
+				}],
 				ephemeral: true
 			});
 		}
@@ -226,7 +227,11 @@ export class GuildLog extends Command {
 		));
 
 		return interaction.reply({
-			content: `Les logs d'arrivés et de départs des membres sont désormais actif sur le channel ${channel}`,
+			embeds: [{
+				title: "Logs activés",
+				description: `Les logs d'arrivés et de départs des membres sont désormais actif sur le channel ${channel}`,
+				color: "GREEN"
+			}],
 			ephemeral: true
 		});
 	}
@@ -241,7 +246,11 @@ export class GuildLog extends Command {
 		));
 
 		return interaction.reply({
-			content: "Les logs d'arrivés et de départs des membres sont désormais inactif",
+			embeds: [{
+				title: "Logs désactivés",
+				description: "Les logs d'arrivés et de départs des membres sont désormais inactif",
+				color: "GREEN"
+			}],
 			ephemeral: true
 		});
 	}
@@ -258,7 +267,11 @@ export class GuildLog extends Command {
 		));
 
 		return interaction.reply({
-			content: `Les logs des messages supprimés sont désormais actif sur le channel ${channel}`,
+			embeds: [{
+				title: "Logs activés",
+				description: `Les logs des messages supprimés sont désormais actif sur le channel ${channel}`,
+				color: "GREEN"
+			}],
 			ephemeral: true
 		});
 	}
@@ -273,7 +286,11 @@ export class GuildLog extends Command {
 		));
 
 		return interaction.reply({
-			content: "Les logs des messages supprimés sont désormais inactif",
+			embeds: [{
+				title: "Logs desactivés",
+				description: "Les logs des messages supprimés sont désormais inactif",
+				color: "GREEN"
+			}],
 			ephemeral: true
 		});
 	}
@@ -290,7 +307,11 @@ export class GuildLog extends Command {
 		));
 
 		return interaction.reply({
-			content: `Les logs des messages modifiés sont désormais actif sur le channel ${channel}`,
+			embeds: [{
+				title: "Logs activés",
+				description: `Les logs des messages modifiés sont désormais actif sur le channel ${channel}`,
+				color: "GREEN"
+			}],
 			ephemeral: true
 		});
 	}
@@ -305,7 +326,11 @@ export class GuildLog extends Command {
 		));
 
 		return interaction.reply({
-			content: "Les logs des messages modifiés sont désormais inactif",
+			embeds: [{
+				title: "Logs desactivés",
+				description: "Les logs des messages modifiés sont désormais inactif",
+				color: "GREEN"
+			}],
 			ephemeral: true
 		});
 	}

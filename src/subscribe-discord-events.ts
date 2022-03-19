@@ -2,7 +2,7 @@ import { Client } from "discord.js";
 import { interactionCreate } from "./events/interaction.js";
 import { memberJoined, memberLeft } from "./events/member.js";
 import { afterReady } from "./events/after-ready.js";
-import { messageDelete, messageUpdate } from "./events/message.js";
+import { messageDelete, messageUpdate, newMessage } from "./events/message.js";
 import { botInvited, botRemoved } from "./events/guild.js";
 
 /**
@@ -70,6 +70,14 @@ export function subscribeDiscordEvents(client: Client): void {
 				await botRemoved(guild);
 			} catch (err) {
 				console.error(`Error on event guildDelete: ${err}`);
+			}
+		});
+		// A new message has been written
+		client.on("messageCreate", async message => {
+			try {
+				await newMessage(message);
+			} catch (err) {
+				console.error(`Error on event messageCreate: ${err}`);
 			}
 		});
 

@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import { Message, PartialMessage } from "discord.js";
 import { getRepository } from "typeorm";
+import { findCustomCommand } from "../custom-command/find-command.js";
 import { ChannelLog } from "../entity/ChannelLog.js";
 
 export async function messageDelete(message: Message | PartialMessage) {
@@ -72,4 +73,13 @@ export async function messageUpdate(
 			color: "YELLOW"
 		}]
 	});
+}
+
+export async function newMessage(message: Message) {
+	// Not listening on bots
+	if (message.author.bot) return;
+	// Only listening on guilds
+	if (!message.guild || !message.member) return;
+
+	await findCustomCommand(message);
 }

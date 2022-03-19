@@ -1,4 +1,5 @@
 import { Command } from "./Command.js";
+import { GuildCommand } from "./GuildCommand.js";
 import { GuildLog } from "./GuildLog.js";
 import { Ping } from "./Ping.js";
 
@@ -10,6 +11,7 @@ import { Ping } from "./Ping.js";
 export function instanciateCommands(): Command[] {
 	return [
 		new Ping(),
-		new GuildLog()
+		new GuildLog(),
+		new GuildCommand()
 	];
 }

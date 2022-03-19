@@ -21,12 +21,12 @@ export async function interactionCreate(
 	}
 
 	const subcommand = interaction.options.getSubcommand(false);
-	const subcmdName = subcommand ? `/${subcommand}` : "";
+	const fullCommand = subcommand ? `/${command.name}/${subcommand}` : `/${command.name}`;
 
-	console.log(`Command /${command.name}${subcmdName} called by ${interaction.member.user.tag} on guild ${interaction.guild.name}`);
+	console.log(`Command ${fullCommand} called by ${interaction.member.user.tag} on guild ${interaction.guild.name}`);
 	try {
 		await command.execute(interaction);
 	} catch (err) {
-		console.error(`Error while executing ${command.name}: ${err}`);
+		console.error(`Error on ${fullCommand}: ${err}`);
 	}
 }
