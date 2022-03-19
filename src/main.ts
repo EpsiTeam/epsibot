@@ -23,7 +23,12 @@ checkStartup();
 			Intents.FLAGS.GUILDS,
 			Intents.FLAGS.GUILD_MEMBERS,
 			Intents.FLAGS.GUILD_MESSAGES
-		]
+		],
+		presence: {
+			activities: [{
+				name: `v${process.env.VERSION}`
+			}]
+		}
 	});
 
 	// Listening on Discord events, such as commands being sent
