@@ -1,14 +1,18 @@
 # Epsibot
 
-v2 - Now with slash commands!
-Still a work in progress tho
+Yet another Discord bot that helps managing a server, but done our way (which is not at all a guarantee that it's better).
+
+The bot talks in french, but everything on git and in the code is in english. Don't ask me.
+
+Version 2.0.0 - Now with slash commands!<br>
+Still a work in progress though, don't expect anything to work.
 
 ## Installation
 
-Clone this project, then create a `.env` file at the root of the project (see [Environment variables](#environment-variables)).
+Clone this project, then create a `.env` file at the root of the project (see [Environment variables](#environment-variables)).<br>
 Epsibot may scream at you if you didn't setup correctly some environment variables.
 
-You need node v16 to run it:
+You need at least node v16 to run it:
 ```
 npm i
 npm run migrate
