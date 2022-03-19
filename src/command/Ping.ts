@@ -8,7 +8,7 @@ export class Ping extends Command {
 		this.availableTo = "owner";
 	}
 
-	async execute(interaction: CommandInteraction): Promise<void> {
-		await interaction.reply("pong");
+	async execute(interaction: CommandInteraction) {
+		return interaction.reply("pong");
 	}
 }

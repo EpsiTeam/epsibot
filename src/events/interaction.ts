@@ -20,10 +20,13 @@ export async function interactionCreate(
 		return;
 	}
 
-	console.log(`Command ${command.name} called by ${interaction.member.user.tag} on guild ${interaction.guild.name}`);
+	const subcommand = interaction.options.getSubcommand(false);
+	const subcmdName = subcommand ? `/${subcommand}` : "";
+
+	console.log(`Command /${command.name}${subcmdName} called by ${interaction.member.user.tag} on guild ${interaction.guild.name}`);
 	try {
 		await command.execute(interaction);
 	} catch (err) {
-		console.error(`Error while execution ${command.name}: ${err}`);
+		console.error(`Error while executing ${command.name}: ${err}`);
 	}
 }

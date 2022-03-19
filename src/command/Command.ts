@@ -58,5 +58,5 @@ export abstract class Command implements ChatInputApplicationCommandData {
 		return memberPerms.has(this.needPermissions);
 	}
 
-	abstract execute(interaction: CommandInteraction<"cached">): Promise<void>
+	abstract execute(interaction: CommandInteraction<"cached">): Promise<unknown>
 }

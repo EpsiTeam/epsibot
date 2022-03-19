@@ -38,9 +38,13 @@ export class CommandManager {
 
 		// Setting all commands
 		for (const guild of guilds) {
-			promisesSetCommands.push(
-				guild.commands.set(this.commandList)
-			);
+			if (!guild.me?.permissions.has("ADMINISTRATOR")) {
+				console.error(`Epsibot don't have the ADMINISTRATOR permission on guild ${guild.name}`);
+			} else {
+				promisesSetCommands.push(
+					guild.commands.set(this.commandList)
+				);
+			}
 		}
 		// Waiting for pending change
 		await Promise.all(promisesSetCommands);
