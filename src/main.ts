@@ -5,7 +5,7 @@ import { Client, Intents } from "discord.js";
 import { createConnection } from "typeorm";
 import { subscribeDiscordEvents } from "./subscribe-discord-events.js";
 
-// Stopping node if there is unepected config
+// Stopping node if there is unexpected config
 checkStartup();
 
 // This is a function that will call itself
@@ -25,7 +25,7 @@ checkStartup();
 		]
 	});
 
-	// Listening on Discord events, such as commands being sent
+	// Listening to Discord events, such as commands being sent
 	subscribeDiscordEvents(client);
 
 	try {
