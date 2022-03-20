@@ -3,16 +3,21 @@ import { getRepository, Repository } from "typeorm";
 import { ChannelLog } from "../entity/ChannelLog.js";
 import { Command } from "./Command.js";
 
-export enum GuildLogGroup {
+enum Subcommand {
+	enable = "enable",
+	disable = "disable",
+	list = "list"
+}
+
+enum LogType {
 	user = "user",
 	deletedMessage = "deleted_message",
 	updatedMessage = "updated_message"
 }
 
-export enum GuildLogSubcommand {
-	activate = "activate",
-	desactivate = "desactivate",
-	list = "list"
+enum Params {
+	logType = "log_type",
+	channel = "channel"
 }
 
 export class GuildLog extends Command {
@@ -21,70 +26,50 @@ export class GuildLog extends Command {
 
 		this.needPermissions = ["ADMINISTRATOR"];
 
+		// Choices for the log type
+		const logChoices = [{
+			name: "Logs sur les arrivés et départs de membre",
+			value: LogType.user
+		}, {
+			name: "Logs sur les messages supprimés",
+			value: LogType.deletedMessage
+		}, {
+			name: "Logs sur les messages modifiés",
+			value: LogType.updatedMessage
+		}];
+
 		this.options = [{
-			type: "SUB_COMMAND_GROUP",
-			name: GuildLogGroup.user,
-			description: "Met en place des logs sur les arrivés et départs de membres",
-			options: [{
-				type: "SUB_COMMAND",
-				name: GuildLogSubcommand.activate,
-				description: "Active les logs d'arrivés et départs de membres",
-				options: [{
-					type: "CHANNEL",
-					name: "channel",
-					description: "Channel où les logs seront affichés",
-					required: true,
-					channelTypes: ["GUILD_TEXT"]
-				}]
-			}, {
-				type: "SUB_COMMAND",
-				name: GuildLogSubcommand.desactivate,
-				description: "Désactive les logs d'arrivés et départs de membres"
-			}]
+			type: "SUB_COMMAND",
+			name: Subcommand.list,
+			description: "Liste les logs activés, et dans quel channel les logs sont écrit"
 		}, {
-			type: "SUB_COMMAND_GROUP",
-			name: GuildLogGroup.deletedMessage,
-			description: "Met en place des logs sur les messages supprimés",
+			type: "SUB_COMMAND",
+			name: Subcommand.enable,
+			description: "Active un type de log",
 			options: [{
-				type: "SUB_COMMAND",
-				name: GuildLogSubcommand.activate,
-				description: "Active les logs sur les messages supprimés",
-				options: [{
-					type: "CHANNEL",
-					name: "channel",
-					description: "Channel où les logs seront affichés",
-					required: true,
-					channelTypes: ["GUILD_TEXT"]
-				}]
+				type: "STRING",
+				name: Params.logType,
+				description: "Type de log à activer",
+				required: true,
+				choices: logChoices
 			}, {
-				type: "SUB_COMMAND",
-				name: GuildLogSubcommand.desactivate,
-				description: "Désactive les logs sur les messages supprimés"
-			}]
-		}, {
-			type: "SUB_COMMAND_GROUP",
-			name: GuildLogGroup.updatedMessage,
-			description: "Met en place des logs sur les messages modifiés",
-			options: [{
-				type: "SUB_COMMAND",
-				name: GuildLogSubcommand.activate,
-				description: "Active les logs sur les messages modifiés",
-				options: [{
-					type: "CHANNEL",
-					name: "channel",
-					description: "Channel où les logs seront affichés",
-					required: true,
-					channelTypes: ["GUILD_TEXT"]
-				}]
-			}, {
-				type: "SUB_COMMAND",
-				name: GuildLogSubcommand.desactivate,
-				description: "Désactive les logs sur les messages modifiés"
+				type: "CHANNEL",
+				name: Params.channel,
+				description: "Channel où les logs seront affichés",
+				required: true,
+				channelTypes: ["GUILD_TEXT"]
 			}]
 		}, {
 			type: "SUB_COMMAND",
-			name: "list",
-			description: "Liste les logs activés, et dans quel channel les logs sont écrit"
+			name: Subcommand.disable,
+			description: "Désactive un type de log",
+			options: [{
+				type: "STRING",
+				name: Params.logType,
+				description: "Type de log à désactiver",
+				required: true,
+				choices: logChoices
+			}]
 		}];
 	}
 
@@ -102,51 +87,55 @@ export class GuildLog extends Command {
 		const subcommand = interaction.options.getSubcommand();
 		const channelLogRepo = getRepository(ChannelLog);
 
-		if (subcommand === GuildLogSubcommand.list) {
+		if (subcommand === Subcommand.list) {
 			return this.listLogs(
 				interaction,
 				channelLogRepo
 			);
 		}
 
-		const group = interaction.options.getSubcommandGroup();
+		const logtype = interaction.options.getString(Params.logType, true);
 
 		// Choosing the correct subcommand to execute
-		if (subcommand === GuildLogSubcommand.activate) {
-			const channel = interaction.options.getChannel("channel", true);
-			switch (group) {
-			case GuildLogGroup.user:
+		if (subcommand === Subcommand.enable) {
+			const channel = interaction.options.getChannel(
+				Params.channel,
+				true
+			);
+
+			switch (logtype) {
+			case LogType.user:
 				return this.activateUserLog(
 					interaction,
 					channel,
 					channelLogRepo
 				);
-			case GuildLogGroup.deletedMessage:
+			case LogType.deletedMessage:
 				return this.activateDeletedMessageLog(
 					interaction,
 					channel,
 					channelLogRepo
 				);
-			case GuildLogGroup.updatedMessage:
+			case LogType.updatedMessage:
 				return this.activateUpdatedMessageLog(
 					interaction,
 					channel,
 					channelLogRepo
 				);
 			}
-		} else if (subcommand === GuildLogSubcommand.desactivate) {
-			switch (group) {
-			case GuildLogGroup.user:
+		} else if (subcommand === Subcommand.disable) {
+			switch (logtype) {
+			case LogType.user:
 				return this.desactivateUserLog(
 					interaction,
 					channelLogRepo)
 				;
-			case GuildLogGroup.deletedMessage:
+			case LogType.deletedMessage:
 				return this.desactivateUserLog(
 					interaction,
 					channelLogRepo
 				);
-			case GuildLogGroup.updatedMessage:
+			case LogType.updatedMessage:
 				return this.desactivateUpdatedMessageLog(
 					interaction,
 					channelLogRepo
@@ -154,7 +143,7 @@ export class GuildLog extends Command {
 			}
 		}
 
-		throw Error(`Unexpected group ${group} or subcommand ${subcommand}`);
+		throw Error(`Unexpected logType ${logtype} or subcommand ${subcommand}`);
 	}
 
 	async listLogs(
