@@ -159,7 +159,7 @@ export class GuildCommand extends Command {
 		};
 
 		const collector = message.createMessageComponentCollector({
-			idle: 20000,
+			idle: 60 * 1000,
 			componentType: "BUTTON"
 		});
 
