@@ -43,7 +43,19 @@ export async function findCustomCommand(message: Message) {
 		choosenCommand.response
 	);
 
-	await message.channel.send({
-		content: filledCommand
-	});
+	const messagePromises: Promise<Message>[] = [];
+
+	if (choosenCommand.autoDelete) {
+		messagePromises.push(
+			message.delete()
+		);
+	}
+
+	messagePromises.push(
+		message.channel.send({
+			content: filledCommand
+		})
+	);
+
+	await Promise.all(messagePromises);
 }
