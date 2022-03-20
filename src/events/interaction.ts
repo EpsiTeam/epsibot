@@ -7,6 +7,11 @@ export async function interactionCreate(
 ) {
 	// Only taking care of slash commands
 	if (!interaction.isCommand()) return;
+	// Only if command is in guild
+	if (!interaction.inCachedGuild()) {
+		console.error(`${interaction.commandName} not executed in a guild, or guild not in cache`);
+		return;
+	}
 
 	const command = commandManager.commands.get(interaction.commandName);
 
@@ -15,10 +20,13 @@ export async function interactionCreate(
 		return;
 	}
 
-	console.log(`Called command ${command.name}`);
+	const subcommand = interaction.options.getSubcommand(false);
+	const fullCommand = subcommand ? `/${command.name}/${subcommand}` : `/${command.name}`;
+
+	console.log(`Command ${fullCommand} called by ${interaction.member.user.tag} on guild ${interaction.guild.name}`);
 	try {
 		await command.execute(interaction);
 	} catch (err) {
-		console.error(`Error while execution ${command.name}: ${err}`);
+		console.error(`Error on ${fullCommand}: ${err}`);
 	}
 }

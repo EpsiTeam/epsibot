@@ -22,7 +22,7 @@ export async function memberJoined(member: GuildMember) {
 		throw Error(`Impossible to send logs on channel ${channel}, maybe it has been deleted or modified`);
 	}
 
-	await channel.send({
+	return channel.send({
 		embeds: [{
 			title: `${member.user.tag} a rejoint le serveur`,
 			description: `Bonjour à toi ${member}`,
@@ -44,7 +44,6 @@ export async function memberLeft(member: GuildMember | PartialGuildMember) {
 
 	const channelLog = await repo.findOne(new ChannelLog(guild.id, "userJoinLeave"));
 
-	// Should we display logs?
 	if (!channelLog) return;
 
 	const channel = await guild.channels.fetch(channelLog.channelId);
@@ -53,7 +52,7 @@ export async function memberLeft(member: GuildMember | PartialGuildMember) {
 		throw Error(`Impossible to send logs on channel ${channel}, maybe it has been deleted or modified`);
 	}
 
-	await channel.send({
+	return channel.send({
 		embeds: [{
 			title: `${member.user.tag} a quitté le serveur`,
 			description: getMemberDuration(member),

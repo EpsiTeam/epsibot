@@ -2,7 +2,8 @@
 	"type": "better-sqlite3",
 	"database": "data.db",
 	"entities": [
-		"built/entity/ChannelLog.js"
+		"built/entity/ChannelLog.js",
+		"built/entity/CustomCommand.js"
 	],
 	"migrations": [
 		"built/migration/*.js"

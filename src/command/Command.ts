@@ -1,4 +1,9 @@
-import { ApplicationCommandOptionData, ChatInputApplicationCommandData, CommandInteraction, PermissionFlags } from "discord.js";
+import {
+	ApplicationCommandOptionData,
+	ChatInputApplicationCommandData,
+	CommandInteraction,
+	PermissionResolvable
+} from "discord.js";
 
 export abstract class Command implements ChatInputApplicationCommandData {
 	/**
@@ -25,12 +30,33 @@ export abstract class Command implements ChatInputApplicationCommandData {
 	/**
 	 * The special permissions needed to execute this command
 	 */
-	needPermissions: PermissionFlags[] = [];
+	needPermissions: PermissionResolvable[] = [];
 
 	constructor(name: string, description: string) {
 		this.name = name;
 		this.description = description;
 	}
 
-	abstract execute(interaction: CommandInteraction): Promise<void>
+	public get defaultPermission(): boolean {
+		return this.availableTo === "everyone";
+	}
+
+	/**
+	 * Will check the permissions of the member that executed a slash command
+	 * againt `this.needPermissions`
+	 * @param interaction The slach command interaction
+	 * @returns true is the member can execute this command, false otherwise
+	 */
+	hasPermissions(interaction: CommandInteraction<"cached">): boolean {
+		if (!interaction.channel) {
+			throw Error(`Command ${interaction.commandName} not executed in a channel, or the channel was not in the cache`);
+		}
+
+		const memberPerms =
+			interaction.member.permissionsIn(interaction.channel);
+
+		return memberPerms.has(this.needPermissions);
+	}
+
+	abstract execute(interaction: CommandInteraction<"cached">): Promise<unknown>
 }
