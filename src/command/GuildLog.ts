@@ -98,10 +98,8 @@ export class GuildLog extends Command {
 
 		// Choosing the correct subcommand to execute
 		if (subcommand === Subcommand.enable) {
-			const channel = interaction.options.getChannel(
-				Params.channel,
-				true
-			);
+			const channel =
+				interaction.options.getChannel(Params.channel, true);
 
 			switch (logtype) {
 			case LogType.user:

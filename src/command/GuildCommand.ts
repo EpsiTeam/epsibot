@@ -3,10 +3,17 @@ import { getRepository, Repository } from "typeorm";
 import { CustomCommand } from "../entity/CustomCommand.js";
 import { Command } from "./Command.js";
 
-export enum GuildCommandSubcommand {
+enum Subcommand {
 	list = "list",
 	add = "add",
 	remove = "remove"
+}
+
+enum Params {
+	name = "name",
+	response = "response",
+	adminOnly = "admin_only",
+	autoDelte = "auto_delete"
 }
 
 export class GuildCommand extends Command {
@@ -17,42 +24,42 @@ export class GuildCommand extends Command {
 
 		this.options = [{
 			type: "SUB_COMMAND",
-			name: GuildCommandSubcommand.add,
+			name: Subcommand.add,
 			description: "Ajoute une commande custom",
 			options: [{
 				type: "STRING",
-				name: "name",
+				name: Params.name,
 				description: "Nom de la commande custom à ajouter, tout message qui commencera par ce nom appelera cette commande",
 				required: true
 			}, {
 				type: "STRING",
-				name: "response",
+				name: Params.response,
 				description: "Réponse de la commande custom (\\n pour les retours à la ligne, et $0, $1 etc pour les paramètres)",
 				required: true
 			}, {
 				type: "BOOLEAN",
-				name: "admin_only",
+				name: Params.adminOnly,
 				description: "Est-ce que seulement les admins pourront lancer cete commande custom ?",
 				required: true
 			}, {
 				type: "BOOLEAN",
-				name: "auto_delete",
+				name: Params.autoDelte,
 				description: "Est-ce que le message qui active la commande doit être supprimé automatiquement ?",
 				required: true
 			}]
 		}, {
 			type: "SUB_COMMAND",
-			name: GuildCommandSubcommand.remove,
+			name: Subcommand.remove,
 			description: "Supprime une commande custom",
 			options: [{
 				type: "STRING",
-				name: "name",
+				name: Params.name,
 				description: "Nom de la commande custom à suprimer",
 				required: true
 			}]
 		}, {
 			type: "SUB_COMMAND",
-			name: GuildCommandSubcommand.list,
+			name: Subcommand.list,
 			description: "List les commandes custom existantes"
 		}];
 	}
@@ -61,7 +68,7 @@ export class GuildCommand extends Command {
 		const subcommand = interaction.options.getSubcommand();
 		const customCommandRepo = getRepository(CustomCommand);
 
-		if (subcommand === GuildCommandSubcommand.list) {
+		if (subcommand === Subcommand.list) {
 			return this.listCommands(
 				interaction,
 				customCommandRepo
@@ -79,12 +86,12 @@ export class GuildCommand extends Command {
 		}
 
 		switch (subcommand) {
-		case GuildCommandSubcommand.add:
+		case Subcommand.add:
 			return this.addCommand(
 				interaction,
 				customCommandRepo
 			);
-		case GuildCommandSubcommand.remove:
+		case Subcommand.remove:
 			return this.removeCommand(
 				interaction,
 				customCommandRepo
@@ -189,10 +196,13 @@ export class GuildCommand extends Command {
 		interaction: CommandInteraction<"cached">,
 		customCommandRepo: Repository<CustomCommand>
 	): Promise<void> {
-		const name = interaction.options.getString("name", true);
-		const inlineResponse = interaction.options.getString("response", true);
-		const adminOnly = interaction.options.getBoolean("admin_only", true);
-		const autoDelete = interaction.options.getBoolean("auto_delete", true);
+		const name = interaction.options.getString(Params.name, true);
+		const inlineResponse =
+			interaction.options.getString(Params.response, true);
+		const adminOnly =
+			interaction.options.getBoolean(Params.adminOnly, true);
+		const autoDelete =
+			interaction.options.getBoolean(Params.autoDelte, true);
 
 		const response = inlineResponse.replaceAll("\\n", "\n");
 
@@ -245,7 +255,7 @@ export class GuildCommand extends Command {
 		interaction: CommandInteraction<"cached">,
 		customCommandRepo: Repository<CustomCommand>
 	): Promise<void> {
-		const name = interaction.options.getString("name", true);
+		const name = interaction.options.getString(Params.name, true);
 
 		const command = await customCommandRepo.findOne(new CustomCommand(
 			interaction.guildId,
