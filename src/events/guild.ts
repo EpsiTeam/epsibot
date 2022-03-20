@@ -1,6 +1,6 @@
 import { Guild } from "discord.js";
 import { getRepository } from "typeorm";
-import { CommandManager } from "../command/CommandManager.js";
+import { CommandManager } from "../command/manager/CommandManager.js";
 import { ChannelLog } from "../entity/ChannelLog.js";
 
 export async function botInvited(

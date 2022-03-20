@@ -1,5 +1,5 @@
 import { Client, Guild } from "discord.js";
-import { CommandManager } from "../command/CommandManager.js";
+import { CommandManager } from "../command/manager/CommandManager.js";
 
 /**
  * Will create the command manager to register slash commands on Discord

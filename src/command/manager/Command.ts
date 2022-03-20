@@ -5,6 +5,10 @@ import {
 	PermissionResolvable
 } from "discord.js";
 
+/**
+ * This is the base class for all commands,
+ * they should all extends this one
+ */
 export abstract class Command implements ChatInputApplicationCommandData {
 	/**
 	 * Name of the command, users will be able to use /name

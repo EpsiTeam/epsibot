@@ -1,5 +1,5 @@
 import { Interaction } from "discord.js";
-import { CommandManager } from "../command/CommandManager.js";
+import { CommandManager } from "../command/manager/CommandManager.js";
 
 export async function interactionCreate(
 	commandManager: CommandManager,

@@ -5,9 +5,9 @@
 	"main": "built/index.js",
 	"scripts": {
 		"clean": "rm -rf built/ logs/",
-		"check": "npx eslint src/",
+		"check": "npx eslint src/ && echo 'All good, no problem found'",
 		"fix": "npx eslint --fix src/",
-		"build": "rm -rf built/ && npm run check && node_modules/typescript/bin/tsc",
+		"build": "rm -rf built/ && npm run check && node_modules/typescript/bin/tsc && echo 'Build finished'",
 		"migrate": "node node_modules/typeorm/cli.js migration:run",
 		"start": "npm run build && node -r dotenv/config built/main.js",
 		"start:builded": "node -r dotenv/config built/main.js",

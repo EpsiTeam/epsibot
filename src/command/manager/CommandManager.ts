@@ -1,6 +1,6 @@
 import { ApplicationCommandPermissionData, Guild } from "discord.js";
 import { Command } from "./Command.js";
-import { instanciateCommands } from "./CommandList.js";
+import { instanciateCommands } from "./instanciate-command.js";
 
 /**
  * CommandManager is the class managing commands,

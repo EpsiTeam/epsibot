@@ -1,7 +1,7 @@
 import { CommandInteraction, MessagePayload } from "discord.js";
 import { getRepository, Repository } from "typeorm";
 import { CustomCommand } from "../entity/CustomCommand.js";
-import { Command } from "./Command.js";
+import { Command } from "./manager/Command.js";
 
 enum Subcommand {
 	list = "list",

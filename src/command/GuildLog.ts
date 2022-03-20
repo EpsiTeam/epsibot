@@ -1,7 +1,7 @@
 import { CommandInteraction, GuildBasedChannel } from "discord.js";
 import { getRepository, Repository } from "typeorm";
 import { ChannelLog } from "../entity/ChannelLog.js";
-import { Command } from "./Command.js";
+import { Command } from "./manager/Command.js";
 
 enum Subcommand {
 	enable = "enable",
