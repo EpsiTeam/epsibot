@@ -3,7 +3,8 @@
 	"database": "data.db",
 	"entities": [
 		"built/entity/ChannelLog.js",
-		"built/entity/CustomCommand.js"
+		"built/entity/CustomCommand.js",
+		"built/entity/AutoRole.js"
 	],
 	"migrations": [
 		"built/migration/*.js"

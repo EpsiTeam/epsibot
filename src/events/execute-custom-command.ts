@@ -1,14 +1,19 @@
 import { Message } from "discord.js";
 import { getRepository } from "typeorm";
 import { CustomCommand } from "../entity/CustomCommand.js";
-import { fillArguments } from "./command-argument.js";
+import { fillArguments } from "../custom-command/command-argument.js";
 
 /**
  * Will check if a custom command should be executed on a message,
  * and executes it
  * @param message Message triggering the custom command
  */
-export async function findCustomCommand(message: Message) {
+export async function executeCustomCommand(message: Message) {
+	// Not listening on bots
+	if (message.author.bot) return;
+	// Only listening on guilds
+	if (!message.guild || !message.member) return;
+
 	const lowercase = message.content.toLowerCase();
 
 	if (!message.guild) {
@@ -57,5 +62,5 @@ export async function findCustomCommand(message: Message) {
 		})
 	);
 
-	await Promise.all(messagePromises);
+	await Promise.all([messagePromises]);
 }

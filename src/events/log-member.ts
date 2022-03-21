@@ -4,7 +4,10 @@ import { GuildMember, PartialGuildMember } from "discord.js";
 import { getRepository } from "typeorm";
 import { ChannelLog } from "../entity/ChannelLog.js";
 
-export async function memberJoined(member: GuildMember) {
+/**
+ * Log a new member on guild
+ */
+export async function logMemberJoined(member: GuildMember) {
 	const guild = member.guild;
 
 	console.log(`User ${member.user.tag} [${member.id}] joined guild ${guild.name} [${guild.id}]`);
@@ -22,7 +25,7 @@ export async function memberJoined(member: GuildMember) {
 		throw Error(`Impossible to send logs on channel ${channel}, maybe it has been deleted or modified`);
 	}
 
-	return channel.send({
+	await channel.send({
 		embeds: [{
 			title: `${member.user.tag} a rejoint le serveur`,
 			description: `Bonjour à toi ${member}`,
@@ -35,7 +38,13 @@ export async function memberJoined(member: GuildMember) {
 	});
 }
 
-export async function memberLeft(member: GuildMember | PartialGuildMember) {
+/**
+ * Log a member that left a guild
+ */
+export async function logMemberLeft(member: GuildMember | PartialGuildMember) {
+	// Maybe it was Epsibot who left?
+	if (member.id === member.guild.me?.id) return;
+
 	const guild = member.guild;
 
 	console.log(`User ${member.user.tag} [${member.id}] left guild ${guild.name} [${guild.id}]`);
@@ -52,7 +61,7 @@ export async function memberLeft(member: GuildMember | PartialGuildMember) {
 		throw Error(`Impossible to send logs on channel ${channel}, maybe it has been deleted or modified`);
 	}
 
-	return channel.send({
+	await channel.send({
 		embeds: [{
 			title: `${member.user.tag} a quitté le serveur`,
 			description: getMemberDuration(member),

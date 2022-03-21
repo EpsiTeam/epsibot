@@ -97,6 +97,8 @@ export class GuildCommand extends Command {
 				customCommandRepo
 			);
 		}
+
+		throw Error(`Unexpected subcommand ${subcommand}`);
 	}
 
 	async listCommands(

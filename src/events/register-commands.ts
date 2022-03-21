@@ -6,7 +6,7 @@ import { CommandManager } from "../command/manager/CommandManager.js";
  * @param client The bot instance
  * @returns a CommandManager
  */
-export async function afterReady(client: Client) {
+export async function registerCommands(client: Client) {
 	console.log("Logged to Discord");
 
 	// Fetching all guilds

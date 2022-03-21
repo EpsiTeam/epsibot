@@ -1,10 +1,12 @@
 import { format } from "date-fns";
 import { Message, PartialMessage } from "discord.js";
 import { getRepository } from "typeorm";
-import { findCustomCommand } from "../custom-command/find-command.js";
 import { ChannelLog } from "../entity/ChannelLog.js";
 
-export async function messageDelete(message: Message | PartialMessage) {
+/**
+ * Log a deleted message
+ */
+export async function logMessageDelete(message: Message | PartialMessage) {
 	const guild = message.guild;
 	if (!guild || !message.author) return;
 
@@ -23,7 +25,7 @@ export async function messageDelete(message: Message | PartialMessage) {
 
 	const creationDate = format(message.createdTimestamp, "dd/MM/yyyy HH:mm");
 
-	return channel.send({
+	await channel.send({
 		embeds: [{
 			title: `Message de ${message.author.tag} suprimé`,
 			description: `Un message de ${message.member} a été supprimé dans ${message.channel}:\n${message.content}`,
@@ -36,7 +38,10 @@ export async function messageDelete(message: Message | PartialMessage) {
 	});
 }
 
-export async function messageUpdate(
+/**
+ * Log an updated message
+ */
+export async function logMessageUpdate(
 	oldMsg: Message | PartialMessage,
 	newMsg: Message | PartialMessage
 ) {
@@ -62,7 +67,7 @@ export async function messageUpdate(
 
 	const creationDate = format(oldMsg.createdTimestamp, "dd/MM/yyyy HH:mm");
 
-	return channel.send({
+	await channel.send({
 		embeds: [{
 			title: `Message de ${author.tag} modifié`,
 			description: `Un message de ${newMsg.member} a été modifié dans ${newMsg.channel}, l'ancien message était:\n${oldMsg.content}`,
@@ -73,13 +78,4 @@ export async function messageUpdate(
 			color: "YELLOW"
 		}]
 	});
-}
-
-export async function newMessage(message: Message) {
-	// Not listening on bots
-	if (message.author.bot) return;
-	// Only listening on guilds
-	if (!message.guild || !message.member) return;
-
-	await findCustomCommand(message);
 }

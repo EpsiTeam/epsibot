@@ -1,7 +1,10 @@
 import { Interaction } from "discord.js";
 import { CommandManager } from "../command/manager/CommandManager.js";
 
-export async function interactionCreate(
+/**
+ * Handle the execution of a slash command
+ */
+export async function executeCommand(
 	commandManager: CommandManager,
 	interaction: Interaction
 ) {

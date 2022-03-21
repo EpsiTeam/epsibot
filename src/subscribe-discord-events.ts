@@ -1,9 +1,10 @@
 import { Client } from "discord.js";
-import { interactionCreate } from "./events/interaction.js";
-import { memberJoined, memberLeft } from "./events/member.js";
-import { afterReady } from "./events/after-ready.js";
-import { messageDelete, messageUpdate, newMessage } from "./events/message.js";
-import { botInvited, botRemoved } from "./events/guild.js";
+import { executeCommand } from "./events/execute-command.js";
+import { logMemberJoined, logMemberLeft } from "./events/log-member.js";
+import { registerCommands } from "./events/register-commands.js";
+import { logMessageDelete, logMessageUpdate } from "./events/log-message.js";
+import { botInvited, botRemoved } from "./events/bot-join-left.js";
+import { executeCustomCommand } from "./events/execute-custom-command.js";
 
 /**
  * Will subscribe a bot to some Discord events
@@ -12,74 +13,28 @@ import { botInvited, botRemoved } from "./events/guild.js";
 export function subscribeDiscordEvents(client: Client): void {
 	// Waiting for the bot to be ready before doing anything
 	client.once("ready", async (client) => {
-		const commandManager = await afterReady(client);
+		const commandManager = await registerCommands(client);
 
 		// Someone used a slash command
 		client.on("interactionCreate", async (interaction) => {
-			try {
-				await interactionCreate(commandManager, interaction);
-			} catch (err) {
-				console.error(`Error on event interactionCreate: ${err}`);
-			}
+			await executeCommand(commandManager, interaction);
 		});
-		// New member on guild
-		client.on("guildMemberAdd", async member => {
-			try {
-				await memberJoined(member);
-			} catch (err) {
-				console.error(`Error on event guildMemberAdd: ${err}`);
-			}
-		});
-		// Member left guild
-		client.on("guildMemberRemove", async member => {
-			try {
-				// Maybe it was Epsibot who left?
-				if (member.id === member.guild.me?.id) return;
-				await memberLeft(member);
-			} catch (err) {
-				console.error(`Error on event guildMemberRemove: ${err}`);
-			}
-		});
-		// A message has been delete
-		client.on("messageDelete", async message => {
-			try {
-				await messageDelete(message);
-			} catch (err) {
-				console.error(`Error on event messageDelete: ${err}`);
-			}
-		});
-		// A message has been modified
-		client.on("messageUpdate", async (oldMsg, newMsg) => {
-			try {
-				await messageUpdate(oldMsg, newMsg);
-			} catch (err) {
-				console.error(`Error on event messageUpdate: ${err}`);
-			}
-		});
+		// Log a new member on guild
+		client.on("guildMemberAdd", logMemberJoined);
+		// Log a member that left a guild
+		client.on("guildMemberRemove", logMemberLeft);
+		// Log a deleted message
+		client.on("messageDelete", logMessageDelete);
+		// Log an updated message
+		client.on("messageUpdate", logMessageUpdate);
 		// Epsibot has been invited to a new guild
 		client.on("guildCreate", async guild => {
-			try {
-				await botInvited(commandManager, guild);
-			} catch (err) {
-				console.error(`Error on event guildCreate: ${err}`);
-			}
+			await botInvited(commandManager, guild);
 		});
 		// Epsibot has been removed from a guild
-		client.on("guildDelete", async guild => {
-			try {
-				await botRemoved(guild);
-			} catch (err) {
-				console.error(`Error on event guildDelete: ${err}`);
-			}
-		});
+		client.on("guildDelete", botRemoved);
 		// A new message has been written
-		client.on("messageCreate", async message => {
-			try {
-				await newMessage(message);
-			} catch (err) {
-				console.error(`Error on event messageCreate: ${err}`);
-			}
-		});
+		client.on("messageCreate", executeCustomCommand);
 
 		console.log("Epsibot fully ready");
 	});
