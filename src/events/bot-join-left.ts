@@ -4,6 +4,7 @@ import { CommandManager } from "../command/manager/CommandManager.js";
 import { AutoRole } from "../entity/AutoRole.js";
 import { ChannelLog } from "../entity/ChannelLog.js";
 import { CustomCommand } from "../entity/CustomCommand.js";
+import { IgnoredChannel } from "../entity/IgnoredChannel.js";
 
 export async function botInvited(
 	commandManager: CommandManager,
@@ -24,6 +25,9 @@ export async function botRemoved(guild: Guild) {
 			guildId: guild.id
 		}),
 		getRepository(AutoRole).delete({
+			guildId: guild.id
+		}),
+		getRepository(IgnoredChannel).delete({
 			guildId: guild.id
 		})
 	]);

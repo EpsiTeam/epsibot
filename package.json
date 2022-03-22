@@ -11,7 +11,7 @@
 		"build": "rm -rf built/ && npm run check && tsc && echo 'Build finished'",
 
 		"about:start": "echo 'Will build and start Epsibot'",
-		"start": "npm run build && node -r dotenv/config built/main.js",
+		"start": "npm run build && node --enable-source-maps -r dotenv/config built/main.js",
 
 		"about:clean": "echo 'Clean your directory by deleting build/ and logs/'",
 		"clean": "rm -rf built/ logs/",
@@ -23,7 +23,7 @@
 		"migrate": "typeorm migration:run",
 
 		"about:start:builded": "echo 'Will start Epsibot without rebuilding it'",
-		"start:builded": "node -r dotenv/config built/main.js",
+		"start:builded": "node --enable-source-maps -r dotenv/config built/main.js",
 
 		"about:test": "echo 'Will launch all tests'",
 		"test": "echo 'Sorry, there is no tests for now'"

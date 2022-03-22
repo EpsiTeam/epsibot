@@ -4,7 +4,6 @@ type logType = "userJoinLeave" | "deletedMessage" | "updatedMessage"
 
 @Entity()
 export class ChannelLog {
-
 	constructor(
 		guildId: string,
 		logType: logType,

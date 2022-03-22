@@ -1,12 +1,14 @@
 import { CommandInteraction, GuildBasedChannel } from "discord.js";
 import { getRepository, Repository } from "typeorm";
 import { ChannelLog } from "../entity/ChannelLog.js";
+import { IgnoredChannel } from "../entity/IgnoredChannel.js";
 import { Command } from "./manager/Command.js";
 
 enum Subcommand {
+	list = "list",
 	enable = "enable",
 	disable = "disable",
-	list = "list"
+	ignore = "ignore"
 }
 
 enum LogType {
@@ -18,7 +20,8 @@ enum LogType {
 
 enum Params {
 	logType = "log_type",
-	channel = "channel"
+	channel = "channel",
+	ignored = "ignored"
 }
 
 export class GuildLog extends Command {
@@ -74,6 +77,22 @@ export class GuildLog extends Command {
 				required: true,
 				choices: logChoices
 			}]
+		}, {
+			type: "SUB_COMMAND",
+			name: Subcommand.ignore,
+			description: "Ignore ou non certains channels pour les logs",
+			options: [{
+				type: "CHANNEL",
+				name: Params.channel,
+				description: "Channel à ignorer ou non, les messages supprimés/modifiés seront ou non dans les logs",
+				required: true,
+				channelTypes: ["GUILD_TEXT"]
+			}, {
+				type: "BOOLEAN",
+				name: Params.ignored,
+				description: "Est-ce que ce channel doit être ignoré ?",
+				required: true
+			}]
 		}];
 	}
 
@@ -98,12 +117,18 @@ export class GuildLog extends Command {
 			);
 		}
 
+		if (subcommand === Subcommand.ignore) {
+			return this.ignoreLogs(interaction);
+		}
+
 		const logtype = interaction.options.getString(Params.logType, true);
 
 		// Choosing the correct subcommand to execute
 		if (subcommand === Subcommand.enable) {
-			const channel =
-				interaction.options.getChannel(Params.channel, true);
+			const channel = interaction.options.getChannel(
+				Params.channel,
+				true
+			);
 
 			switch (logtype) {
 			case LogType.all:
@@ -163,7 +188,8 @@ export class GuildLog extends Command {
 		interaction: CommandInteraction<"cached">,
 		channelLogRepo: Repository<ChannelLog>
 	) {
-		const promisesDb = [
+		// Retrieve all types of log
+		const [userLog, deletedLog, updatedLog] = await Promise.all([
 			channelLogRepo.findOne(new ChannelLog(
 				interaction.guildId,
 				"userJoinLeave"
@@ -176,23 +202,39 @@ export class GuildLog extends Command {
 				interaction.guildId,
 				"updatedMessage"
 			))
-		];
+		]);
 
-		const [
-			userLog,
-			deletedLog,
-			updatedLog
-		] = await Promise.all(promisesDb);
-
+		// -- Some function to help build the list --
+		// Get a channel from Discord (not so easy because the channel
+		// might have been deleted)
+		const getChannel = async (channelId: string) => {
+			const deletedChannel = "(channel supprimé)";
+			try {
+				const channel =
+					await interaction.guild.channels.fetch(channelId);
+				return channel?.toString() ?? deletedChannel;
+			} catch (err) {
+				// This is a special case where we're sure
+				// the channel has been deleted
+				if (err?.code === 10003) {
+					// Better clean our DB
+					await getRepository(IgnoredChannel).remove(
+						new IgnoredChannel(interaction.guildId, channelId)
+					);
+				}
+				return deletedChannel;
+			}
+		};
+		// Print a line for a not configured log
 		const notConfigured = (logType: string) =>
 			`**${logType}** → non configuré`;
-
+		// Print a line for a configured log
 		const configured = async (logType: string, channelId: string) => {
-			const channel = await interaction.guild.channels.fetch(channelId);
+			const channel = await getChannel(channelId);
 
 			return `**${logType}** → ${channel}`;
 		};
-
+		// Print a line for a type of log
 		const configurationMsg = async (
 			channelLog: ChannelLog | undefined,
 			logType: string
@@ -204,11 +246,29 @@ export class GuildLog extends Command {
 			}
 		};
 
-		let message = await configurationMsg(userLog, "Arrivés et départs de membres");
+		// Starting building the list
+		let message = "";
+		message += await configurationMsg(userLog, "Arrivés et départs de membres");
 		message += "\n" + await configurationMsg(deletedLog, "Messages supprimés");
 		message += "\n" + await configurationMsg(updatedLog, "Messages modifiés");
 
-		interaction.reply({
+		// Retrieve ignored channels
+		const ignoredChannels = await getRepository(IgnoredChannel).find({
+			where: {
+				guildId: interaction.guildId
+			}
+		});
+
+		// Finish building the list
+		if (ignoredChannels.length > 0) {
+			message += "\n\nChannels ignorés (les messages supprimés ou modifés dans ces channels ne seront pas log):";
+		}
+		for (const ignoredChannel of ignoredChannels) {
+			const channel = await getChannel(ignoredChannel.channelId);
+			message += `\n${channel}`;
+		}
+
+		return interaction.reply({
 			embeds: [{
 				title: "Liste des configurations des logs",
 				description: message
@@ -382,6 +442,42 @@ export class GuildLog extends Command {
 			embeds: [{
 				title: "Logs desactivés",
 				description: "Les logs des messages modifiés sont désormais inactif",
+				color: "GREEN"
+			}],
+			ephemeral: true
+		});
+	}
+
+	async ignoreLogs(interaction: CommandInteraction<"cached">) {
+		const ignored = interaction.options.getBoolean(Params.ignored, true);
+		const channel = interaction.options.getChannel(Params.channel, true);
+		const ignoredChannelRepo = getRepository(IgnoredChannel);
+
+		if (!ignored) {
+			await ignoredChannelRepo.remove(new IgnoredChannel(
+				interaction.guildId,
+				channel.id
+			));
+
+			return interaction.reply({
+				embeds: [{
+					title: "Channel pris en compte pour les logs",
+					description: `Le channel ${channel} sera maintenant pris en compte pour les logs des messages supprimés ou modifiés`,
+					color: "GREEN"
+				}],
+				ephemeral: true
+			});
+		}
+
+		await ignoredChannelRepo.save(new IgnoredChannel(
+			interaction.guildId,
+			channel.id
+		));
+
+		return interaction.reply({
+			embeds: [{
+				title: "Channel ignoré pour les logs",
+				description: `Le channel ${channel} sera maintenant ignoré pour les logs des messages supprimés ou modifiés`,
 				color: "GREEN"
 			}],
 			ephemeral: true

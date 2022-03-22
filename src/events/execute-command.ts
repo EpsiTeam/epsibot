@@ -30,6 +30,6 @@ export async function executeCommand(
 	try {
 		await command.execute(interaction);
 	} catch (err) {
-		console.error(`Error on ${fullCommand}: ${err}`);
+		console.error(`Error on ${fullCommand}: ${err.stack}`);
 	}
 }

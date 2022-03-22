@@ -4,7 +4,8 @@
 	"entities": [
 		"built/entity/ChannelLog.js",
 		"built/entity/CustomCommand.js",
-		"built/entity/AutoRole.js"
+		"built/entity/AutoRole.js",
+		"built/entity/IgnoredChannel.js"
 	],
 	"migrations": [
 		"built/migration/*.js"

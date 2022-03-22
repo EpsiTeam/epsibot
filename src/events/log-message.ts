@@ -2,6 +2,7 @@ import { format } from "date-fns";
 import { Message, PartialMessage } from "discord.js";
 import { getRepository } from "typeorm";
 import { ChannelLog } from "../entity/ChannelLog.js";
+import { IgnoredChannel } from "../entity/IgnoredChannel.js";
 
 /**
  * Log a deleted message
@@ -12,15 +13,23 @@ export async function logMessageDelete(message: Message | PartialMessage) {
 
 	console.log(`Message deleted in guild ${guild.name} [${guild.id}] for user ${message.author.tag} [${message.author.id}]`);
 
-	const repo = getRepository(ChannelLog);
-	const channelLog = await repo.findOne(new ChannelLog(guild.id, "deletedMessage"));
-
+	// Retrieve the channel where we should log this
+	const channelLog = await getRepository(ChannelLog).findOne(
+		new ChannelLog(guild.id, "deletedMessage")
+	);
 	if (!channelLog) return;
 
-	const channel = await guild.channels.fetch(channelLog.channelId);
+	// Check if this channel is ignored
+	const ignored = await getRepository(IgnoredChannel).count(
+		new IgnoredChannel(guild.id, message.channel.id)
+	);
+	if (ignored > 0) return;
 
+	// Retrieve the Discord channel
+	const channel = await guild.channels.fetch(channelLog.channelId);
 	if (!channel || !channel.isText()) {
-		throw Error(`Impossible to send logs on channel ${channel}, maybe it has been deleted or modified`);
+		console.error(`Impossible to send logs on channel ${channel}, maybe it has been deleted or modified`);
+		return;
 	}
 
 	const creationDate = format(message.createdTimestamp, "dd/MM/yyyy HH:mm");
@@ -54,15 +63,23 @@ export async function logMessageUpdate(
 
 	console.log(`Message updated in guild ${guild.name} [${guild.id}] for user ${author.tag} [${author.id}]`);
 
-	const repo = getRepository(ChannelLog);
-	const channelLog = await repo.findOne(new ChannelLog(guild.id, "updatedMessage"));
-
+	// Retrieve the channel where we should log this
+	const channelLog = await getRepository(ChannelLog).findOne(
+		new ChannelLog(guild.id, "updatedMessage")
+	);
 	if (!channelLog) return;
 
-	const channel = await guild.channels.fetch(channelLog.channelId);
+	// Check if this channel is ignored
+	const ignored = await getRepository(IgnoredChannel).count(
+		new IgnoredChannel(guild.id, newMsg.channel.id)
+	);
+	if (ignored > 0) return;
 
+	// Retrieve the Discord channel
+	const channel = await guild.channels.fetch(channelLog.channelId);
 	if (!channel || !channel.isText()) {
-		throw Error(`Impossible to send logs on channel ${channel}, maybe it has been deleted or modified`);
+		console.error(`Impossible to send logs on channel ${channel}, maybe it has been deleted or modified`);
+		return;
 	}
 
 	const creationDate = format(oldMsg.createdTimestamp, "dd/MM/yyyy HH:mm");
