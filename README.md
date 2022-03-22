@@ -23,6 +23,12 @@ Now everything should be ready to start Epsibot.<br>
 You can do so with `npm start`.<br>
 You can also run `npm run start:builded` if you don't wish to rebuild the binaries each time.
 
+## Available script
+
+Do `npm run` to see the list of available scripts.<br>
+Each scripts `<script>` has a corresponding `about:<script>` to know what is does.<br>
+For example, try running `npm run about:start`.
+
 ## Environment variables
 
 Name			|	Type		|	Example value				|	Description

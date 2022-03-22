@@ -1,7 +1,7 @@
 import { Command } from "./Command.js";
 import { GuildCommand } from "../GuildCommand.js";
 import { GuildLog } from "../GuildLog.js";
-import { Ping } from "../Ping.js";
+import { Test } from "../Test.js";
 import { GuildAutoRole } from "../GuildAutoRole.js";
 
 /**
@@ -11,7 +11,7 @@ import { GuildAutoRole } from "../GuildAutoRole.js";
  */
 export function instanciateCommands(): Command[] {
 	return [
-		new Ping(),
+		new Test(),
 		new GuildLog(),
 		new GuildCommand(),
 		new GuildAutoRole()

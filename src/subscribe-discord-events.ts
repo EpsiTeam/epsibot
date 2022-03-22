@@ -5,6 +5,7 @@ import { registerCommands } from "./events/register-commands.js";
 import { logMessageDelete, logMessageUpdate } from "./events/log-message.js";
 import { botInvited, botRemoved } from "./events/bot-join-left.js";
 import { executeCustomCommand } from "./events/execute-custom-command.js";
+import { addAutorole } from "./events/add-autorole.js";
 
 /**
  * Will subscribe a bot to some Discord events
@@ -19,22 +20,32 @@ export function subscribeDiscordEvents(client: Client): void {
 		client.on("interactionCreate", async (interaction) => {
 			await executeCommand(commandManager, interaction);
 		});
+
 		// Log a new member on guild
 		client.on("guildMemberAdd", logMemberJoined);
+
 		// Log a member that left a guild
 		client.on("guildMemberRemove", logMemberLeft);
+
 		// Log a deleted message
 		client.on("messageDelete", logMessageDelete);
+
 		// Log an updated message
 		client.on("messageUpdate", logMessageUpdate);
+
 		// Epsibot has been invited to a new guild
 		client.on("guildCreate", async guild => {
 			await botInvited(commandManager, guild);
 		});
+
 		// Epsibot has been removed from a guild
 		client.on("guildDelete", botRemoved);
-		// A new message has been written
+
+		// A new message has been written, maybe a custom command?
 		client.on("messageCreate", executeCustomCommand);
+
+		// Adding the autorole
+		client.on("guildMemberAdd", addAutorole);
 
 		console.log("Epsibot fully ready");
 	});

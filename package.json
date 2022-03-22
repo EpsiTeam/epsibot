@@ -4,14 +4,29 @@
 	"description": "Light discord bot for epsilon needs",
 	"main": "built/index.js",
 	"scripts": {
-		"clean": "rm -rf built/ logs/",
-		"check": "npx eslint src/ && echo 'All good, no problem found'",
-		"fix": "npx eslint --fix src/",
-		"build": "rm -rf built/ && npm run check && node_modules/typescript/bin/tsc && echo 'Build finished'",
-		"migrate": "node node_modules/typeorm/cli.js migration:run",
+		"about:check": "echo 'Check that your code is good by running eslint'",
+		"check": "eslint src/ && echo 'All good, no problem found'",
+
+		"about:build": "echo 'Will compile the .ts files to .js and put them in built/'",
+		"build": "rm -rf built/ && npm run check && tsc && echo 'Build finished'",
+
+		"about:start": "echo 'Will build and start Epsibot'",
 		"start": "npm run build && node -r dotenv/config built/main.js",
+
+		"about:clean": "echo 'Clean your directory by deleting build/ and logs/'",
+		"clean": "rm -rf built/ logs/",
+
+		"about:fix": "echo 'Fix everyting it can in your code (like missing semicolons)'",
+		"fix": "eslint --fix src/",
+
+		"about:migrate": "echo 'Will execute all migrations, creating the DB if needed'",
+		"migrate": "typeorm migration:run",
+
+		"about:start:builded": "echo 'Will start Epsibot without rebuilding it'",
 		"start:builded": "node -r dotenv/config built/main.js",
-		"test": "echo \"Error: no test specified\" && exit 1"
+
+		"about:test": "echo 'Will launch all tests'",
+		"test": "echo 'Sorry, there is no tests for now'"
 	},
 	"private": true,
 	"author": "EpsiTeam",

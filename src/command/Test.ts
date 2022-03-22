@@ -1,9 +1,9 @@
 import { CommandInteraction } from "discord.js";
 import { Command } from "./manager/Command.js";
 
-export class Ping extends Command {
+export class Test extends Command {
 	constructor() {
-		super("ping", "Juste pour les tests");
+		super("test", "Juste pour les tests");
 
 		this.availableTo = "owner";
 	}

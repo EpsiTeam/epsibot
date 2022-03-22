@@ -24,6 +24,10 @@ export class GuildCommand extends Command {
 
 		this.options = [{
 			type: "SUB_COMMAND",
+			name: Subcommand.list,
+			description: "List les commandes custom existantes"
+		}, {
+			type: "SUB_COMMAND",
 			name: Subcommand.add,
 			description: "Ajoute une commande custom",
 			options: [{
@@ -57,10 +61,6 @@ export class GuildCommand extends Command {
 				description: "Nom de la commande custom à suprimer",
 				required: true
 			}]
-		}, {
-			type: "SUB_COMMAND",
-			name: Subcommand.list,
-			description: "List les commandes custom existantes"
 		}];
 	}
 

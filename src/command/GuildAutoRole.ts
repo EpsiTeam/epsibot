@@ -113,6 +113,27 @@ export class GuildAutoRole extends Command {
 			});
 		}
 
+		if (!interaction.guild.me) {
+			throw Error("guild.me is null, no idea why (has the bot been kicked?)");
+		}
+
+		const roleBelowBot: boolean =
+			interaction.guild.roles.comparePositions(
+				role,
+				interaction.guild.me.roles.highest
+			) < 0;
+
+		if (!roleBelowBot) {
+			return interaction.reply({
+				embeds:[{
+					title: "Impossible de configurer le rôle automatique",
+					description: `Je suis incapable d'assigner le role ${role} à qui que ce soit, car ce rôle est plus haut que moi dans la hiérarchie. Déplacez ce rôle dans les paramètres du serveur si vous voulez que je puisse l'assigner automatiquement !`,
+					color: "RED"
+				}],
+				ephemeral: true
+			});
+		}
+
 		await autoroleRepo.save(
 			new AutoRole(interaction.guildId, role.id)
 		);
