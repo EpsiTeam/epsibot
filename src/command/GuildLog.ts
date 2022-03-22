@@ -10,6 +10,7 @@ enum Subcommand {
 }
 
 enum LogType {
+	all = "all",
 	user = "user",
 	deletedMessage = "deleted_message",
 	updatedMessage = "updated_message"
@@ -28,6 +29,9 @@ export class GuildLog extends Command {
 
 		// Choices for the log type
 		const logChoices = [{
+			name: "Tous les logs",
+			value: LogType.all
+		}, {
 			name: "Logs sur les arrivés et départs de membre",
 			value: LogType.user
 		}, {
@@ -102,20 +106,26 @@ export class GuildLog extends Command {
 				interaction.options.getChannel(Params.channel, true);
 
 			switch (logtype) {
+			case LogType.all:
+				return this.enableAllLog(
+					interaction,
+					channel,
+					channelLogRepo
+				);
 			case LogType.user:
-				return this.activateUserLog(
+				return this.enableUserLog(
 					interaction,
 					channel,
 					channelLogRepo
 				);
 			case LogType.deletedMessage:
-				return this.activateDeletedMessageLog(
+				return this.enableDeletedMessageLog(
 					interaction,
 					channel,
 					channelLogRepo
 				);
 			case LogType.updatedMessage:
-				return this.activateUpdatedMessageLog(
+				return this.enableUpdatedMessageLog(
 					interaction,
 					channel,
 					channelLogRepo
@@ -123,18 +133,23 @@ export class GuildLog extends Command {
 			}
 		} else if (subcommand === Subcommand.disable) {
 			switch (logtype) {
-			case LogType.user:
-				return this.desactivateUserLog(
+			case LogType.all:
+				return this.disableAllLog(
 					interaction,
-					channelLogRepo)
-				;
+					channelLogRepo
+				);
+			case LogType.user:
+				return this.disableUserLog(
+					interaction,
+					channelLogRepo
+				);
 			case LogType.deletedMessage:
-				return this.desactivateUserLog(
+				return this.disableUserLog(
 					interaction,
 					channelLogRepo
 				);
 			case LogType.updatedMessage:
-				return this.desactivateUpdatedMessageLog(
+				return this.disableUpdatedMessageLog(
 					interaction,
 					channelLogRepo
 				);
@@ -202,7 +217,58 @@ export class GuildLog extends Command {
 		});
 	}
 
-	async activateUserLog(
+	async enableAllLog(
+		interaction: CommandInteraction<"cached">,
+		channel: GuildBasedChannel,
+		channelLogRepo: Repository<ChannelLog>
+	) {
+		await Promise.all([
+			channelLogRepo.save(new ChannelLog(
+				interaction.guildId,
+				"userJoinLeave",
+				channel.id
+			)),
+			channelLogRepo.save(new ChannelLog(
+				interaction.guildId,
+				"deletedMessage",
+				channel.id
+			)),
+			channelLogRepo.save(new ChannelLog(
+				interaction.guildId,
+				"updatedMessage",
+				channel.id
+			))
+		]);
+
+		return interaction.reply({
+			embeds: [{
+				title: "Logs activés",
+				description: `Tous les logs sont désormais actif sur le channel ${channel}`,
+				color: "GREEN"
+			}],
+			ephemeral: true
+		});
+	}
+
+	async disableAllLog(
+		interaction: CommandInteraction<"cached">,
+		channelLogRepo: Repository<ChannelLog>
+	) {
+		await channelLogRepo.delete({
+			guildId: interaction.guildId
+		});
+
+		return interaction.reply({
+			embeds: [{
+				title: "Logs désactivés",
+				description: "Tous les logs sont désormais inactif",
+				color: "GREEN"
+			}],
+			ephemeral: true
+		});
+	}
+
+	async enableUserLog(
 		interaction: CommandInteraction<"cached">,
 		channel: GuildBasedChannel,
 		channelLogRepo: Repository<ChannelLog>
@@ -223,11 +289,11 @@ export class GuildLog extends Command {
 		});
 	}
 
-	async desactivateUserLog(
+	async disableUserLog(
 		interaction: CommandInteraction<"cached">,
 		channelLogRepo: Repository<ChannelLog>
 	) {
-		channelLogRepo.delete(new ChannelLog(
+		await channelLogRepo.remove(new ChannelLog(
 			interaction.guildId,
 			"userJoinLeave"
 		));
@@ -242,7 +308,7 @@ export class GuildLog extends Command {
 		});
 	}
 
-	async activateDeletedMessageLog(
+	async enableDeletedMessageLog(
 		interaction: CommandInteraction<"cached">,
 		channel: GuildBasedChannel,
 		channelLogRepo: Repository<ChannelLog>
@@ -263,11 +329,11 @@ export class GuildLog extends Command {
 		});
 	}
 
-	async desactivateDeletedMessageLog(
+	async disableDeletedMessageLog(
 		interaction: CommandInteraction<"cached">,
 		channelLogRepo: Repository<ChannelLog>
 	) {
-		channelLogRepo.delete(new ChannelLog(
+		await channelLogRepo.remove(new ChannelLog(
 			interaction.guildId,
 			"deletedMessage"
 		));
@@ -282,7 +348,7 @@ export class GuildLog extends Command {
 		});
 	}
 
-	async activateUpdatedMessageLog(
+	async enableUpdatedMessageLog(
 		interaction: CommandInteraction<"cached">,
 		channel: GuildBasedChannel,
 		channelLogRepo: Repository<ChannelLog>
@@ -303,11 +369,11 @@ export class GuildLog extends Command {
 		});
 	}
 
-	async desactivateUpdatedMessageLog(
+	async disableUpdatedMessageLog(
 		interaction: CommandInteraction<"cached">,
 		channelLogRepo: Repository<ChannelLog>
 	) {
-		channelLogRepo.delete(new ChannelLog(
+		await channelLogRepo.remove(new ChannelLog(
 			interaction.guildId,
 			"updatedMessage"
 		));
