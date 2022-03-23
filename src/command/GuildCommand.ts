@@ -58,7 +58,7 @@ export class GuildCommand extends Command {
 			options: [{
 				type: "STRING",
 				name: Params.name,
-				description: "Nom de la commande custom à suprimer",
+				description: "Nom de la commande custom à supprimer",
 				required: true
 			}]
 		}];
