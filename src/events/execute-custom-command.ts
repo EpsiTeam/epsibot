@@ -16,10 +16,6 @@ export async function executeCustomCommand(message: Message) {
 
 	const lowercase = message.content.toLowerCase();
 
-	if (!message.guild) {
-		throw Error("No guild found for this message while checking for custom commands");
-	}
-
 	// Retrieving all custom commands for this guild
 	const customCommandRepo = getRepository(CustomCommand);
 	const customCommands = await customCommandRepo.find({
