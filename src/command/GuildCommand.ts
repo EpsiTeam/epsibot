@@ -13,7 +13,7 @@ enum Params {
 	name = "name",
 	response = "response",
 	adminOnly = "admin_only",
-	autoDelte = "auto_delete"
+	autoDelete = "auto_delete"
 }
 
 export class GuildCommand extends Command {
@@ -47,7 +47,7 @@ export class GuildCommand extends Command {
 				required: true
 			}, {
 				type: "BOOLEAN",
-				name: Params.autoDelte,
+				name: Params.autoDelete,
 				description: "Est-ce que le message qui active la commande doit être supprimé automatiquement ?",
 				required: true
 			}]
@@ -204,7 +204,7 @@ export class GuildCommand extends Command {
 		const adminOnly =
 			interaction.options.getBoolean(Params.adminOnly, true);
 		const autoDelete =
-			interaction.options.getBoolean(Params.autoDelte, true);
+			interaction.options.getBoolean(Params.autoDelete, true);
 
 		const response = inlineResponse.replaceAll("\\n", "\n");
 
