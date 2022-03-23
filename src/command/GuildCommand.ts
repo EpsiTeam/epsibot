@@ -25,7 +25,7 @@ export class GuildCommand extends Command {
 		this.options = [{
 			type: "SUB_COMMAND",
 			name: Subcommand.list,
-			description: "List les commandes custom existantes"
+			description: "Liste les commandes custom existantes"
 		}, {
 			type: "SUB_COMMAND",
 			name: Subcommand.add,
