@@ -62,5 +62,9 @@ export async function executeCustomCommand(message: Message) {
 		})
 	);
 
-	await Promise.all([messagePromises]);
+	try {
+		await Promise.all([messagePromises]);
+	} catch (err) {
+		console.error(`Error while executing custom command ${choosenCommand.name}: ${err.stack}`);
+	}
 }
