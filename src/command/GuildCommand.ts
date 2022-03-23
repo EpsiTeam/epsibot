@@ -1,5 +1,5 @@
 import { CommandInteraction, MessagePayload } from "discord.js";
-import { getRepository, Repository } from "typeorm";
+import { getRepository } from "typeorm";
 import { CustomCommand } from "../entity/CustomCommand.js";
 import { Command } from "./manager/Command.js";
 
@@ -64,15 +64,11 @@ export class GuildCommand extends Command {
 		}];
 	}
 
-	async execute(interaction: CommandInteraction<"cached">): Promise<void> {
+	async execute(interaction: CommandInteraction<"cached">) {
 		const subcommand = interaction.options.getSubcommand();
-		const customCommandRepo = getRepository(CustomCommand);
 
 		if (subcommand === Subcommand.list) {
-			return this.listCommands(
-				interaction,
-				customCommandRepo
-			);
+			return this.listCommands(interaction);
 		}
 
 		if (!this.hasPermissions(interaction)) {
@@ -85,27 +81,17 @@ export class GuildCommand extends Command {
 			});
 		}
 
-		switch (subcommand) {
-		case Subcommand.add:
-			return this.addCommand(
-				interaction,
-				customCommandRepo
-			);
-		case Subcommand.remove:
-			return this.removeCommand(
-				interaction,
-				customCommandRepo
-			);
+		if (subcommand === Subcommand.add) {
+			return this.addCommand(interaction);
+		} else if (subcommand === Subcommand.remove) {
+			return this.removeCommand(interaction);
 		}
 
 		throw Error(`Unexpected subcommand ${subcommand}`);
 	}
 
-	async listCommands(
-		interaction: CommandInteraction<"cached">,
-		customCommandRepo: Repository<CustomCommand>
-	): Promise<void> {
-		const commands = await customCommandRepo.find();
+	async listCommands(interaction: CommandInteraction<"cached">) {
+		const commands = await getRepository(CustomCommand).find();
 		if (commands.length === 0) {
 			return interaction.reply({
 				embeds: [{
@@ -194,10 +180,7 @@ export class GuildCommand extends Command {
 		await interaction.editReply(showList(currentIndex));
 	}
 
-	async addCommand(
-		interaction: CommandInteraction<"cached">,
-		customCommandRepo: Repository<CustomCommand>
-	): Promise<void> {
+	async addCommand(interaction: CommandInteraction<"cached">) {
 		const name = interaction.options.getString(Params.name, true);
 		const inlineResponse =
 			interaction.options.getString(Params.response, true);
@@ -223,7 +206,7 @@ export class GuildCommand extends Command {
 		}
 
 		// TODO ask for confirmation when command already exists
-		await customCommandRepo.save(new CustomCommand(
+		await getRepository(CustomCommand).save(new CustomCommand(
 			interaction.guildId,
 			name,
 			response,
@@ -253,16 +236,15 @@ export class GuildCommand extends Command {
 		});
 	}
 
-	async removeCommand(
-		interaction: CommandInteraction<"cached">,
-		customCommandRepo: Repository<CustomCommand>
-	): Promise<void> {
+	async removeCommand(interaction: CommandInteraction<"cached">) {
 		const name = interaction.options.getString(Params.name, true);
 
-		const command = await customCommandRepo.findOne(new CustomCommand(
-			interaction.guildId,
-			name
-		));
+		const command = await getRepository(CustomCommand).findOne(
+			new CustomCommand(
+				interaction.guildId,
+				name
+			)
+		);
 
 		if (!command) {
 			return interaction.reply({
@@ -275,7 +257,7 @@ export class GuildCommand extends Command {
 			});
 		}
 
-		await customCommandRepo.remove(command);
+		await getRepository(CustomCommand).remove(command);
 
 		return interaction.reply({
 			embeds: [{
