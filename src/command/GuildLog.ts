@@ -1,6 +1,6 @@
-import { CommandInteraction, GuildBasedChannel } from "discord.js";
-import { getRepository, Repository } from "typeorm";
-import { ChannelLog } from "../entity/ChannelLog.js";
+import { CommandInteraction } from "discord.js";
+import { getRepository } from "typeorm";
+import { ChannelLog, logType } from "../entity/ChannelLog.js";
 import { IgnoredChannel } from "../entity/IgnoredChannel.js";
 import { Command } from "./manager/Command.js";
 
@@ -108,100 +108,64 @@ export class GuildLog extends Command {
 		}
 
 		const subcommand = interaction.options.getSubcommand();
-		const channelLogRepo = getRepository(ChannelLog);
-
+		// List logs
 		if (subcommand === Subcommand.list) {
-			return this.listLogs(
-				interaction,
-				channelLogRepo
-			);
+			return this.listLogs(interaction);
 		}
-
+		// Ignore or watch a channel for logs
 		if (subcommand === Subcommand.ignore) {
 			return this.ignoreLogs(interaction);
 		}
 
-		const logtype = interaction.options.getString(Params.logType, true);
+		// The type of log we should enable or disable
+		const paramLogType =
+			interaction.options.getString(Params.logType, true);
 
-		// Choosing the correct subcommand to execute
-		if (subcommand === Subcommand.enable) {
-			const channel = interaction.options.getChannel(
-				Params.channel,
-				true
-			);
-
-			switch (logtype) {
-			case LogType.all:
-				return this.enableAllLog(
-					interaction,
-					channel,
-					channelLogRepo
-				);
-			case LogType.user:
-				return this.enableUserLog(
-					interaction,
-					channel,
-					channelLogRepo
-				);
-			case LogType.deletedMessage:
-				return this.enableDeletedMessageLog(
-					interaction,
-					channel,
-					channelLogRepo
-				);
-			case LogType.updatedMessage:
-				return this.enableUpdatedMessageLog(
-					interaction,
-					channel,
-					channelLogRepo
-				);
+		// Maybe all of them?
+		if (paramLogType === LogType.all) {
+			if (subcommand === Subcommand.enable) {
+				return this.enableAllLog(interaction);
+			} else if (subcommand === Subcommand.disable) {
+				return this.disableAllLog(interaction);
 			}
-		} else if (subcommand === Subcommand.disable) {
-			switch (logtype) {
-			case LogType.all:
-				return this.disableAllLog(
-					interaction,
-					channelLogRepo
-				);
-			case LogType.user:
-				return this.disableUserLog(
-					interaction,
-					channelLogRepo
-				);
-			case LogType.deletedMessage:
-				return this.disableUserLog(
-					interaction,
-					channelLogRepo
-				);
-			case LogType.updatedMessage:
-				return this.disableUpdatedMessageLog(
-					interaction,
-					channelLogRepo
-				);
-			}
+			throw Error(`Subcommand ${subcommand} is not recognized for log type ${paramLogType}`);
 		}
 
-		throw Error(`Unexpected logType ${logtype} or subcommand ${subcommand}`);
+		// Mapping the log type displayed to the user to the one in our DB
+		let logType: logType;
+		switch (paramLogType) {
+		case LogType.user:
+			logType = "userJoinLeave";
+			break;
+		case LogType.deletedMessage:
+			logType = "deletedMessage";
+			break;
+		case LogType.updatedMessage:
+			logType = "updatedMessage";
+			break;
+		default:
+			throw Error(`logType ${paramLogType} is not recognized, don't how which ChannelLog.logType to assign`);
+		}
+
+		// Enabling or disable those logs
+		if (subcommand === Subcommand.enable) {
+			return this.enableLog(interaction, logType);
+		} else if (subcommand === Subcommand.disable) {
+			return this.disableLog(interaction, logType);
+		}
+
+		throw Error(`Unexpected subcommand ${subcommand}`);
 	}
 
-	async listLogs(
-		interaction: CommandInteraction<"cached">,
-		channelLogRepo: Repository<ChannelLog>
-	) {
+	private async listLogs(interaction: CommandInteraction<"cached">) {
+		const repo = getRepository(ChannelLog);
+		const guildId = interaction.guildId;
+
 		// Retrieve all types of log
 		const [userLog, deletedLog, updatedLog] = await Promise.all([
-			channelLogRepo.findOne(new ChannelLog(
-				interaction.guildId,
-				"userJoinLeave"
-			)),
-			channelLogRepo.findOne(new ChannelLog(
-				interaction.guildId,
-				"deletedMessage"
-			)),
-			channelLogRepo.findOne(new ChannelLog(
-				interaction.guildId,
-				"updatedMessage"
-			))
+			repo.findOne(new ChannelLog(guildId, "userJoinLeave")),
+			repo.findOne(new ChannelLog(interaction.guildId, "deletedMessage")),
+			repo.findOne(new ChannelLog(interaction.guildId, "updatedMessage"))
 		]);
 
 		// -- Some function to help build the list --
@@ -231,7 +195,6 @@ export class GuildLog extends Command {
 		// Print a line for a configured log
 		const configured = async (logType: string, channelId: string) => {
 			const channel = await getChannel(channelId);
-
 			return `**${logType}** → ${channel}`;
 		};
 		// Print a line for a type of log
@@ -277,27 +240,14 @@ export class GuildLog extends Command {
 		});
 	}
 
-	async enableAllLog(
-		interaction: CommandInteraction<"cached">,
-		channel: GuildBasedChannel,
-		channelLogRepo: Repository<ChannelLog>
-	) {
-		await Promise.all([
-			channelLogRepo.save(new ChannelLog(
-				interaction.guildId,
-				"userJoinLeave",
-				channel.id
-			)),
-			channelLogRepo.save(new ChannelLog(
-				interaction.guildId,
-				"deletedMessage",
-				channel.id
-			)),
-			channelLogRepo.save(new ChannelLog(
-				interaction.guildId,
-				"updatedMessage",
-				channel.id
-			))
+	private async enableAllLog(interaction: CommandInteraction<"cached">) {
+		const channel = interaction.options.getChannel(Params.channel, true);
+		const repo = getRepository(ChannelLog);
+
+		await repo.save([
+			new ChannelLog(interaction.guildId, "userJoinLeave", channel.id),
+			new ChannelLog(interaction.guildId, "deletedMessage", channel.id),
+			new ChannelLog(interaction.guildId, "updatedMessage", channel.id)
 		]);
 
 		return interaction.reply({
@@ -310,11 +260,8 @@ export class GuildLog extends Command {
 		});
 	}
 
-	async disableAllLog(
-		interaction: CommandInteraction<"cached">,
-		channelLogRepo: Repository<ChannelLog>
-	) {
-		await channelLogRepo.delete({
+	private async disableAllLog(interaction: CommandInteraction<"cached">) {
+		await getRepository(ChannelLog).delete({
 			guildId: interaction.guildId
 		});
 
@@ -328,133 +275,51 @@ export class GuildLog extends Command {
 		});
 	}
 
-	async enableUserLog(
-		interaction: CommandInteraction<"cached">,
-		channel: GuildBasedChannel,
-		channelLogRepo: Repository<ChannelLog>
-	) {
-		channelLogRepo.save(new ChannelLog(
+	private async enableLog(interaction: CommandInteraction<"cached">, logType: logType) {
+		const channel = interaction.options.getChannel(Params.channel, true);
+		const logDescription = this.getLogDescription(logType);
+
+		await getRepository(ChannelLog).save(new ChannelLog(
 			interaction.guildId,
-			"userJoinLeave",
+			logType,
 			channel.id
 		));
 
 		return interaction.reply({
 			embeds: [{
 				title: "Logs activés",
-				description: `Les logs d'arrivés et de départs des membres sont désormais actif sur le channel ${channel}`,
+				description: `Les logs ${logDescription} sont désormais actif sur le channel ${channel}`,
 				color: "GREEN"
 			}],
 			ephemeral: true
 		});
 	}
 
-	async disableUserLog(
-		interaction: CommandInteraction<"cached">,
-		channelLogRepo: Repository<ChannelLog>
-	) {
-		await channelLogRepo.remove(new ChannelLog(
+	private async disableLog(interaction: CommandInteraction<"cached">, channelLogType: logType) {
+		const logDescription = this.getLogDescription(channelLogType);
+
+		await getRepository(ChannelLog).remove(new ChannelLog(
 			interaction.guildId,
-			"userJoinLeave"
+			channelLogType
 		));
 
 		return interaction.reply({
 			embeds: [{
 				title: "Logs désactivés",
-				description: "Les logs d'arrivés et de départs des membres sont désormais inactif",
+				description: `Les logs ${logDescription} sont désormais inactif`,
 				color: "GREEN"
 			}],
 			ephemeral: true
 		});
 	}
 
-	async enableDeletedMessageLog(
-		interaction: CommandInteraction<"cached">,
-		channel: GuildBasedChannel,
-		channelLogRepo: Repository<ChannelLog>
-	) {
-		channelLogRepo.save(new ChannelLog(
-			interaction.guildId,
-			"deletedMessage",
-			channel.id
-		));
-
-		return interaction.reply({
-			embeds: [{
-				title: "Logs activés",
-				description: `Les logs des messages supprimés sont désormais actif sur le channel ${channel}`,
-				color: "GREEN"
-			}],
-			ephemeral: true
-		});
-	}
-
-	async disableDeletedMessageLog(
-		interaction: CommandInteraction<"cached">,
-		channelLogRepo: Repository<ChannelLog>
-	) {
-		await channelLogRepo.remove(new ChannelLog(
-			interaction.guildId,
-			"deletedMessage"
-		));
-
-		return interaction.reply({
-			embeds: [{
-				title: "Logs desactivés",
-				description: "Les logs des messages supprimés sont désormais inactif",
-				color: "GREEN"
-			}],
-			ephemeral: true
-		});
-	}
-
-	async enableUpdatedMessageLog(
-		interaction: CommandInteraction<"cached">,
-		channel: GuildBasedChannel,
-		channelLogRepo: Repository<ChannelLog>
-	) {
-		channelLogRepo.save(new ChannelLog(
-			interaction.guildId,
-			"updatedMessage",
-			channel.id
-		));
-
-		return interaction.reply({
-			embeds: [{
-				title: "Logs activés",
-				description: `Les logs des messages modifiés sont désormais actif sur le channel ${channel}`,
-				color: "GREEN"
-			}],
-			ephemeral: true
-		});
-	}
-
-	async disableUpdatedMessageLog(
-		interaction: CommandInteraction<"cached">,
-		channelLogRepo: Repository<ChannelLog>
-	) {
-		await channelLogRepo.remove(new ChannelLog(
-			interaction.guildId,
-			"updatedMessage"
-		));
-
-		return interaction.reply({
-			embeds: [{
-				title: "Logs desactivés",
-				description: "Les logs des messages modifiés sont désormais inactif",
-				color: "GREEN"
-			}],
-			ephemeral: true
-		});
-	}
-
-	async ignoreLogs(interaction: CommandInteraction<"cached">) {
+	private async ignoreLogs(interaction: CommandInteraction<"cached">) {
 		const ignored = interaction.options.getBoolean(Params.ignored, true);
 		const channel = interaction.options.getChannel(Params.channel, true);
-		const ignoredChannelRepo = getRepository(IgnoredChannel);
+		const repo = getRepository(IgnoredChannel);
 
 		if (!ignored) {
-			await ignoredChannelRepo.remove(new IgnoredChannel(
+			await repo.remove(new IgnoredChannel(
 				interaction.guildId,
 				channel.id
 			));
@@ -469,7 +334,7 @@ export class GuildLog extends Command {
 			});
 		}
 
-		await ignoredChannelRepo.save(new IgnoredChannel(
+		await repo.save(new IgnoredChannel(
 			interaction.guildId,
 			channel.id
 		));
@@ -482,5 +347,18 @@ export class GuildLog extends Command {
 			}],
 			ephemeral: true
 		});
+	}
+
+	private getLogDescription(logType: logType) {
+		switch (logType) {
+		case "userJoinLeave":
+			return "d'arrivés et de départs des membres";
+		case "deletedMessage":
+			return "des messages supprimés";
+		case "updatedMessage":
+			return "des messages modifiés";
+		default:
+			return `de type ${logType}`;
+		}
 	}
 }
