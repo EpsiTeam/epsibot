@@ -7,6 +7,7 @@ import { botInvited, botRemoved } from "./events/bot-join-left.js";
 import { executeCustomCommand } from "./events/execute-custom-command.js";
 import { addAutorole } from "./events/add-autorole.js";
 import { executeCustomEmbedCommand } from "./events/execute-custom-embed-command.js";
+import { botRoleUpdated, botUpdated } from "./events/bot-check-admin.js";
 
 /**
  * Will subscribe a bot to some Discord events
@@ -50,6 +51,10 @@ export function subscribeDiscordEvents(client: Client): void {
 
 		// Adding the autorole
 		client.on("guildMemberAdd", addAutorole);
+
+		client.on("guildMemberUpdate", botUpdated);
+
+		client.on("roleUpdate", botRoleUpdated);
 
 		console.log("Epsibot fully ready");
 	});

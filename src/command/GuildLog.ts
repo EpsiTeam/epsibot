@@ -180,7 +180,7 @@ export class GuildLog extends Command {
 			} catch (err) {
 				// This is a special case where we're sure
 				// the channel has been deleted
-				if (err?.code === 10003) {
+				if (err?.code === 10003) { // Unknown channel
 					// Better clean our DB
 					await getRepository(IgnoredChannel).remove(
 						new IgnoredChannel(interaction.guildId, channelId)

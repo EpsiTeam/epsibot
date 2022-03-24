@@ -1,4 +1,4 @@
-import { Client, Guild } from "discord.js";
+import { Client } from "discord.js";
 import { CommandManager } from "../command/manager/CommandManager.js";
 
 /**
@@ -9,16 +9,23 @@ import { CommandManager } from "../command/manager/CommandManager.js";
 export async function registerCommands(client: Client) {
 	console.log("Logged to Discord");
 
-	// Fetching all guilds
-	const partialGuilds = await client.guilds.fetch();
-	const promisesGuilds: Promise<Guild>[] = [];
-	for (const partialGuild of partialGuilds.values()) {
-		promisesGuilds.push(
-			partialGuild.fetch()
-		);
-	}
-	const guilds = await Promise.all(promisesGuilds);
-	console.log(`Connected on ${guilds.length} guilds, all in cache`);
+	const allGuilds = client.guilds.cache;
+	console.log(`Connected on ${allGuilds.size} guilds`);
+
+	// Check admin perm
+	const notAdminGuilds = allGuilds.filter(guild => !guild.me?.permissions.has("ADMINISTRATOR"));
+	// Leave if not admin
+	notAdminGuilds.each(async guild => {
+		try {
+			console.log(`No admin perm in guild ${guild.name} [${guild.id}], leaving it`);
+			await guild.leave();
+		} catch (err) {
+			console.error(`Failed to leave guild ${guild.name} [${guild.id}]: ${err.stack}`);
+		}
+	});
+
+	const guilds = Array.from(allGuilds.filter(guild => guild.me?.permissions.has("ADMINISTRATOR") ?? false).values());
+	console.log(`Registering commands on ${guilds.length} guilds`);
 
 	const commandManager = new CommandManager();
 	try {
@@ -26,7 +33,7 @@ export async function registerCommands(client: Client) {
 	} catch (err) {
 		throw Error(`Impossible to register slash commands: ${err}`);
 	}
-	console.log(`Registered ${commandManager.commands.size} commands`);
+	console.log(`Registered ${commandManager.commands.size} commands on each guild`);
 
 	return commandManager;
 }
