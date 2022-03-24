@@ -3,6 +3,7 @@ import { GuildCommand } from "../GuildCommand.js";
 import { GuildLog } from "../GuildLog.js";
 import { Test } from "../Test.js";
 import { GuildAutoRole } from "../GuildAutoRole.js";
+import { GuildEmbedCommand } from "../GuildEmbedCommand.js";
 
 /**
  * CommandManager will read this list to create all commands,
@@ -14,6 +15,7 @@ export function instanciateCommands(): Command[] {
 		new Test(),
 		new GuildLog(),
 		new GuildCommand(),
+		new GuildEmbedCommand(),
 		new GuildAutoRole()
 	];
 }

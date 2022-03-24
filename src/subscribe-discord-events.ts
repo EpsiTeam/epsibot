@@ -6,6 +6,7 @@ import { logMessageDelete, logMessageUpdate } from "./events/log-message.js";
 import { botInvited, botRemoved } from "./events/bot-join-left.js";
 import { executeCustomCommand } from "./events/execute-custom-command.js";
 import { addAutorole } from "./events/add-autorole.js";
+import { executeCustomEmbedCommand } from "./events/execute-custom-embed-command.js";
 
 /**
  * Will subscribe a bot to some Discord events
@@ -43,6 +44,9 @@ export function subscribeDiscordEvents(client: Client): void {
 
 		// A new message has been written, maybe a custom command?
 		client.on("messageCreate", executeCustomCommand);
+
+		// A new message has been written, maybe a custom command?
+		client.on("messageCreate", executeCustomEmbedCommand);
 
 		// Adding the autorole
 		client.on("guildMemberAdd", addAutorole);
