@@ -8,6 +8,7 @@ import { executeCustomCommand } from "./events/execute-custom-command.js";
 import { addAutorole } from "./events/add-autorole.js";
 import { executeCustomEmbedCommand } from "./events/execute-custom-embed-command.js";
 import { botRoleUpdated, botUpdated } from "./events/bot-check-admin.js";
+import { channelDeleted } from "./events/channel-deleted.js";
 
 /**
  * Will subscribe a bot to some Discord events
@@ -18,43 +19,43 @@ export function subscribeDiscordEvents(client: Client): void {
 	client.once("ready", async (client) => {
 		const commandManager = await registerCommands(client);
 
-		// Someone used a slash command
-		client.on("interactionCreate", async (interaction) => {
-			await executeCommand(commandManager, interaction);
-		});
-
-		// Log a new member on guild
-		client.on("guildMemberAdd", logMemberJoined);
-
-		// Log a member that left a guild
-		client.on("guildMemberRemove", logMemberLeft);
-
-		// Log a deleted message
-		client.on("messageDelete", logMessageDelete);
-
-		// Log an updated message
-		client.on("messageUpdate", logMessageUpdate);
-
+		/* ------------------ EPSIBOT LIFECYCLE ------------------ */
 		// Epsibot has been invited to a new guild
 		client.on("guildCreate", async guild => {
 			await botInvited(commandManager, guild);
 		});
-
 		// Epsibot has been removed from a guild
 		client.on("guildDelete", botRemoved);
+		// Checking that the bot is still admin after updating him
+		client.on("guildMemberUpdate", botUpdated);
+		// Checking that the bot is still admin after updating any role
+		client.on("roleUpdate", botRoleUpdated);
+		// Cleaning some DB if a channel is delete
+		client.on("channelDelete", channelDeleted);
 
+		/* ------------------- LOGS IN CHANNEL ------------------- */
+		// Log a new member on guild
+		client.on("guildMemberAdd", logMemberJoined);
+		// Log a member that left a guild
+		client.on("guildMemberRemove", logMemberLeft);
+		// Log a deleted message
+		client.on("messageDelete", logMessageDelete);
+		// Log an updated message
+		client.on("messageUpdate", logMessageUpdate);
+
+		/* ------------------- CUSTOM COMMANDS ------------------- */
 		// A new message has been written, maybe a custom command?
 		client.on("messageCreate", executeCustomCommand);
-
-		// A new message has been written, maybe a custom command?
+		// A new message has been written, maybe a custom embed command?
 		client.on("messageCreate", executeCustomEmbedCommand);
 
+		/* ------------------------ OTHER ------------------------ */
+		// Someone used a slash command
+		client.on("interactionCreate", async (interaction) => {
+			await executeCommand(commandManager, interaction);
+		});
 		// Adding the autorole
 		client.on("guildMemberAdd", addAutorole);
-
-		client.on("guildMemberUpdate", botUpdated);
-
-		client.on("roleUpdate", botRoleUpdated);
 
 		console.log("Epsibot fully ready");
 	});
