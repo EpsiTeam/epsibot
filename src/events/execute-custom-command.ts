@@ -17,8 +17,7 @@ export async function executeCustomCommand(message: Message) {
 	const lowercase = message.content.toLowerCase();
 
 	// Retrieving all custom commands for this guild
-	const customCommandRepo = getRepository(CustomCommand);
-	const customCommands = await customCommandRepo.find({
+	const customCommands = await getRepository(CustomCommand).find({
 		where: {
 			guildId: message.guild.id
 		}

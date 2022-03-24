@@ -10,8 +10,17 @@ export async function botInvited(
 	commandManager: CommandManager,
 	guild: Guild
 ) {
+	if (!guild.me) {
+		console.error(`Epsibot has been invited to guild ${guild.name} [${guild.id}], but guild.me is not defined`);
+		return;
+	}
+	if (!guild.me.permissions.has("ADMINISTRATOR")) {
+		console.error(`Epsibot has been invited to guild ${guild.name} [${guild.id}] without admin permissions, leaving guild`);
+		return guild.leave();
+	}
+
 	console.log(`Epsibot invited to new guild ${guild.name} [${guild.id}], registerings commands on it`);
-	await commandManager.registerCommands([guild]);
+	return commandManager.registerCommands([guild]);
 }
 
 export async function botRemoved(guild: Guild) {
