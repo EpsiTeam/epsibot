@@ -13,7 +13,9 @@ export async function registerCommands(client: Client) {
 	console.log(`Connected on ${allGuilds.size} guilds`);
 
 	// Check admin perm
-	const notAdminGuilds = allGuilds.filter(guild => !guild.me?.permissions.has("ADMINISTRATOR"));
+	const [adminGuilds, notAdminGuilds] =
+		allGuilds.partition(guild => guild.me?.permissions.has("ADMINISTRATOR") ?? false);
+
 	// Leave if not admin
 	notAdminGuilds.each(async guild => {
 		try {
@@ -24,7 +26,7 @@ export async function registerCommands(client: Client) {
 		}
 	});
 
-	const guilds = Array.from(allGuilds.filter(guild => guild.me?.permissions.has("ADMINISTRATOR") ?? false).values());
+	const guilds = Array.from(adminGuilds.values());
 	console.log(`Registering commands on ${guilds.length} guilds`);
 
 	const commandManager = new CommandManager();
