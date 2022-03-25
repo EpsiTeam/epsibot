@@ -10,6 +10,8 @@ import { executeCustomEmbedCommand } from "./events/execute-custom-embed-command
 import { botRoleUpdated, botUpdated } from "./events/bot-check-admin.js";
 import { channelDeleted } from "./events/channel-deleted.js";
 
+const errorHandler = (err: unknown) => console.log(err);
+
 /**
  * Will subscribe a bot to some Discord events
  * @param client The bot that will listen to events
@@ -35,13 +37,13 @@ export function subscribeDiscordEvents(client: Client): void {
 
 		/* ------------------- LOGS IN CHANNEL ------------------- */
 		// Log a new member on guild
-		client.on("guildMemberAdd", logMemberJoined);
+		client.on("guildMemberAdd", member => logMemberJoined(member).catch(errorHandler));
 		// Log a member that left a guild
-		client.on("guildMemberRemove", logMemberLeft);
+		client.on("guildMemberRemove", member => logMemberLeft(member).catch(errorHandler));
 		// Log a deleted message
-		client.on("messageDelete", logMessageDelete);
+		client.on("messageDelete", message => logMessageDelete(message).catch(errorHandler));
 		// Log an updated message
-		client.on("messageUpdate", logMessageUpdate);
+		client.on("messageUpdate", (oldMsg, newMsg) => logMessageUpdate(oldMsg, newMsg).catch(errorHandler));
 
 		/* ------------------- CUSTOM COMMANDS ------------------- */
 		// A new message has been written, maybe a custom command?

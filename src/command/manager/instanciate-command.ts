@@ -1,7 +1,6 @@
 import { Command } from "./Command.js";
 import { GuildCommand } from "../GuildCommand.js";
 import { GuildLog } from "../GuildLog.js";
-import { Test } from "../Test.js";
 import { GuildAutoRole } from "../GuildAutoRole.js";
 import { GuildEmbedCommand } from "../GuildEmbedCommand.js";
 import { Purge } from "../Purge.js";
@@ -13,7 +12,6 @@ import { Purge } from "../Purge.js";
  */
 export function instanciateCommands(): Command[] {
 	return [
-		new Test(),
 		new GuildLog(),
 		new GuildCommand(),
 		new GuildEmbedCommand(),

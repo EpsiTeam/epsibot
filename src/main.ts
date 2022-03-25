@@ -38,6 +38,6 @@ checkStartup();
 		console.log("Logging in to Discord...");
 		await client.login(process.env.DISCORD_TOKEN);
 	} catch (err) {
-		throw Error(`Failed to log to Discord: ${err}`);
+		throw Error(`Failed to log to Discord: ${err.stack}`);
 	}
 })();

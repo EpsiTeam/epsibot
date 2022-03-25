@@ -49,7 +49,7 @@ export class CustomEmbedCommand {
 		description: string;
 
 	@Column()
-		image: string;
+		image?: string;
 
 	@Column()
 		color: number;
