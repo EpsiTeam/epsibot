@@ -1,0 +1,18 @@
+{
+	"type": "better-sqlite3",
+	"database": "data.db",
+	"entities": [
+		"built/entity/ChannelLog.js",
+		"built/entity/CustomCommand.js",
+		"built/entity/CustomEmbedCommand.js",
+		"built/entity/AutoRole.js",
+		"built/entity/IgnoredChannel.js"
+	],
+	"migrations": [
+		"built/migration/*.js"
+	],
+	"cli": {
+		"entitiesDir": "src/entity",
+		"migrationsDir": "src/migration"
+	}
+}

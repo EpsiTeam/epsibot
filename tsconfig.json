@@ -1,15 +1,26 @@
 {
 	"compilerOptions": {
+		// Folder where the .js will be created
 		"outDir": "./built",
-		"target": "ES2020",
-		"module": "CommonJS",
+		// Options for the compiler (we compile for node)
+		"lib": ["ES2021"],
+		"target": "ES2021",
+		"module": "ES2020",
+		"moduleResolution": "node",
+		"allowSyntheticDefaultImports": true,
+		// Options for TS checks (we want clean TS)
 		"noImplicitReturns": true,
 		"noImplicitAny": true,
 		"noImplicitThis": true,
 		"strictNullChecks": true,
-		"esModuleInterop": true,
+		//"esModuleInterop": true,
+		// TS will produce sourceMap, to know the mapping between js and ts files
 		"sourceMap": true,
-		"resolveJsonModule": true
+		// Enabling the importing of JSON
+		"resolveJsonModule": true,
+		// Needed for the ORM
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true
 	},
 	"include": ["./src/**/*"]
 }
