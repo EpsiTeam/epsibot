@@ -89,7 +89,7 @@ export async function logMessageUpdate(
 	await channel.send({
 		embeds: [{
 			title: `Message de ${author.tag} modifié`,
-			description: `Un message de ${newMsg.member} a été modifié dans ${newMsg.channel}, l'ancien message était:\n${oldMsg.content}`,
+			description: `Un message de ${newMsg.member} a été modifié dans ${newMsg.channel}\n[Voir le message modifié](${newMsg.url})\n__Ancien message:__\n${oldMsg.content}`,
 			footer: {
 				iconURL: author.displayAvatarURL(),
 				text: `Message original crée le ${creationDate}`
