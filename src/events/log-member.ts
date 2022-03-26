@@ -3,6 +3,7 @@ import fr from "../../node_modules/date-fns/locale/fr/index.js";
 import { GuildMember, PartialGuildMember } from "discord.js";
 import { getRepository } from "typeorm";
 import { ChannelLog } from "../entity/ChannelLog.js";
+import { Logger } from "../utils/logger/Logger.js";
 
 /**
  * Log a new member on guild
@@ -10,7 +11,7 @@ import { ChannelLog } from "../entity/ChannelLog.js";
 export async function logMemberJoined(member: GuildMember) {
 	const guild = member.guild;
 
-	console.log(`User ${member.user.tag} [${member.id}] joined guild ${guild.name} [${guild.id}]`);
+	Logger.info("Joined guild", guild, member.user);
 
 	const repo = getRepository(ChannelLog);
 
@@ -47,7 +48,7 @@ export async function logMemberLeft(member: GuildMember | PartialGuildMember) {
 
 	const guild = member.guild;
 
-	console.log(`User ${member.user.tag} [${member.id}] left guild ${guild.name} [${guild.id}]`);
+	Logger.info("Left guild", guild, member.user);
 
 	const repo = getRepository(ChannelLog);
 

@@ -3,6 +3,7 @@ import { Message, PartialMessage } from "discord.js";
 import { getRepository } from "typeorm";
 import { ChannelLog } from "../entity/ChannelLog.js";
 import { IgnoredChannel } from "../entity/IgnoredChannel.js";
+import { Logger } from "../utils/logger/Logger.js";
 
 /**
  * Log a deleted message
@@ -12,7 +13,7 @@ export async function logMessageDelete(message: Message | PartialMessage) {
 	if (!guild || !message.author) return;
 	if (message.author.bot) return;
 
-	console.log(`Message deleted in guild ${guild.name} [${guild.id}] for user ${message.author.tag} [${message.author.id}]`);
+	Logger.debug("Message deleted", guild, message.author);
 
 	// Retrieve the channel where we should log this
 	const channelLog = await getRepository(ChannelLog).findOne(
@@ -29,7 +30,7 @@ export async function logMessageDelete(message: Message | PartialMessage) {
 	// Retrieve the Discord channel
 	const channel = await guild.channels.fetch(channelLog.channelId);
 	if (!channel || !channel.isText()) {
-		console.error(`Impossible to send logs on channel ${channel}, maybe it has been deleted or modified`);
+		Logger.error(`Impossible to send logs on channel ${channelLog.channelId}, maybe it has been deleted or modified`, guild, message.author);
 		return;
 	}
 
@@ -63,7 +64,7 @@ export async function logMessageUpdate(
 	if (!guild || !author) return;
 	if (author.bot) return;
 
-	console.log(`Message updated in guild ${guild.name} [${guild.id}] for user ${author.tag} [${author.id}]`);
+	Logger.debug("Message updated", guild, author);
 
 	// Retrieve the channel where we should log this
 	const channelLog = await getRepository(ChannelLog).findOne(
@@ -80,7 +81,7 @@ export async function logMessageUpdate(
 	// Retrieve the Discord channel
 	const channel = await guild.channels.fetch(channelLog.channelId);
 	if (!channel || !channel.isText()) {
-		console.error(`Impossible to send logs on channel ${channel}, maybe it has been deleted or modified`);
+		Logger.error(`Impossible to send logs on channel ${channelLog.channelId}, maybe it has been deleted or modified`, guild, author);
 		return;
 	}
 

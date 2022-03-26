@@ -56,12 +56,12 @@ export class GuildAutoRole extends Command {
 		const autoroleRepo = getRepository(AutoRole);
 
 		switch (subcommand) {
-		case Subcommand.info:
-			return this.showInfo(interaction, autoroleRepo);
-		case Subcommand.enable:
-			return this.enableAutorole(interaction, autoroleRepo);
-		case Subcommand.disable:
-			return this.disableAutorole(interaction, autoroleRepo);
+			case Subcommand.info:
+				return this.showInfo(interaction, autoroleRepo);
+			case Subcommand.enable:
+				return this.enableAutorole(interaction, autoroleRepo);
+			case Subcommand.disable:
+				return this.disableAutorole(interaction, autoroleRepo);
 		}
 
 		throw Error(`Unexpected subcommand ${subcommand}`);

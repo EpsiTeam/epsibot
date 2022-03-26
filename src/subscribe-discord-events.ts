@@ -9,8 +9,9 @@ import { addAutorole } from "./events/add-autorole.js";
 import { executeCustomEmbedCommand } from "./events/execute-custom-embed-command.js";
 import { botRoleUpdated, botUpdated } from "./events/bot-check-admin.js";
 import { channelDeleted } from "./events/channel-deleted.js";
+import { Logger } from "./utils/logger/Logger.js";
 
-const errorHandler = (err: unknown) => console.log(err);
+const errorHandler = (err: Error) => Logger.error(err.stack ?? err.message);
 
 /**
  * Will subscribe a bot to some Discord events
@@ -37,13 +38,26 @@ export function subscribeDiscordEvents(client: Client): void {
 
 		/* ------------------- LOGS IN CHANNEL ------------------- */
 		// Log a new member on guild
-		client.on("guildMemberAdd", member => logMemberJoined(member).catch(errorHandler));
+		client.on(
+			"guildMemberAdd",
+			member => logMemberJoined(member).catch(errorHandler)
+		);
 		// Log a member that left a guild
-		client.on("guildMemberRemove", member => logMemberLeft(member).catch(errorHandler));
+		client.on(
+			"guildMemberRemove",
+			member => logMemberLeft(member).catch(errorHandler)
+		);
 		// Log a deleted message
-		client.on("messageDelete", message => logMessageDelete(message).catch(errorHandler));
+		client.on(
+			"messageDelete",
+			message => logMessageDelete(message).catch(errorHandler)
+		);
 		// Log an updated message
-		client.on("messageUpdate", (oldMsg, newMsg) => logMessageUpdate(oldMsg, newMsg).catch(errorHandler));
+		client.on(
+			"messageUpdate",
+			(oldMsg, newMsg) =>
+				logMessageUpdate(oldMsg, newMsg).catch(errorHandler)
+		);
 
 		/* ------------------- CUSTOM COMMANDS ------------------- */
 		// A new message has been written, maybe a custom command?
@@ -59,6 +73,6 @@ export function subscribeDiscordEvents(client: Client): void {
 		// Adding the autorole
 		client.on("guildMemberAdd", addAutorole);
 
-		console.log("Epsibot fully ready");
+		Logger.done("Epsibot fully ready");
 	});
 }

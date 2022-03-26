@@ -1,7 +1,8 @@
 import { Message } from "discord.js";
 import { getRepository } from "typeorm";
 import { CustomCommand } from "../entity/CustomCommand.js";
-import { fillArguments } from "../custom-command/command-argument.js";
+import { fillArguments } from "../utils/custom-command/command-argument.js";
+import { Logger } from "../utils/logger/Logger.js";
 
 /**
  * Will check if a custom command should be executed on a message,
@@ -57,9 +58,12 @@ export async function executeCustomCommand(message: Message) {
 		})
 	);
 
+	const logger = Logger.contextualize(message.guild, message.member.user);
+
 	try {
 		await Promise.all([messagePromises]);
+		logger.debug(`Executed custom command '${choosenCommand.name}'`);
 	} catch (err) {
-		console.error(`Error while executing custom command ${choosenCommand.name}: ${err.stack}`);
+		logger.error(`Error on custom command '${choosenCommand.name}': ${err.stack}`);
 	}
 }

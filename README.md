@@ -33,6 +33,6 @@ For example, try running `npm run about:start`.
 
 Name			|	Type		|	Example value				|	Description
 ---				|	---			|	---							|	---
-`PRODUCTION`	|	boolean		|	false						|	Not used for now
+`PRODUCTION`	|	boolean		|	false						|	Will change the colors of logs
 `DISCORD_TOKEN`	|	string		|	s0m3-s3cr37					|	The Discord token, get it from the [developer portal](https://discord.com/developers/applications) by creating an application
 `OWNERS`		|	string[]	|	"discord_id1,discord_id2"	|	The owners of the bot, will be able to use some special commands

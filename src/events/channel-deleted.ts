@@ -2,22 +2,25 @@ import { DMChannel, NonThreadGuildBasedChannel } from "discord.js";
 import { getRepository } from "typeorm";
 import { ChannelLog } from "../entity/ChannelLog.js";
 import { IgnoredChannel } from "../entity/IgnoredChannel.js";
+import { Logger } from "../utils/logger/Logger.js";
 
 export async function channelDeleted(
-	chanel: DMChannel | NonThreadGuildBasedChannel
+	channel: DMChannel | NonThreadGuildBasedChannel
 ) {
+	if (channel instanceof DMChannel) return;
+
 	try {
-		console.log(`Channel ${chanel.id} has been deleted, cleaning DB`);
+		Logger.info(`Channel ${channel.name} has been deleted, cleaning DB`, channel.guild);
 
 		await Promise.all([
 			getRepository(ChannelLog).delete({
-				channelId: chanel.id
+				channelId: channel.id
 			}),
 			getRepository(IgnoredChannel).delete({
-				channelId: chanel.id
+				channelId: channel.id
 			})
 		]);
 	} catch (err) {
-		console.error(`Error while cleaning DB: ${err}`);
+		Logger.error(`Error while cleaning DB: ${err}`, channel.guild);
 	}
 }
