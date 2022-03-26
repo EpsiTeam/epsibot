@@ -10,6 +10,7 @@ import { IgnoredChannel } from "../entity/IgnoredChannel.js";
 export async function logMessageDelete(message: Message | PartialMessage) {
 	const guild = message.guild;
 	if (!guild || !message.author) return;
+	if (message.author.bot) return;
 
 	console.log(`Message deleted in guild ${guild.name} [${guild.id}] for user ${message.author.tag} [${message.author.id}]`);
 
@@ -60,6 +61,7 @@ export async function logMessageUpdate(
 	const author = newMsg.author;
 
 	if (!guild || !author) return;
+	if (author.bot) return;
 
 	console.log(`Message updated in guild ${guild.name} [${guild.id}] for user ${author.tag} [${author.id}]`);
 
