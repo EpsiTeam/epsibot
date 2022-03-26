@@ -82,10 +82,10 @@ export class GuildEmbedCommand extends Command {
 		}
 
 		switch (subcommand) {
-		case Subcommand.add:
-			return this.addCommand(interaction);
-		case Subcommand.remove:
-			return this.removeCommand(interaction);
+			case Subcommand.add:
+				return this.addCommand(interaction);
+			case Subcommand.remove:
+				return this.removeCommand(interaction);
 		}
 
 		throw Error(`Unexpected subcommand ${subcommand}`);

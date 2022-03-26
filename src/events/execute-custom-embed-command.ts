@@ -1,6 +1,7 @@
 import { Message } from "discord.js";
 import { getRepository } from "typeorm";
 import { CustomEmbedCommand } from "../entity/CustomEmbedCommand.js";
+import { Logger } from "../utils/logger/Logger.js";
 
 /**
  * Will check if a custom embed command should be executed on a message,
@@ -51,9 +52,12 @@ export async function executeCustomEmbedCommand(message: Message) {
 		})
 	);
 
+	const logger = Logger.contextualize(message.guild, message.member.user);
+
 	try {
 		await Promise.all([messagePromises]);
+		logger.debug(`Executed custom command '${choosenCommand.name}'`);
 	} catch (err) {
-		console.error(`Error while executing custom embed command ${choosenCommand.name}: ${err.stack}`);
+		logger.error(`Error while executing custom embed command ${choosenCommand.name}: ${err.stack}`);
 	}
 }

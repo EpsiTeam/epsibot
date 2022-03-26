@@ -1,49 +1,35 @@
 import { Guild } from "discord.js";
 import { CommandManager } from "../command/manager/CommandManager.js";
+import { Logger } from "../utils/logger/Logger.js";
 
 export async function botInvited(
 	commandManager: CommandManager,
 	guild: Guild
 ) {
+	const logger = Logger.contextualize(guild);
 	if (!guild.me) {
-		console.error(`Epsibot has been invited to guild ${guild.name} [${guild.id}], but guild.me is not defined`);
+		logger.error("Epsibot has been invited, but guild.me is not defined");
 		return;
 	}
 	if (!guild.me.permissions.has("ADMINISTRATOR")) {
-		console.error(`Epsibot has been invited to guild ${guild.name} [${guild.id}] without admin permissions, leaving guild`);
+		logger.error("Epsibot has been invited without admin permissions, leaving guild...");
 		try {
 			return guild.leave();
 		} catch (err) {
-			console.error(`Failed to leave guild ${guild.name} [${guild.id}]: ${err.stack}`);
+			logger.error(`Failed to leave guild: ${err.stack}`);
 			return;
 		}
 	}
 
-	console.log(`Epsibot invited to new guild ${guild.name} [${guild.id}], registerings commands on it`);
+	logger.info("Epsibot invited to new guild, registerings commands on it");
 	try {
 		return commandManager.registerCommands([guild]);
 	} catch (err) {
-		console.error(`Failed to register commands: ${err.stack}`);
+		logger.error(`Failed to register commands: ${err.stack}`);
 		return;
 	}
 }
 
 export async function botRemoved(guild: Guild) {
-	console.log(`Epsibot removed from guild ${guild.name} [${guild.id}]`);
-
-	/* Not cleaning DB, in case Epsibot is reinvited after */
-	// await Promise.all([
-	// 	getRepository(ChannelLog).delete({
-	// 		guildId: guild.id
-	// 	}),
-	// 	getRepository(CustomCommand).delete({
-	// 		guildId: guild.id
-	// 	}),
-	// 	getRepository(AutoRole).delete({
-	// 		guildId: guild.id
-	// 	}),
-	// 	getRepository(IgnoredChannel).delete({
-	// 		guildId: guild.id
-	// 	})
-	// ]);
+	Logger.warn("Epsibot removed from guild", guild);
 }

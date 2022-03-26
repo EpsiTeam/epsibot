@@ -4,6 +4,7 @@ import { checkStartup } from "./check-startup.js";
 import { Client, Intents } from "discord.js";
 import { createConnection } from "typeorm";
 import { subscribeDiscordEvents } from "./subscribe-discord-events.js";
+import { Logger } from "./utils/logger/Logger.js";
 
 // Stopping node if there is unexpected config
 checkStartup();
@@ -13,7 +14,7 @@ checkStartup();
 (async () => {
 	try {
 		await createConnection();
-		console.log("DB connection created");
+		Logger.info("DB connection created");
 	} catch (err) {
 		throw Error(`Failed to create DB connection: ${err}`);
 	}
@@ -35,7 +36,7 @@ checkStartup();
 	subscribeDiscordEvents(client);
 
 	try {
-		console.log("Logging in to Discord...");
+		Logger.debug("Logging in to Discord...");
 		await client.login(process.env.DISCORD_TOKEN);
 	} catch (err) {
 		throw Error(`Failed to log to Discord: ${err.stack}`);

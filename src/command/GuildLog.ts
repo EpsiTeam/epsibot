@@ -134,17 +134,17 @@ export class GuildLog extends Command {
 		// Mapping the log type displayed to the user to the one in our DB
 		let logType: logType;
 		switch (paramLogType) {
-		case LogType.user:
-			logType = "userJoinLeave";
-			break;
-		case LogType.deletedMessage:
-			logType = "deletedMessage";
-			break;
-		case LogType.updatedMessage:
-			logType = "updatedMessage";
-			break;
-		default:
-			throw Error(`logType ${paramLogType} is not recognized, don't how which ChannelLog.logType to assign`);
+			case LogType.user:
+				logType = "userJoinLeave";
+				break;
+			case LogType.deletedMessage:
+				logType = "deletedMessage";
+				break;
+			case LogType.updatedMessage:
+				logType = "updatedMessage";
+				break;
+			default:
+				throw Error(`logType ${paramLogType} is not recognized, don't how which ChannelLog.logType to assign`);
 		}
 
 		// Enabling or disable those logs
@@ -351,14 +351,14 @@ export class GuildLog extends Command {
 
 	private getLogDescription(logType: logType) {
 		switch (logType) {
-		case "userJoinLeave":
-			return "d'arrivés et de départs des membres";
-		case "deletedMessage":
-			return "des messages supprimés";
-		case "updatedMessage":
-			return "des messages modifiés";
-		default:
-			return `de type ${logType}`;
+			case "userJoinLeave":
+				return "d'arrivés et de départs des membres";
+			case "deletedMessage":
+				return "des messages supprimés";
+			case "updatedMessage":
+				return "des messages modifiés";
+			default:
+				return `de type ${logType}`;
 		}
 	}
 }

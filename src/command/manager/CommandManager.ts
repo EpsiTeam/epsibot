@@ -1,4 +1,5 @@
 import { ApplicationCommandPermissionData, Guild } from "discord.js";
+import { Logger } from "../../utils/logger/Logger.js";
 import { Command } from "./Command.js";
 import { instanciateCommands } from "./instanciate-command.js";
 
@@ -39,7 +40,7 @@ export class CommandManager {
 		// Setting all commands
 		for (const guild of guilds) {
 			if (!guild.me?.permissions.has("ADMINISTRATOR")) {
-				console.error(`Epsibot don't have the ADMINISTRATOR permission on guild ${guild.name}`);
+				Logger.error("Epsibot don't have the ADMINISTRATOR permission", guild);
 			} else {
 				promisesSetCommands.push(
 					guild.commands.set(this.commandList)
