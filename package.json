@@ -1,30 +1,23 @@
 {
 	"name": "epsibot",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"description": "Light discord bot for epsilon needs",
 	"main": "built/index.js",
 	"scripts": {
 		"about:check": "echo 'Check that your code is good by running eslint'",
 		"check": "eslint src/ && echo 'All good, no problem found'",
-
 		"about:build": "echo 'Will compile the .ts files to .js and put them in built/'",
 		"build": "rm -rf built/ && npm run check && tsc && echo 'Build finished'",
-
 		"about:start": "echo 'Will build and start Epsibot'",
 		"start": "npm run build && node --enable-source-maps -r dotenv/config built/main.js",
-
 		"about:clean": "echo 'Clean your directory by deleting build/ and logs/'",
 		"clean": "rm -rf built/ logs/",
-
 		"about:fix": "echo 'Fix everyting it can in your code (like missing semicolons)'",
 		"fix": "eslint --fix src/",
-
 		"about:migrate": "echo 'Will execute all migrations, creating the DB if needed'",
 		"migrate": "typeorm migration:run",
-
 		"about:start:builded": "echo 'Will start Epsibot without rebuilding it'",
 		"start:builded": "node --enable-source-maps -r dotenv/config built/main.js",
-
 		"about:test": "echo 'Will launch all tests'",
 		"test": "echo 'Sorry, there is no tests for now'"
 	},
