@@ -9,7 +9,7 @@
 		"about:build": "echo 'Will compile the .ts files to .js and put them in built/'",
 		"build": "rm -rf built/ && npm run check && tsc && echo 'Build finished'",
 		"about:start": "echo 'Will build and start Epsibot'",
-		"start": "npm run build && node --enable-source-maps -r dotenv/config built/main.js",
+		"start": "npm run build && clear && node --enable-source-maps -r dotenv/config built/main.js",
 		"about:clean": "echo 'Clean your directory by deleting build/ and logs/'",
 		"clean": "rm -rf built/ logs/",
 		"about:fix": "echo 'Fix everyting it can in your code (like missing semicolons)'",
