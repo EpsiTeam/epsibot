@@ -1,8 +1,11 @@
 import { CommandInteraction, MessagePayload } from "discord.js";
 import { getRepository } from "typeorm";
 import { CustomEmbedCommand } from "../../entity/CustomEmbedCommand.js";
+import { Logger } from "../../utils/logger/Logger.js";
 
 export async function list(interaction: CommandInteraction<"cached">) {
+	const logger =
+		Logger.contextualize(interaction.guild, interaction.member.user);
 	const commands = await getRepository(CustomEmbedCommand).find();
 	if (commands.length === 0) {
 		return interaction.reply({
@@ -78,13 +81,29 @@ export async function list(interaction: CommandInteraction<"cached">) {
 			if (currentIndex < 0) currentIndex = commands.length - 1;
 		}
 
-		await click.update(showList(currentIndex));
+		try {
+			await click.update(showList(currentIndex));
+		} catch (err) {
+			if (err.code === 10008) {
+				logger.info("Can't update list because message has been deleted");
+			} else {
+				logger.warn(`Impossible to update list: ${err.stack}`);
+			}
+		}
 	});
 
 	collector.on("end", async () => {
-		await interaction.editReply({
-			components: []
-		});
+		try {
+			await interaction.editReply({
+				components: []
+			});
+		} catch (err) {
+			if (err.code === 10008) {
+				logger.info("Can't end list because message has been deleted");
+			} else {
+				logger.warn(`Impossible to end collector: ${err.stack}`);
+			}
+		}
 	});
 
 	await interaction.editReply(showList(currentIndex));
