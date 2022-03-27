@@ -27,7 +27,6 @@ async function disableAllLog(interaction: CommandInteraction<"cached">) {
 
 	return interaction.reply({
 		embeds: [{
-			title: "Logs désactivés",
 			description: "Tous les logs sont désormais inactif",
 			color: "GREEN"
 		}],
@@ -45,7 +44,6 @@ async function disableLog(interaction: CommandInteraction<"cached">, channelLogT
 
 	return interaction.reply({
 		embeds: [{
-			title: "Logs désactivés",
 			description: `Les logs ${logDescription} sont désormais inactif`,
 			color: "GREEN"
 		}],

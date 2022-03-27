@@ -21,8 +21,7 @@ export async function play(interaction: CommandInteraction<"cached">) {
 	if (user1.id === user2.id) {
 		return interaction.reply({
 			embeds: [{
-				title: "Partie impossible",
-				description: "Vous ne pouvez pas jouer contre vous-même !",
+				description: "Impossible de jouer contre soi-même",
 				color: "RED"
 			}],
 			ephemeral: true
@@ -39,8 +38,7 @@ export async function play(interaction: CommandInteraction<"cached">) {
 
 	await interaction.editReply({
 		embeds: [{
-			title: "Partie de morpion",
-			description: `${user2} défie ${user1} à une partie de morpion\n${user1}, est-ce que tu acceptes le challenge ?`
+			description: `${user2} défie ${user1} à une partie de morpion\nZst-ce que ${user1} accepte le challenge ?`
 		}],
 		components: [{
 			type: "ACTION_ROW",
@@ -64,8 +62,7 @@ export async function play(interaction: CommandInteraction<"cached">) {
 	} catch (err) {
 		return interaction.editReply({
 			embeds: [{
-				title: "Partie refusée",
-				description: `Désolé ${user2}, mais ${user1} n'a pas répondu`,
+				description: `Désolé ${user2}, mais la partie est annulée car ${user1} n'a pas répondu`,
 				color: "RED"
 			}],
 			components: []
@@ -75,8 +72,7 @@ export async function play(interaction: CommandInteraction<"cached">) {
 	if (confirm.customId === ButtonAction.no) {
 		return confirm.update({
 			embeds: [{
-				title: "Partie refusée",
-				description: `Désolé ${user2}, mais ${user1} a refusé de jouer contre toi !`,
+				description: `Désolé ${user2}, mais ${user1} a refusé cette partie`,
 				color: "RED"
 			}],
 			components: []
@@ -99,8 +95,7 @@ export async function play(interaction: CommandInteraction<"cached">) {
 
 		await click.update({
 			embeds: [{
-				title: "Partie de morpion",
-				description: `Au tour de ${player} de jouer !`,
+				description: `Au tour de ${player} de jouer`,
 				color: game.getPlayerColor(player)
 			}],
 			components: game.getComponents(false)
@@ -113,10 +108,10 @@ export async function play(interaction: CommandInteraction<"cached">) {
 		try {
 			game.play(parseInt(x, 10), parseInt(y, 10));
 		} catch (err) {
+			logger.error(`Something went wrong with TicTacToeGame: ${err.stack}`);
 			return click.update({
 				embeds: [{
-					title: "Erreur dans la partie",
-					description: `Désolé, il y a eu une erreur avec la partie, considérons que c'est un match nul entre ${user1} et ${user2} !`,
+					description: `Désolé, il y a eu une erreur avec la partie, considérons que c'est un match nul entre ${user1} et ${user2}`,
 					color: "RED"
 				}],
 				components: []
@@ -129,8 +124,7 @@ export async function play(interaction: CommandInteraction<"cached">) {
 
 	return click.update({
 		embeds: [{
-			title: "Partie terminée",
-			description: `Résultat de la partie entre ${user1} et ${user2}:\n${result}`,
+			description: `Résultat de la partie de morpion entre ${user1} et ${user2}:\n${result}`,
 			color: winner ? game.getPlayerColor(winner) : "YELLOW"
 		}],
 		components: game.getComponents(true)

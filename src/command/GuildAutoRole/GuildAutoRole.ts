@@ -12,7 +12,7 @@ enum Subcommand {
 
 export class GuildAutoRole extends Command {
 	constructor() {
-		super("autorole", "Gère le rôle assigné aux nouveaux membres");
+		super("autorole", "Gère le rôle assigné automatiquement aux nouveaux membres");
 
 		this.needPermissions = ["ADMINISTRATOR"];
 

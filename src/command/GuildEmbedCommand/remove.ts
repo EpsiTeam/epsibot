@@ -18,8 +18,7 @@ export async function remove(interaction: CommandInteraction<"cached">) {
 	if (!command) {
 		return interaction.reply({
 			embeds: [{
-				title: "Commande non existente",
-				description: `La commande custom \`${name}\` n'existe pas`,
+				description: `Commande custom \`${name}\` inexistente, impossible de la supprimer`,
 				color: "RED"
 			}],
 			ephemeral: true
@@ -30,8 +29,7 @@ export async function remove(interaction: CommandInteraction<"cached">) {
 
 	return interaction.reply({
 		embeds: [{
-			title: "Commande supprimée",
-			description: `La commande custom \`${name}\` a été supprimée`,
+			description: `Commande custom \`${name}\` supprimée`,
 			color: "GREEN"
 		}],
 		ephemeral: true

@@ -13,7 +13,7 @@ export async function disable(interaction: CommandInteraction<"cached">) {
 		return interaction.reply({
 			embeds: [{
 				title: "Rôle automatique supprimé",
-				description: "Il n'y avait pas de rôle automatique, mais bon si ça te fait plaisir, il n'y en a toujours pas !",
+				description: "Il n'y avait pas de rôle automatique configuré",
 				color: "YELLOW"
 			}],
 			ephemeral: true
@@ -26,7 +26,7 @@ export async function disable(interaction: CommandInteraction<"cached">) {
 	let message: string;
 
 	if (!role) {
-		message = "Les nouveaux membres n'auront plus de rôle automatique (tant mieux parce que j'ai l'impression que ce rôle n'existe plus)";
+		message = "Les nouveaux membres n'auront plus de rôle automatique";
 	} else {
 		message = `Les nouveaux membres n'auront plus le rôle ${role} automatiquement`;
 	}

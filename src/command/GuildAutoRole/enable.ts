@@ -13,7 +13,7 @@ export async function enable(interaction: CommandInteraction<"cached">) {
 		return interaction.reply({
 			embeds: [{
 				title: "Impossible de configurer le rôle automatique",
-				description: `Ça n'aurait aucun sens d'assigner le rôle ${interaction.guild.roles.everyone} !`,
+				description: `Impossible d'assigner le rôle ${interaction.guild.roles.everyone} à qui que ce soit`,
 				color: "RED"
 			}],
 			ephemeral: true
@@ -24,17 +24,18 @@ export async function enable(interaction: CommandInteraction<"cached">) {
 		throw Error("guild.me is null, no idea why (has the bot been kicked?)");
 	}
 
+	const highestRole = interaction.guild.me.roles.highest;
 	const roleBelowBot: boolean =
 		interaction.guild.roles.comparePositions(
 			role,
-			interaction.guild.me.roles.highest
+			highestRole
 		) < 0;
 
 	if (!roleBelowBot) {
 		return interaction.reply({
 			embeds:[{
 				title: "Impossible de configurer le rôle automatique",
-				description: `Je suis incapable d'assigner le role ${role} à qui que ce soit, car ce rôle est plus haut que moi dans la hiérarchie. Déplacez ce rôle dans les paramètres du serveur si vous voulez que je puisse l'assigner automatiquement !`,
+				description: `Impossible d'assigner le role ${role} à qui que ce soit, car ce rôle est plus que ${highestRole} dans la hiérarchie (mon rôle le plus haut)\nIl faut que l'un de mes rôles soit plus haut que ${role} pour que je puisse l'assigner automatiquement`,
 				color: "RED"
 			}],
 			ephemeral: true
@@ -48,7 +49,7 @@ export async function enable(interaction: CommandInteraction<"cached">) {
 	return interaction.reply({
 		embeds: [{
 			title: "Rôle automatique configuré",
-			description: `Tous les nouveaux membres se verront assigner le rôle ${role}`,
+			description: `Tous les nouveaux membres auront le rôle ${role}`,
 			color: "GREEN"
 		}],
 		ephemeral: true

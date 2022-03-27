@@ -7,9 +7,8 @@ export async function list(interaction: CommandInteraction<"cached">) {
 	if (commands.length === 0) {
 		return interaction.reply({
 			embeds: [{
-				title: "List des commandes custom",
-				description: "Il n'y a aucune commande custom sur ce serveur :o",
-				color: "RED"
+				description: "Il n'y a aucune commande embed custom sur ce serveur\n`/embed_command add` permet de créer une nouvelle commande embed custom",
+				color: "YELLOW"
 			}]
 		});
 	}

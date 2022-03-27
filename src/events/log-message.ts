@@ -38,8 +38,7 @@ export async function logMessageDelete(message: Message | PartialMessage) {
 
 	await channel.send({
 		embeds: [{
-			title: `Message de ${message.author.tag} suprimé`,
-			description: `Un message de ${message.member} a été supprimé dans ${message.channel}:\n${message.content}`,
+			description: `Un message de ${message.member} (${message.author.tag}) a été supprimé dans ${message.channel}:\n\n${message.content}`,
 			footer: {
 				iconURL: message.author.displayAvatarURL(),
 				text: `Message crée le ${creationDate}`
@@ -56,6 +55,7 @@ export async function logMessageUpdate(
 	oldMsg: Message | PartialMessage,
 	newMsg: Message | PartialMessage
 ) {
+	if (!oldMsg.content) return;
 	if (oldMsg.content === newMsg.content) return;
 
 	const guild = newMsg.guild;
@@ -89,8 +89,7 @@ export async function logMessageUpdate(
 
 	await channel.send({
 		embeds: [{
-			title: `Message de ${author.tag} modifié`,
-			description: `Un message de ${newMsg.member} a été modifié dans ${newMsg.channel}\n[Voir le message modifié](${newMsg.url})\n__Ancien message:__\n${oldMsg.content}`,
+			description: `Un message de ${newMsg.member} (${author.tag}) a été modifié dans ${newMsg.channel}\n[Voir le message modifié](${newMsg.url})\n__Ancien message:__\n\n${oldMsg.content}`,
 			footer: {
 				iconURL: author.displayAvatarURL(),
 				text: `Message original crée le ${creationDate}`

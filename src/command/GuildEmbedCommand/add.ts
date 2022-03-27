@@ -27,7 +27,7 @@ export async function add(interaction: CommandInteraction<"cached">) {
 
 	await interaction.reply({
 		embeds: [{
-			description: `Quel sera le titre affiché pour la commande ${name} ?`,
+			description: `Quel sera le titre affiché pour la commande \`${name}\` ?`,
 			color: "AQUA"
 		}]
 	});
@@ -44,7 +44,7 @@ export async function add(interaction: CommandInteraction<"cached">) {
 	} catch (err) {
 		return interaction.followUp({
 			embeds: [{
-				description: `Création de la commande ${name} annulée, il fallait répondre !`,
+				description: `Pas de réponse, création de la commande \`${name}\` annulée`,
 				color: "RED"
 			}]
 		});
@@ -59,7 +59,7 @@ export async function add(interaction: CommandInteraction<"cached">) {
 		await msgTitle.react("❌");
 		return msgTitle.reply({
 			embeds: [{
-				title: `Création de la commande ${name} annulée`,
+				title: `Création de la commande \`${name}\` annulée`,
 				description: `Le titre choisi a une taille de ${title.length}, la taille doit être entre 1 et ${CustomEmbedCommand.maxTitleLength} caractères`,
 				color: "RED"
 			}]
@@ -70,7 +70,7 @@ export async function add(interaction: CommandInteraction<"cached">) {
 
 	await interaction.followUp({
 		embeds: [{
-			description: `Quel sera la description affichée pour la commande ${name} ?`,
+			description: `Quel sera la description affichée pour la commande \`${name}\` ?`,
 			color: "AQUA"
 		}]
 	});
@@ -85,7 +85,7 @@ export async function add(interaction: CommandInteraction<"cached">) {
 	} catch (err) {
 		return interaction.followUp({
 			embeds: [{
-				description: `Création de la commande ${name} annulée, il fallait répondre !`,
+				description: `Pas de réponse, création de la commande \`${name}\` annulée`,
 				color: "RED"
 			}]
 		});
@@ -100,7 +100,7 @@ export async function add(interaction: CommandInteraction<"cached">) {
 		await msgDescription.react("❌");
 		return msgDescription.reply({
 			embeds: [{
-				title: `Création de la commande ${name} annulée`,
+				title: `Création de la commande \`${name}\` annulée`,
 				description: `La description choisie a une taille de ${description.length}, la taille doit être entre 1 et ${CustomEmbedCommand.maxDescriptionLength} caractères`,
 				color: "RED"
 			}]
@@ -111,7 +111,7 @@ export async function add(interaction: CommandInteraction<"cached">) {
 
 	const msgAskImage = await interaction.followUp({
 		embeds: [{
-			description: `Est-ce que la commande ${name} contient une image ?`,
+			description: `Est-ce que la commande \`${name}\` contient une image ?`,
 			color: "AQUA"
 		}],
 		components: [{
@@ -154,7 +154,7 @@ export async function add(interaction: CommandInteraction<"cached">) {
 	} catch (err) {
 		return interaction.followUp({
 			embeds: [{
-				description: `Création de la commande ${name} annulée, il fallait choisir une option !`,
+				description: `Aucune option choisie, création de la commande \`${name}\` annulée`,
 				color: "RED"
 			}]
 		});
@@ -164,7 +164,7 @@ export async function add(interaction: CommandInteraction<"cached">) {
 	if (hasImage) {
 		await interaction.followUp({
 			embeds: [{
-				description: `Quelle sera l'image affichée pour la commande ${name} ?`,
+				description: `Quelle sera l'image affichée pour la commande \`${name}\` ?`,
 				color: "AQUA"
 			}]
 		});
@@ -179,7 +179,7 @@ export async function add(interaction: CommandInteraction<"cached">) {
 		} catch (err) {
 			return interaction.followUp({
 				embeds: [{
-					description: `Création de la commande ${name} annulée, il fallait répondre !`,
+					description: `Pas de réponse, création de la commande \`${name}\` annulée`,
 					color: "RED"
 				}]
 			});
@@ -191,7 +191,7 @@ export async function add(interaction: CommandInteraction<"cached">) {
 			await msgTitle.react("❌");
 			return msgDescription.reply({
 				embeds: [{
-					title: `Création de la commande ${name} annulée`,
+					title: `Création de la commande \`${name}\` annulée`,
 					description: "Une image était attendue",
 					color: "RED"
 				}]
@@ -204,7 +204,7 @@ export async function add(interaction: CommandInteraction<"cached">) {
 
 	const msgAskColor = await interaction.followUp({
 		embeds: [{
-			description: `Est-ce que la commande ${name} doit avoir une couleur spécifique ?`,
+			description: `Est-ce que la commande \`${name}\` doit avoir une couleur spécifique ?`,
 			color: "AQUA"
 		}],
 		components: [{
@@ -247,7 +247,7 @@ export async function add(interaction: CommandInteraction<"cached">) {
 	} catch (err) {
 		return interaction.followUp({
 			embeds: [{
-				description: `Création de la commande ${name} annulée, il fallait choisir une option !`,
+				description: `Aucune option choisie, création de la commande \`${name}\` annulée`,
 				color: "RED"
 			}]
 		});
@@ -257,7 +257,7 @@ export async function add(interaction: CommandInteraction<"cached">) {
 	if (hasColor) {
 		const msgColor = await interaction.followUp({
 			embeds: [{
-				description: `Choisissez la couleur pour la commande ${name}`,
+				description: `Choisissez la couleur pour la commande \`${name}\``,
 				color: "AQUA"
 			}],
 			components: [actionRowColor]
@@ -290,7 +290,7 @@ export async function add(interaction: CommandInteraction<"cached">) {
 		} catch (err) {
 			return interaction.followUp({
 				embeds: [{
-					description: `Création de la commande ${name} annulée, il fallait valider une couleur !`,
+					description: `Aucune couleur choisie, création de la commande \`${name}\` annulée`,
 					color: "RED"
 				}]
 			});
@@ -313,8 +313,7 @@ export async function add(interaction: CommandInteraction<"cached">) {
 
 	return interaction.followUp({
 		embeds: [{
-			title: "Commande embed créée",
-			description: `Commande \`${name}\``,
+			title: `Commande embed \`${name}\` créée`,
 			fields: [{
 				name: "Pour admins:",
 				value: adminOnly ? "Oui" : "Non",
@@ -324,6 +323,9 @@ export async function add(interaction: CommandInteraction<"cached">) {
 				value: autoDelete ? "Oui" : "Non",
 				inline: true
 			}],
+			footer: {
+				text: "Réponse de la commande:"
+			},
 			color: "GREEN"
 		},
 		embedCommand.createEmbed()

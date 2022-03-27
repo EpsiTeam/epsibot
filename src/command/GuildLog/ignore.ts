@@ -20,7 +20,6 @@ export async function ignore(interaction: CommandInteraction<"cached">) {
 
 		return interaction.reply({
 			embeds: [{
-				title: "Channel pris en compte pour les logs",
 				description: `Le channel ${channel} sera maintenant pris en compte pour les logs des messages supprimés ou modifiés`,
 				color: "GREEN"
 			}],
@@ -35,7 +34,6 @@ export async function ignore(interaction: CommandInteraction<"cached">) {
 
 	return interaction.reply({
 		embeds: [{
-			title: "Channel ignoré pour les logs",
 			description: `Le channel ${channel} sera maintenant ignoré pour les logs des messages supprimés ou modifiés`,
 			color: "GREEN"
 		}],
