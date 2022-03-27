@@ -45,8 +45,7 @@ export async function add(interaction: CommandInteraction<"cached">) {
 
 	return interaction.reply({
 		embeds: [{
-			title: "Commande créée",
-			description: `Commande \`${name}\`:\n${response}`,
+			title: `Commande \`${name}\` créée`,
 			fields: [{
 				name: "Réponse:",
 				value: response

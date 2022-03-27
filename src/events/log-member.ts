@@ -28,8 +28,7 @@ export async function logMemberJoined(member: GuildMember) {
 
 	await channel.send({
 		embeds: [{
-			title: `${member.user.tag} a rejoint le serveur`,
-			description: `Bonjour à toi ${member}`,
+			description: `${member} (${member.user.tag}) a rejoint le serveur`,
 			footer: {
 				iconURL: member.displayAvatarURL(),
 				text: getMemberJoinedDate(member)
@@ -64,8 +63,7 @@ export async function logMemberLeft(member: GuildMember | PartialGuildMember) {
 
 	await channel.send({
 		embeds: [{
-			title: `${member.user.tag} a quitté le serveur`,
-			description: getMemberDuration(member),
+			description: `${member} (${member.user.tag}) a quitté le serveur ${getMemberDuration(member)}`,
 			footer: {
 				iconURL: member.user.displayAvatarURL(),
 				text: getMemberJoinedDate(member)
@@ -77,7 +75,7 @@ export async function logMemberLeft(member: GuildMember | PartialGuildMember) {
 
 function getMemberDuration(member: GuildMember | PartialGuildMember) {
 	if (!member.joinedTimestamp) {
-		return `Impossible de savoir combien de temps est resté ${member}`;
+		return "(impossible de savoir combien de temps il est resté)";
 	}
 
 	const duration = formatDuration(intervalToDuration({
@@ -87,7 +85,7 @@ function getMemberDuration(member: GuildMember | PartialGuildMember) {
 		locale: fr
 	});
 
-	return `${member} est resté ${duration}`;
+	return `après être resté ${duration}`;
 }
 
 function getMemberJoinedDate(member: GuildMember | PartialGuildMember) {

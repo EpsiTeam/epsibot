@@ -32,8 +32,10 @@ export async function purge(interaction: CommandInteraction<"cached">) {
 	if (msgToDelete.length === 0) {
 		return interaction.reply({
 			embeds: [{
-				title: "Impossible de purger ce channel",
-				description: "En cherchant les messages purgeables, je n'en ai pas trouvé, peut être que les messages dates d'il y a plus de 2 semaines ?",
+				description: "Aucun message à purger trouvé",
+				footer: {
+					text: "Pour information, les messages plus vieux que 2 semaines ne peuvent pas être purgé"
+				},
 				color: "RED"
 			}],
 			ephemeral: true
@@ -47,7 +49,6 @@ export async function purge(interaction: CommandInteraction<"cached">) {
 
 		return interaction.reply({
 			embeds: [{
-				title: "Message supprimé",
 				description: `Un message ${user ? `de ${user} ` : ""}a été supprimé`,
 				color: "GREEN"
 			}],
@@ -59,7 +60,6 @@ export async function purge(interaction: CommandInteraction<"cached">) {
 
 	return interaction.reply({
 		embeds: [{
-			title: "Messages supprimés",
 			description: `${msgToDelete.length} message ${user ? `de ${user} ` : ""}ont été supprimés`,
 			color: "GREEN"
 		}],

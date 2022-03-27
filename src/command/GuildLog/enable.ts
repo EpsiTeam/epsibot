@@ -34,7 +34,6 @@ async function enableAllLog(interaction: CommandInteraction<"cached">) {
 
 	return interaction.reply({
 		embeds: [{
-			title: "Logs activés",
 			description: `Tous les logs sont désormais actif sur le channel ${channel}`,
 			color: "GREEN"
 		}],
@@ -54,7 +53,6 @@ async function enableLog(interaction: CommandInteraction<"cached">, logType: log
 
 	return interaction.reply({
 		embeds: [{
-			title: "Logs activés",
 			description: `Les logs ${logDescription} sont désormais actif sur le channel ${channel}`,
 			color: "GREEN"
 		}],
