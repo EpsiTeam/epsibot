@@ -2,7 +2,7 @@ import { Client } from "discord.js";
 import { executeCommand } from "./events/execute-command.js";
 import { logMemberJoined, logMemberLeft } from "./events/log-member.js";
 import { registerCommands } from "./events/register-commands.js";
-import { logMessageDelete, logMessageUpdate } from "./events/log-message.js";
+import { logBulkMessageDelete, logMessageDelete, logMessageUpdate } from "./events/log-message.js";
 import { botInvited, botRemoved } from "./events/bot-join-left.js";
 import { executeCustomCommand } from "./events/execute-custom-command.js";
 import { addAutorole } from "./events/add-autorole.js";
@@ -51,6 +51,11 @@ export function subscribeDiscordEvents(client: Client): void {
 		client.on(
 			"messageDelete",
 			message => logMessageDelete(message).catch(errorHandler)
+		);
+		// Log bulk deleted messages
+		client.on(
+			"messageDeleteBulk",
+			messages => logBulkMessageDelete(messages).catch(errorHandler)
 		);
 		// Log an updated message
 		client.on(
