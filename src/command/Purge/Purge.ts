@@ -1,6 +1,6 @@
 import { addDays } from "date-fns";
 import { Collection, CommandInteraction, Message, TextBasedChannel, User } from "discord.js";
-import { Command } from "./manager/Command.js";
+import { Command } from "../Command.js";
 
 enum Param {
 	nb = "nb_to_delete",
@@ -10,6 +10,8 @@ enum Param {
 export class Purge extends Command {
 	constructor() {
 		super("purge", "Purge les derniers messages d'un channel");
+
+		this.needPermissions = ["MANAGE_MESSAGES"];
 
 		this.options = [{
 			type: "INTEGER",
@@ -27,6 +29,10 @@ export class Purge extends Command {
 	}
 
 	async execute(interaction: CommandInteraction<"cached">) {
+		if (!this.hasPermissions(interaction)) {
+			return this.wrongPermissions(interaction);
+		}
+
 		if (!interaction.channel) {
 			throw Error("Channel is undefined while trying to purge");
 		}
