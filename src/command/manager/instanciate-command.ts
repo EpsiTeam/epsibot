@@ -4,6 +4,7 @@ import { GuildLog } from "../GuildLog.js";
 import { GuildAutoRole } from "../GuildAutoRole.js";
 import { GuildEmbedCommand } from "../GuildEmbedCommand.js";
 import { Purge } from "../Purge.js";
+import { TicTacToe } from "../TicTacToe.js";
 
 /**
  * CommandManager will read this list to create all commands,
@@ -16,6 +17,7 @@ export function instanciateCommands(): Command[] {
 		new GuildCommand(),
 		new GuildEmbedCommand(),
 		new GuildAutoRole(),
-		new Purge()
+		new Purge(),
+		new TicTacToe()
 	];
 }

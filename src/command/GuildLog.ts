@@ -18,7 +18,7 @@ enum LogType {
 	updatedMessage = "updated_message"
 }
 
-enum Params {
+enum Param {
 	logType = "log_type",
 	channel = "channel",
 	ignored = "ignored"
@@ -55,13 +55,13 @@ export class GuildLog extends Command {
 			description: "Active un type de log",
 			options: [{
 				type: "STRING",
-				name: Params.logType,
+				name: Param.logType,
 				description: "Type de log à activer",
 				required: true,
 				choices: logChoices
 			}, {
 				type: "CHANNEL",
-				name: Params.channel,
+				name: Param.channel,
 				description: "Channel où les logs seront affichés",
 				required: true,
 				channelTypes: ["GUILD_TEXT"]
@@ -72,7 +72,7 @@ export class GuildLog extends Command {
 			description: "Désactive un type de log",
 			options: [{
 				type: "STRING",
-				name: Params.logType,
+				name: Param.logType,
 				description: "Type de log à désactiver",
 				required: true,
 				choices: logChoices
@@ -83,13 +83,13 @@ export class GuildLog extends Command {
 			description: "Ignore ou non certains channels pour les logs",
 			options: [{
 				type: "CHANNEL",
-				name: Params.channel,
+				name: Param.channel,
 				description: "Channel à ignorer ou non, les messages supprimés/modifiés seront ou non dans les logs",
 				required: true,
 				channelTypes: ["GUILD_TEXT"]
 			}, {
 				type: "BOOLEAN",
-				name: Params.ignored,
+				name: Param.ignored,
 				description: "Est-ce que ce channel doit être ignoré ?",
 				required: true
 			}]
@@ -119,7 +119,7 @@ export class GuildLog extends Command {
 
 		// The type of log we should enable or disable
 		const paramLogType =
-			interaction.options.getString(Params.logType, true);
+			interaction.options.getString(Param.logType, true);
 
 		// Maybe all of them?
 		if (paramLogType === LogType.all) {
@@ -241,7 +241,7 @@ export class GuildLog extends Command {
 	}
 
 	private async enableAllLog(interaction: CommandInteraction<"cached">) {
-		const channel = interaction.options.getChannel(Params.channel, true);
+		const channel = interaction.options.getChannel(Param.channel, true);
 		const repo = getRepository(ChannelLog);
 
 		await repo.save([
@@ -276,7 +276,7 @@ export class GuildLog extends Command {
 	}
 
 	private async enableLog(interaction: CommandInteraction<"cached">, logType: logType) {
-		const channel = interaction.options.getChannel(Params.channel, true);
+		const channel = interaction.options.getChannel(Param.channel, true);
 		const logDescription = this.getLogDescription(logType);
 
 		await getRepository(ChannelLog).save(new ChannelLog(
@@ -314,8 +314,8 @@ export class GuildLog extends Command {
 	}
 
 	private async ignoreLogs(interaction: CommandInteraction<"cached">) {
-		const ignored = interaction.options.getBoolean(Params.ignored, true);
-		const channel = interaction.options.getChannel(Params.channel, true);
+		const ignored = interaction.options.getBoolean(Param.ignored, true);
+		const channel = interaction.options.getChannel(Param.channel, true);
 		const repo = getRepository(IgnoredChannel);
 
 		if (!ignored) {

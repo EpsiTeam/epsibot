@@ -9,7 +9,7 @@ enum Subcommand {
 	disable = "disable"
 }
 
-enum Params {
+enum Param {
 	role = "role"
 }
 
@@ -29,7 +29,7 @@ export class GuildAutoRole extends Command {
 			description: "Active le rôle automatique",
 			options: [{
 				type: "ROLE",
-				name: Params.role,
+				name: Param.role,
 				description: "Rôle à assigner automatiquement aux nouveaux membres",
 				required: true
 			}]
@@ -100,7 +100,7 @@ export class GuildAutoRole extends Command {
 		interaction: CommandInteraction<"cached">,
 		autoroleRepo: Repository<AutoRole>
 	) {
-		const role = interaction.options.getRole(Params.role, true);
+		const role = interaction.options.getRole(Param.role, true);
 
 		if (role.id === interaction.guild.roles.everyone.id) {
 			return interaction.reply({

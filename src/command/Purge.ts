@@ -2,7 +2,7 @@ import { addDays } from "date-fns";
 import { Collection, CommandInteraction, Message, TextBasedChannel, User } from "discord.js";
 import { Command } from "./manager/Command.js";
 
-enum Params {
+enum Param {
 	nb = "nb_to_delete",
 	user = "user"
 }
@@ -13,14 +13,14 @@ export class Purge extends Command {
 
 		this.options = [{
 			type: "INTEGER",
-			name: Params.nb,
+			name: Param.nb,
 			description: "Le nombre de messages à supprimer",
 			minValue: 1,
 			maxValue: 100,
 			required: true
 		}, {
 			type: "USER",
-			name: Params.user,
+			name: Param.user,
 			description: "L'utilisateur dont il faut supprimer les messages",
 			required: false
 		}];
@@ -31,8 +31,8 @@ export class Purge extends Command {
 			throw Error("Channel is undefined while trying to purge");
 		}
 
-		const nb = interaction.options.getInteger(Params.nb, true);
-		const user = interaction.options.getUser(Params.user);
+		const nb = interaction.options.getInteger(Param.nb, true);
+		const user = interaction.options.getUser(Param.user);
 
 		let msgToDelete: Message[];
 

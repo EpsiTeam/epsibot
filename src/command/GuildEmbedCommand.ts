@@ -10,7 +10,7 @@ enum Subcommand {
 	remove = "remove"
 }
 
-enum Params {
+enum Param {
 	name = "name",
 	adminOnly = "admin_only",
 	autoDelete = "auto_delete"
@@ -37,17 +37,17 @@ export class GuildEmbedCommand extends Command {
 			description: "Ajoute une commande embed custom",
 			options: [{
 				type: "STRING",
-				name: Params.name,
+				name: Param.name,
 				description: "Nom de la commande custom à ajouter, tout message qui commencera par ce nom appelera cette commande",
 				required: true
 			}, {
 				type: "BOOLEAN",
-				name: Params.adminOnly,
+				name: Param.adminOnly,
 				description: "Est-ce que seulement les admins pourront lancer cete commande custom ?",
 				required: true
 			}, {
 				type: "BOOLEAN",
-				name: Params.autoDelete,
+				name: Param.autoDelete,
 				description: "Est-ce que le message qui active la commande doit être supprimé automatiquement ?",
 				required: true
 			}]
@@ -57,7 +57,7 @@ export class GuildEmbedCommand extends Command {
 			description: "Supprime une commande embed custom",
 			options: [{
 				type: "STRING",
-				name: Params.name,
+				name: Param.name,
 				description: "Nom de la commande custom à supprimer",
 				required: true
 			}]
@@ -154,7 +154,7 @@ export class GuildEmbedCommand extends Command {
 		};
 
 		const collector = message.createMessageComponentCollector({
-			idle: 60 * 1000,
+			idle: 60_000,
 			componentType: "BUTTON"
 		});
 
@@ -181,11 +181,11 @@ export class GuildEmbedCommand extends Command {
 	}
 
 	async addCommand(interaction: CommandInteraction<"cached">) {
-		const name = interaction.options.getString(Params.name, true);
+		const name = interaction.options.getString(Param.name, true);
 		const adminOnly =
-			interaction.options.getBoolean(Params.adminOnly, true);
+			interaction.options.getBoolean(Param.adminOnly, true);
 		const autoDelete =
-			interaction.options.getBoolean(Params.autoDelete, true);
+			interaction.options.getBoolean(Param.autoDelete, true);
 
 		if (!interaction.channel) {
 			throw Error("Channel doesn't exist");
@@ -600,7 +600,7 @@ export class GuildEmbedCommand extends Command {
 	}
 
 	async removeCommand(interaction: CommandInteraction<"cached">) {
-		const name = interaction.options.getString(Params.name, true);
+		const name = interaction.options.getString(Param.name, true);
 
 		const command = await getRepository(CustomEmbedCommand).findOne(
 			new CustomEmbedCommand(
