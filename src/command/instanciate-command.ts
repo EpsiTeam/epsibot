@@ -5,6 +5,7 @@ import { GuildAutoRole } from "./GuildAutoRole/GuildAutoRole.js";
 import { GuildEmbedCommand } from "./GuildEmbedCommand/GuildEmbedCommand.js";
 import { Purge } from "./Purge/Purge.js";
 import { TicTacToe } from "./TicTacToe/TicTacToe.js";
+import { InviteLink } from "./InviteLink/InviteLink.js";
 
 /**
  * CommandManager will read this list to create all commands,
@@ -18,6 +19,7 @@ export function instanciateCommands(): Command[] {
 		new GuildEmbedCommand(),
 		new GuildAutoRole(),
 		new Purge(),
-		new TicTacToe()
+		new TicTacToe(),
+		new InviteLink()
 	];
 }
