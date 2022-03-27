@@ -1,5 +1,5 @@
 import { Client } from "discord.js";
-import { CommandManager } from "../command/manager/CommandManager.js";
+import { CommandManager } from "../command/CommandManager.js";
 import { Logger } from "../utils/logger/Logger.js";
 
 /**

@@ -48,7 +48,7 @@ export abstract class Command implements ChatInputApplicationCommandData {
 	/**
 	 * Will check the permissions of the member that executed a slash command
 	 * againt `this.needPermissions`
-	 * @param interaction The slach command interaction
+	 * @param interaction The slash command interaction
 	 * @returns true is the member can execute this command, false otherwise
 	 */
 	hasPermissions(interaction: CommandInteraction<"cached">): boolean {
@@ -62,5 +62,25 @@ export abstract class Command implements ChatInputApplicationCommandData {
 		return memberPerms.has(this.needPermissions);
 	}
 
+	/**
+	 * Will send a message about not having enough permission
+	 * to execute a command
+	 * @param interaction The slash command interaction
+	 */
+	async wrongPermissions(interaction: CommandInteraction<"cached">) {
+		return interaction.reply({
+			embeds: [{
+				title: "Action impossible",
+				description: "Permissions insuffisantes pour lancer cette commande",
+				color: "RED"
+			}],
+			ephemeral: true
+		});
+	}
+
+	/**
+	 * Execute the command
+	 * @param interaction Slash command interaction that called this command
+	 */
 	abstract execute(interaction: CommandInteraction<"cached">): Promise<unknown>
 }
