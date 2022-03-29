@@ -54,6 +54,16 @@ export async function executeCustomCommand(message: Message) {
 	// No custom command in this message!
 	if (!choosenCommand) return;
 
+	if (choosenCommand.adminOnly && !message.member.permissions.has("ADMINISTRATOR")) {
+		await message.reply({
+			embeds: [{
+				description: "Cette commande est réservée aux administrateurs",
+				color: EpsibotColor.error
+			}]
+		});
+		return;
+	}
+
 	let content: string;
 	if (choosenCommand instanceof CustomCommand) {
 		content = choosenCommand.response;

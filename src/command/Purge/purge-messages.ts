@@ -1,5 +1,6 @@
 import { addDays } from "date-fns";
 import { Collection, CommandInteraction, Message, TextBasedChannel, User } from "discord.js";
+import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 
 export enum PurgeParam {
 	nb = "nb_to_delete",
@@ -36,7 +37,7 @@ export async function purge(interaction: CommandInteraction<"cached">) {
 				footer: {
 					text: "Pour information, les messages plus vieux que 2 semaines ne peuvent pas être purgé"
 				},
-				color: "RED"
+				color: EpsibotColor.error
 			}],
 			ephemeral: true
 		});
@@ -50,7 +51,7 @@ export async function purge(interaction: CommandInteraction<"cached">) {
 		return interaction.reply({
 			embeds: [{
 				description: `Un message ${user ? `de ${user} ` : ""}a été supprimé`,
-				color: "GREEN"
+				color: EpsibotColor.success
 			}],
 			ephemeral: true
 		});
@@ -61,7 +62,7 @@ export async function purge(interaction: CommandInteraction<"cached">) {
 	return interaction.reply({
 		embeds: [{
 			description: `${msgToDelete.length} message ${user ? `de ${user} ` : ""}ont été supprimés`,
-			color: "GREEN"
+			color: EpsibotColor.success
 		}],
 		ephemeral: true
 	});

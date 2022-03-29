@@ -4,6 +4,7 @@ import {
 	CommandInteraction,
 	PermissionResolvable
 } from "discord.js";
+import { EpsibotColor } from "../utils/color/EpsibotColor.js";
 
 /**
  * This is the base class for all commands,
@@ -72,7 +73,7 @@ export abstract class Command implements ChatInputApplicationCommandData {
 			embeds: [{
 				title: "Action impossible",
 				description: "Permissions insuffisantes pour lancer cette commande",
-				color: "RED"
+				color: EpsibotColor.error
 			}],
 			ephemeral: true
 		});

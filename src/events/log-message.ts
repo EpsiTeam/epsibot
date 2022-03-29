@@ -3,6 +3,7 @@ import { Collection, Message, PartialMessage } from "discord.js";
 import { getRepository } from "typeorm";
 import { ChannelLog } from "../entity/ChannelLog.js";
 import { IgnoredChannel } from "../entity/IgnoredChannel.js";
+import { EpsibotColor } from "../utils/color/EpsibotColor.js";
 import { Logger } from "../utils/logger/Logger.js";
 
 /**
@@ -43,7 +44,7 @@ export async function logMessageDelete(message: Message | PartialMessage) {
 				iconURL: message.author.displayAvatarURL(),
 				text: `Message crée le ${creationDate}`
 			},
-			color: "ORANGE"
+			color: EpsibotColor.warning
 		}]
 	});
 }
@@ -117,7 +118,7 @@ export async function logBulkMessageDelete(
 			footer: {
 				text: `Messages supprimés le ${deletedDate}`
 			},
-			color: "ORANGE"
+			color: EpsibotColor.warning
 		}],
 		files: [{
 			name: "deleted_message.txt",
@@ -173,7 +174,7 @@ export async function logMessageUpdate(
 				iconURL: author.displayAvatarURL(),
 				text: `Message original crée le ${creationDate}`
 			},
-			color: "YELLOW"
+			color: EpsibotColor.info
 		}]
 	});
 }

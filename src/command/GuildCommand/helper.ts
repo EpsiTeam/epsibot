@@ -29,10 +29,10 @@ export function commandFields(
 	return [{
 		name: "Pour admins seulement:",
 		value: command.adminOnly ? "Oui" : "Non",
-		inline: true
+		inline: false
 	}, {
 		name: "Supprime le message qui appelle la commande:",
 		value: command.autoDelete ? "Oui" : "Non",
-		inline: true
+		inline: false
 	}];
 }

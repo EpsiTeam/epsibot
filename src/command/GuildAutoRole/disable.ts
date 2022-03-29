@@ -1,6 +1,7 @@
 import { CommandInteraction } from "discord.js";
 import { getRepository } from "typeorm";
 import { AutoRole } from "../../entity/AutoRole.js";
+import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 
 export async function disable(interaction: CommandInteraction<"cached">) {
 	const repo = getRepository(AutoRole);
@@ -12,9 +13,8 @@ export async function disable(interaction: CommandInteraction<"cached">) {
 	if (!autorole) {
 		return interaction.reply({
 			embeds: [{
-				title: "Rôle automatique supprimé",
 				description: "Il n'y avait pas de rôle automatique configuré",
-				color: "YELLOW"
+				color: EpsibotColor.warning
 			}],
 			ephemeral: true
 		});
@@ -33,9 +33,8 @@ export async function disable(interaction: CommandInteraction<"cached">) {
 
 	return interaction.reply({
 		embeds: [{
-			title: "Rôle automatique supprimé",
 			description: message,
-			color: "GREEN"
+			color: EpsibotColor.success
 		}],
 		ephemeral: true
 	});

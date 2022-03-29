@@ -2,6 +2,7 @@ import { CommandInteraction } from "discord.js";
 import { Logger } from "../../utils/logger/Logger.js";
 import { TicTacToeGame } from "./TicTacToeGame.js";
 import { confirm } from "../../utils/confirm/confirm.js";
+import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 
 export enum PlayParam {
 	user = "user"
@@ -18,7 +19,7 @@ export async function play(interaction: CommandInteraction<"cached">) {
 		return interaction.reply({
 			embeds: [{
 				description: "Impossible de jouer contre soi-même",
-				color: "RED"
+				color: EpsibotColor.error
 			}],
 			ephemeral: true
 		});
@@ -79,7 +80,7 @@ export async function play(interaction: CommandInteraction<"cached">) {
 			return gameMessage.edit({
 				embeds: [{
 					description: `Désolé, il y a eu une erreur avec la partie, considérons que c'est un match nul entre ${user1} et ${user2}`,
-					color: "RED"
+					color: EpsibotColor.error
 				}],
 				components: []
 			});
@@ -92,7 +93,7 @@ export async function play(interaction: CommandInteraction<"cached">) {
 	return gameMessage.edit({
 		embeds: [{
 			description: `Résultat de la partie de morpion entre ${user1} et ${user2}:\n${result}`,
-			color: winner ? game.getPlayerColor(winner) : "YELLOW"
+			color: winner ? game.getPlayerColor(winner) : EpsibotColor.warning
 		}],
 		components: game.getComponents(true)
 	});

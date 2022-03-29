@@ -1,6 +1,7 @@
 import { CommandInteraction } from "discord.js";
 import { getRepository } from "typeorm";
 import { IgnoredChannel } from "../../entity/IgnoredChannel.js";
+import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 
 export enum IgnoreParam {
 	channel = "channel",
@@ -21,7 +22,7 @@ export async function ignore(interaction: CommandInteraction<"cached">) {
 		return interaction.reply({
 			embeds: [{
 				description: `Le channel ${channel} sera maintenant pris en compte pour les logs des messages supprimés ou modifiés`,
-				color: "GREEN"
+				color: EpsibotColor.success
 			}],
 			ephemeral: true
 		});
@@ -35,7 +36,7 @@ export async function ignore(interaction: CommandInteraction<"cached">) {
 	return interaction.reply({
 		embeds: [{
 			description: `Le channel ${channel} sera maintenant ignoré pour les logs des messages supprimés ou modifiés`,
-			color: "GREEN"
+			color: EpsibotColor.success
 		}],
 		ephemeral: true
 	});

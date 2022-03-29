@@ -2,6 +2,7 @@ import { CommandInteraction } from "discord.js";
 import { getRepository } from "typeorm";
 import { ChannelLog } from "../../entity/ChannelLog.js";
 import { IgnoredChannel } from "../../entity/IgnoredChannel.js";
+import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 
 export async function list(interaction: CommandInteraction<"cached">) {
 	const repo = getRepository(ChannelLog);
@@ -80,7 +81,8 @@ export async function list(interaction: CommandInteraction<"cached">) {
 	return interaction.reply({
 		embeds: [{
 			title: "Liste des configurations des logs",
-			description: message
+			description: message,
+			color: EpsibotColor.info
 		}],
 		ephemeral: true
 	});
