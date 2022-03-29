@@ -1,6 +1,7 @@
 import { CommandInteraction } from "discord.js";
 import { getRepository } from "typeorm";
 import { ChannelLog, logType } from "../../entity/ChannelLog.js";
+import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 import { GuildLogType, getChannelLogType, getLogDescription } from "./channel-log-type.js";
 
 export enum DisableParam {
@@ -28,7 +29,7 @@ async function disableAllLog(interaction: CommandInteraction<"cached">) {
 	return interaction.reply({
 		embeds: [{
 			description: "Tous les logs sont désormais inactif",
-			color: "GREEN"
+			color: EpsibotColor.success
 		}],
 		ephemeral: true
 	});
@@ -45,7 +46,7 @@ async function disableLog(interaction: CommandInteraction<"cached">, channelLogT
 	return interaction.reply({
 		embeds: [{
 			description: `Les logs ${logDescription} sont désormais inactif`,
-			color: "GREEN"
+			color: EpsibotColor.success
 		}],
 		ephemeral: true
 	});

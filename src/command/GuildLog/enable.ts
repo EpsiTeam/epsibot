@@ -3,6 +3,7 @@ import { getRepository } from "typeorm";
 import { ChannelLog } from "../../entity/ChannelLog.js";
 import { getChannelLogType, getLogDescription, GuildLogType } from "./channel-log-type.js";
 import { logType } from "../../entity/ChannelLog.js";
+import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 
 export enum EnableParam {
 	logType = "log_type",
@@ -35,7 +36,7 @@ async function enableAllLog(interaction: CommandInteraction<"cached">) {
 	return interaction.reply({
 		embeds: [{
 			description: `Tous les logs sont désormais actif sur le channel ${channel}`,
-			color: "GREEN"
+			color: EpsibotColor.success
 		}],
 		ephemeral: true
 	});
@@ -54,7 +55,7 @@ async function enableLog(interaction: CommandInteraction<"cached">, logType: log
 	return interaction.reply({
 		embeds: [{
 			description: `Les logs ${logDescription} sont désormais actif sur le channel ${channel}`,
-			color: "GREEN"
+			color: EpsibotColor.success
 		}],
 		ephemeral: true
 	});

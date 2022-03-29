@@ -4,6 +4,7 @@ import { GuildMember, PartialGuildMember } from "discord.js";
 import { getRepository } from "typeorm";
 import { ChannelLog } from "../entity/ChannelLog.js";
 import { Logger } from "../utils/logger/Logger.js";
+import { EpsibotColor } from "../utils/color/EpsibotColor.js";
 
 /**
  * Log a new member on guild
@@ -33,7 +34,7 @@ export async function logMemberJoined(member: GuildMember) {
 				iconURL: member.displayAvatarURL(),
 				text: getMemberJoinedDate(member)
 			},
-			color: "GREEN"
+			color: EpsibotColor.success
 		}]
 	});
 }
@@ -68,7 +69,7 @@ export async function logMemberLeft(member: GuildMember | PartialGuildMember) {
 				iconURL: member.user.displayAvatarURL(),
 				text: getMemberJoinedDate(member)
 			},
-			color: "RED"
+			color: EpsibotColor.error
 		}]
 	});
 }

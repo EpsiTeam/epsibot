@@ -1,20 +1,13 @@
 import { CommandInteraction } from "discord.js";
 import { Command } from "../Command.js";
-import { add } from "./add.js";
 import { list } from "./list.js";
-import { remove } from "./remove.js";
+import { add, AddParam } from "./add.js";
+import { remove, RemoveParam } from "./remove.js";
 
 enum Subcommand {
 	list = "list",
 	add = "add",
 	remove = "remove"
-}
-
-enum Param {
-	name = "name",
-	response = "response",
-	adminOnly = "admin_only",
-	autoDelete = "auto_delete"
 }
 
 export class GuildCommand extends Command {
@@ -33,24 +26,22 @@ export class GuildCommand extends Command {
 			description: "Ajoute une commande custom",
 			options: [{
 				type: "STRING",
-				name: Param.name,
+				name: AddParam.name,
 				description: "Nom de la commande custom à ajouter, tout message qui commencera par ce nom appelera cette commande",
 				required: true
 			}, {
-				type: "STRING",
-				name: Param.response,
-				description: "Réponse de la commande custom (\\n pour les retours à la ligne, et $0, $1 etc pour les paramètres)",
+				type: "BOOLEAN",
+				name: AddParam.embed,
+				description: "Est-ce que la command doit s'afficher dans un embed ?",
 				required: true
 			}, {
 				type: "BOOLEAN",
-				name: Param.adminOnly,
-				description: "Est-ce que seulement les admins pourront lancer cete commande custom ?",
-				required: true
+				name: AddParam.adminOnly,
+				description: "Est-ce que seulement les admins pourront lancer cete commande custom ?"
 			}, {
 				type: "BOOLEAN",
-				name: Param.autoDelete,
-				description: "Est-ce que le message qui active la commande doit être supprimé automatiquement ?",
-				required: true
+				name: AddParam.autoDelete,
+				description: "Est-ce que le message qui active la commande doit être supprimé automatiquement ?"
 			}]
 		}, {
 			type: "SUB_COMMAND",
@@ -58,7 +49,7 @@ export class GuildCommand extends Command {
 			description: "Supprime une commande custom",
 			options: [{
 				type: "STRING",
-				name: Param.name,
+				name: RemoveParam.name,
 				description: "Nom de la commande custom à supprimer",
 				required: true
 			}]

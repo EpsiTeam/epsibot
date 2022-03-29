@@ -1,65 +1,71 @@
 import { CommandInteraction } from "discord.js";
 import { getRepository } from "typeorm";
 import { CustomCommand } from "../../entity/CustomCommand.js";
+import { CustomEmbedCommand } from "../../entity/CustomEmbedCommand.js";
+import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
+import { confirm } from "../../utils/confirm/confirm.js";
+import { addEmbed } from "./addEmbed.js";
+import { addNormal } from "./addNormal.js";
 
 export enum AddParam {
 	name = "name",
-	response = "response",
+	embed = "embed",
 	adminOnly = "admin_only",
 	autoDelete = "auto_delete"
 }
 
 export async function add(interaction: CommandInteraction<"cached">) {
 	const name = interaction.options.getString(AddParam.name, true);
-	const inlineResponse =
-		interaction.options.getString(AddParam.response, true);
-	const adminOnly =
-		interaction.options.getBoolean(AddParam.adminOnly, true);
-	const autoDelete =
-		interaction.options.getBoolean(AddParam.autoDelete, true);
 
-	const response = inlineResponse.replaceAll("\\n", "\n");
-
-	if (
-		response.length > CustomCommand.maxResponseLength ||
-		name.length > CustomCommand.maxNameLength
-	) {
+	if (name.length > CustomCommand.maxNameLength) {
 		return interaction.reply({
 			embeds: [{
-				title: "Impossible d'ajouter cette commande custom",
-				description: `Le nom de la commande doit faire moins de ${CustomCommand.maxNameLength} caractères, et la réponse de la commande doit faire moins de ${CustomCommand.maxResponseLength} caractères`,
-				color: "RED"
+				description: `Le nom de la commande doit faire moins de ${CustomCommand.maxNameLength} caractères !`,
+				color: EpsibotColor.error
 			}],
 			ephemeral: true
 		});
 	}
 
-	// TODO ask for confirmation when command already exists
-	await getRepository(CustomCommand).save(new CustomCommand(
-		interaction.guildId,
-		name,
-		response,
-		adminOnly,
-		autoDelete
-	));
+	await interaction.deferReply();
 
-	return interaction.reply({
-		embeds: [{
-			title: `Commande \`${name}\` créée`,
-			fields: [{
-				name: "Réponse:",
-				value: response
-			}, {
-				name: "Pour admins:",
-				value: adminOnly ? "Oui" : "Non",
-				inline: true
-			}, {
-				name: "Auto delete",
-				value: autoDelete ? "Oui" : "Non",
-				inline: true
-			}],
-			color: "GREEN"
-		}],
-		ephemeral: true
-	});
+	// Checking if command already exists
+	const [command, embedCommand] = await Promise.all([
+		getRepository(CustomCommand).findOne(
+			new CustomCommand(
+				interaction.guildId,
+				name
+			)
+		),
+		getRepository(CustomEmbedCommand).findOne(
+			new CustomEmbedCommand(
+				interaction.guildId,
+				name
+			)
+		)
+	]);
+
+	if (command || embedCommand) {
+		// Command already exists
+		const replace = await confirm(interaction, {
+			description: `La commmande \`${name}\` existe déjà, faut il la remplacer ?`,
+			returnOnTimout: false,
+			color: EpsibotColor.warning
+		});
+
+		if (!replace) return;
+	}
+
+	const embed = interaction.options.getBoolean(AddParam.embed, true);
+
+	const adminOnly =
+		interaction.options.getBoolean(AddParam.adminOnly) ?? false;
+	const autoDelete =
+		interaction.options.getBoolean(AddParam.autoDelete) ?? false;
+
+	if (embed) {
+		return addEmbed(interaction, name, adminOnly, autoDelete);
+	} else {
+		return addNormal(interaction, name, adminOnly, autoDelete);
+	}
 }

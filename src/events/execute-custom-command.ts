@@ -1,6 +1,8 @@
 import { Message } from "discord.js";
 import { getRepository } from "typeorm";
 import { CustomCommand } from "../entity/CustomCommand.js";
+import { CustomEmbedCommand } from "../entity/CustomEmbedCommand.js";
+import { EpsibotColor } from "../utils/color/EpsibotColor.js";
 import { fillArguments } from "../utils/custom-command/command-argument.js";
 import { Logger } from "../utils/logger/Logger.js";
 
@@ -18,15 +20,28 @@ export async function executeCustomCommand(message: Message) {
 	const lowercase = message.content.toLowerCase();
 
 	// Retrieving all custom commands for this guild
-	const customCommands = await getRepository(CustomCommand).find({
-		where: {
-			guildId: message.guild.id
-		}
-	});
+	const [normalCommands, embedCommands] = await Promise.all([
+		getRepository(CustomCommand).find({
+			where: {
+				guildId: message.guild.id
+			}
+		}),
+		getRepository(CustomEmbedCommand).find({
+			where: {
+				guildId: message.guild.id
+			}
+		})
+	]);
+
+	// Typescript shenanigan to correctly type commands
+	const commands = (
+		<(CustomCommand | CustomEmbedCommand)[]>embedCommands
+	).concat(normalCommands);
 
 	// Checking if there is a custom command to execute
-	let choosenCommand: CustomCommand | undefined = undefined;
-	for (const command of customCommands) {
+	let choosenCommand:
+		CustomCommand | CustomEmbedCommand | undefined = undefined;
+	for (const command of commands) {
 		const name = command.name;
 		if (lowercase.startsWith(name.toLowerCase())) {
 			// Taking the longest custom command available
@@ -39,29 +54,69 @@ export async function executeCustomCommand(message: Message) {
 	// No custom command in this message!
 	if (!choosenCommand) return;
 
-	const filledCommand = fillArguments(
-		message.content.substring(choosenCommand.name.length),
-		choosenCommand.response
-	);
-
-	const messagePromises: Promise<Message>[] = [];
-
-	if (choosenCommand.autoDelete) {
-		messagePromises.push(
-			message.delete()
-		);
+	if (choosenCommand.adminOnly && !message.member.permissions.has("ADMINISTRATOR")) {
+		await message.reply({
+			embeds: [{
+				description: "Cette commande est réservée aux administrateurs",
+				color: EpsibotColor.error
+			}]
+		});
+		return;
 	}
 
-	messagePromises.push(
-		message.channel.send({
-			content: filledCommand
-		})
+	let content: string;
+	if (choosenCommand instanceof CustomCommand) {
+		content = choosenCommand.response;
+	} else {
+		content = choosenCommand.description;
+	}
+
+	const filledContent = fillArguments(
+		message.content.substring(choosenCommand.name.length),
+		content
 	);
 
 	const logger = Logger.contextualize(message.guild, message.member.user);
-
 	try {
-		await Promise.all([messagePromises]);
+		if (choosenCommand.autoDelete) {
+			await message.delete();
+		}
+
+		if (choosenCommand instanceof CustomCommand) {
+			if (filledContent.length > CustomCommand.maxResponseLength) {
+				logger.warn(`Custom command '${choosenCommand.name}' response was too long`);
+				await message.channel.send({
+					embeds: [{
+						description: `Je ne peux pas répondre à la commande \`${choosenCommand.name}\`, car la réponse devrait faire ${filledContent.length} caractères et la limite est de ${CustomCommand.maxResponseLength} caractères`,
+						color: EpsibotColor.error
+					}]
+				});
+				return;
+			}
+
+			await message.channel.send({
+				content: filledContent
+			});
+		} else {
+			if (
+				filledContent.length > CustomEmbedCommand.maxDescriptionLength
+			) {
+				logger.warn(`Custom command '${choosenCommand.name}' description was too long`);
+				await message.channel.send({
+					embeds: [{
+						description: `Je ne peux pas répondre à la commande \`${choosenCommand.name}\`, car la description devrait faire ${filledContent.length} caractères et la limite est de ${CustomEmbedCommand.maxDescriptionLength} caractères`,
+						color: EpsibotColor.error
+					}]
+				});
+				return;
+			}
+
+			choosenCommand.description = filledContent;
+			await message.channel.send({
+				embeds: [choosenCommand.createEmbed()]
+			});
+		}
+
 		logger.debug(`Executed custom command '${choosenCommand.name}'`);
 	} catch (err) {
 		logger.error(`Error on custom command '${choosenCommand.name}': ${err.stack}`);
