@@ -2,7 +2,6 @@ import { Command } from "./Command.js";
 import { GuildCommand } from "./GuildCommand/GuildCommand.js";
 import { GuildLog } from "./GuildLog/GuildLog.js";
 import { GuildAutoRole } from "./GuildAutoRole/GuildAutoRole.js";
-import { GuildEmbedCommand } from "./GuildEmbedCommand/GuildEmbedCommand.js";
 import { Purge } from "./Purge/Purge.js";
 import { TicTacToe } from "./TicTacToe/TicTacToe.js";
 import { InviteLink } from "./InviteLink/InviteLink.js";
@@ -14,12 +13,11 @@ import { InviteLink } from "./InviteLink/InviteLink.js";
  */
 export function instanciateCommands(): Command[] {
 	return [
+		new TicTacToe(),
 		new GuildLog(),
 		new GuildCommand(),
-		new GuildEmbedCommand(),
 		new GuildAutoRole(),
 		new Purge(),
-		new TicTacToe(),
 		new InviteLink()
 	];
 }

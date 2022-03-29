@@ -1,9 +1,10 @@
-import { ColorResolvable, MessageEmbed, Util } from "discord.js";
+import { ColorResolvable, MessageEmbedOptions, Util } from "discord.js";
 import { Column, Entity, PrimaryColumn } from "typeorm";
+import { CustomCommand } from "./CustomCommand.js";
 
 @Entity()
 export class CustomEmbedCommand {
-	static maxNameLength = 50;
+	static maxNameLength = CustomCommand.maxNameLength;
 	static maxTitleLength = 256;
 	static maxDescriptionLength = 4096;
 
@@ -25,49 +26,47 @@ export class CustomEmbedCommand {
 		if (color) this.color = Util.resolveColor(color);
 		if (adminOnly !== undefined) this.adminOnly = adminOnly;
 		if (autoDelete !== undefined) this.autoDelete = autoDelete;
+
+		if (this.name && this.name.length > CustomEmbedCommand.maxNameLength) {
+			throw Error("Name too long");
+		}
+		if (
+			this.title && this.title.length > CustomEmbedCommand.maxTitleLength
+		) {
+			throw Error("Title too long");
+		}
+		if (
+			this.description && this.description.length >
+			CustomEmbedCommand.maxDescriptionLength
+		) {
+			throw Error("Description too long");
+		}
 	}
 
-	@PrimaryColumn()
-		guildId: string;
+	@PrimaryColumn() guildId: string;
 
-	@PrimaryColumn({
-		type: "text",
-		length: CustomEmbedCommand.maxNameLength
-	})
-		name: string;
+	@PrimaryColumn() name: string;
 
-	@Column({
-		type: "text",
-		length: CustomEmbedCommand.maxTitleLength
-	})
-		title: string;
+	@Column() title: string;
 
-	@Column({
-		type: "text",
-		length: CustomEmbedCommand.maxDescriptionLength
-	})
-		description: string;
+	@Column() description: string;
 
-	@Column()
-		image?: string;
+	@Column() image?: string;
 
-	@Column()
-		color: number;
+	@Column() color: number;
 
-	@Column()
-		adminOnly: boolean;
+	@Column() adminOnly: boolean;
 
-	@Column()
-		autoDelete: boolean;
+	@Column() autoDelete: boolean;
 
-	public createEmbed(): MessageEmbed {
-		return new MessageEmbed({
+	public createEmbed(): MessageEmbedOptions {
+		return {
 			title: this.title,
 			description: this.description,
 			image: {
 				url: this.image
 			},
 			color: this.color
-		});
+		};
 	}
 }

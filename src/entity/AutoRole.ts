@@ -7,9 +7,7 @@ export class AutoRole {
 		if (roleId) this.roleId = roleId;
 	}
 
-	@PrimaryColumn()
-		guildId: string;
+	@PrimaryColumn() guildId: string;
 
-	@Column()
-		roleId: string;
+	@Column() roleId: string;
 }

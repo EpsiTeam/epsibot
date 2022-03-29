@@ -5,6 +5,7 @@ import {
 	InteractionReplyOptions,
 	Message
 } from "discord.js";
+import { EpsibotColor } from "../color/EpsibotColor.js";
 
 enum ButtonAction {
 	yes = "yes",
@@ -27,6 +28,7 @@ export async function confirm(
 		description: string,
 		/**
 		 * Color of the message sent
+		 * Default to EpsibotColor.success
 		 */
 		color?: ColorResolvable,
 		/**
@@ -35,15 +37,18 @@ export async function confirm(
 		 */
 		userId?: string,
 		/**
-		 * Label to put on the yes button
+		 * Label to put on the yes button<br>
+		 * Default to 'Oui'
 		 */
 		labelYes?: string,
 		/**
-		 * Label to put on the no button
+		 * Label to put on the no button<br>
+		 * Default to 'Non'
 		 */
 		labelNo?: string,
 		/**
-		 * Time in seconds to wait for an answer
+		 * Time in seconds to wait for an answer<br>
+		 * Default to 60s
 		 */
 		timeout?: number,
 		/**
@@ -52,14 +57,15 @@ export async function confirm(
 		 */
 		returnOnTimout?: boolean,
 		/**
-		 * Should the message be hidden?
+		 * Should the message be hidden?<br>
+		 * Default to true
 		 */
 		ephemeral?: boolean
 	}
 ): Promise<boolean | null> {
 	const {
 		description,
-		color,
+		color = EpsibotColor.question,
 		userId = interaction.member.id,
 		labelYes = "Oui",
 		labelNo = "Non",
@@ -74,7 +80,7 @@ export async function confirm(
 
 	const isFollowUp = interaction.deferred || interaction.replied;
 
-	const messageContent: InteractionReplyOptions = {
+	const messageContent: InteractionReplyOptions & { fetchReply: true } = {
 		embeds: [{
 			description: description,
 			color: color
@@ -92,7 +98,9 @@ export async function confirm(
 				style: "DANGER",
 				customId: ButtonAction.no
 			}]
-		}]
+		}],
+		fetchReply: true,
+		ephemeral: ephemeral
 	};
 
 	let messageConfirm: Message<true>;
@@ -100,10 +108,7 @@ export async function confirm(
 	if (isFollowUp) {
 		messageConfirm = await interaction.followUp(messageContent);
 	} else {
-		messageConfirm = await interaction.reply({
-			...messageContent,
-			fetchReply: true
-		});
+		messageConfirm = await interaction.reply(messageContent);
 	}
 
 	let answer: boolean | null;
@@ -122,16 +127,16 @@ export async function confirm(
 	}
 
 	if (answer === null) {
-		await messageConfirm.edit({
+		await interaction.webhook.editMessage(messageConfirm, {
 			components: []
 		});
 	} else {
-		await messageConfirm.edit({
+		await interaction.webhook.editMessage(messageConfirm, {
 			components: [{
 				type: "ACTION_ROW",
 				components: [{
 					type: "BUTTON",
-					label: answer ? "Oui" : "Non",
+					label: answer ? labelYes : labelNo,
 					style: answer ? "SUCCESS" : "DANGER",
 					customId: answer ? ButtonAction.yes : ButtonAction.no,
 					disabled: true

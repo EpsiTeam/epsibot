@@ -1,12 +1,11 @@
 import { Client } from "discord.js";
-import { executeCommand } from "./events/execute-command.js";
+import { executeCommand } from "./events/execute-slash-command.js";
 import { logMemberJoined, logMemberLeft } from "./events/log-member.js";
 import { registerCommands } from "./events/register-commands.js";
 import { logBulkMessageDelete, logMessageDelete, logMessageUpdate } from "./events/log-message.js";
 import { botInvited, botRemoved } from "./events/bot-join-left.js";
 import { executeCustomCommand } from "./events/execute-custom-command.js";
 import { addAutorole } from "./events/add-autorole.js";
-import { executeCustomEmbedCommand } from "./events/execute-custom-embed-command.js";
 import { botRoleUpdated, botUpdated } from "./events/bot-check-admin.js";
 import { channelDeleted } from "./events/channel-deleted.js";
 import { Logger } from "./utils/logger/Logger.js";
@@ -64,17 +63,15 @@ export function subscribeDiscordEvents(client: Client): void {
 				logMessageUpdate(oldMsg, newMsg).catch(errorHandler)
 		);
 
-		/* ------------------- CUSTOM COMMANDS ------------------- */
-		// A new message has been written, maybe a custom command?
-		client.on("messageCreate", executeCustomCommand);
-		// A new message has been written, maybe a custom embed command?
-		client.on("messageCreate", executeCustomEmbedCommand);
-
-		/* ------------------------ OTHER ------------------------ */
+		/* ------------------- COMMANDS ------------------- */
 		// Someone used a slash command
 		client.on("interactionCreate", async (interaction) => {
 			await executeCommand(commandManager, interaction);
 		});
+		// A new message has been written, maybe a custom command?
+		client.on("messageCreate", executeCustomCommand);
+
+		/* ------------------------ OTHER ------------------------ */
 		// Adding the autorole
 		client.on("guildMemberAdd", addAutorole);
 

@@ -14,12 +14,9 @@ export class ChannelLog {
 		if (channelId) this.channelId = channelId;
 	}
 
-	@PrimaryColumn()
-		guildId: string;
+	@PrimaryColumn() guildId: string;
 
-	@PrimaryColumn()
-		logType: logType;
+	@PrimaryColumn() logType: logType;
 
-	@Column()
-		channelId: string;
+	@Column() channelId: string;
 }

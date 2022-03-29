@@ -1,7 +1,7 @@
 import { CommandInteraction } from "discord.js";
 import { Command } from "../Command.js";
-import { add, AddParam } from "./add.js";
 import { list } from "./list.js";
+import { add, AddParam } from "./add.js";
 import { remove, RemoveParam } from "./remove.js";
 
 enum Subcommand {
@@ -30,20 +30,18 @@ export class GuildCommand extends Command {
 				description: "Nom de la commande custom à ajouter, tout message qui commencera par ce nom appelera cette commande",
 				required: true
 			}, {
-				type: "STRING",
-				name: AddParam.response,
-				description: "Réponse de la commande custom (\\n pour les retours à la ligne, et $0, $1 etc pour les paramètres)",
+				type: "BOOLEAN",
+				name: AddParam.embed,
+				description: "Est-ce que la command doit s'afficher dans un embed ?",
 				required: true
 			}, {
 				type: "BOOLEAN",
 				name: AddParam.adminOnly,
-				description: "Est-ce que seulement les admins pourront lancer cete commande custom ?",
-				required: true
+				description: "Est-ce que seulement les admins pourront lancer cete commande custom ?"
 			}, {
 				type: "BOOLEAN",
 				name: AddParam.autoDelete,
-				description: "Est-ce que le message qui active la commande doit être supprimé automatiquement ?",
-				required: true
+				description: "Est-ce que le message qui active la commande doit être supprimé automatiquement ?"
 			}]
 		}, {
 			type: "SUB_COMMAND",

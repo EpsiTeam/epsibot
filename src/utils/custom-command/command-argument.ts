@@ -6,7 +6,12 @@
  * @returns The argument filled command response, ready to be sent
  */
 export function fillArguments(message: string, response: string): string {
-	const args = cleanArguments(message.trim().split(" "));
+	const trimmed = message.trim();
+
+	if (trimmed.length === 0)
+		return response;
+
+	const args = cleanArguments(trimmed.split(" "));
 	let filledResponse = response;
 
 	for (const [index, arg] of args.entries()) {

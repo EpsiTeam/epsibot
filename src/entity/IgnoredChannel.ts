@@ -10,9 +10,7 @@ export class IgnoredChannel {
 		this.channelId = channelId;
 	}
 
-	@PrimaryColumn()
-		guildId: string;
+	@PrimaryColumn() guildId: string;
 
-	@PrimaryColumn()
-		channelId: string;
+	@PrimaryColumn() channelId: string;
 }
