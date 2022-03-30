@@ -1,4 +1,5 @@
 import { ApplicationCommandPermissionData, Guild } from "discord.js";
+import { EnvVariables } from "../utils/env/EnvVariables.js";
 import { Logger } from "../utils/logger/Logger.js";
 import { Command } from "./Command.js";
 import { instanciateCommands } from "./instanciate-command.js";
@@ -51,12 +52,8 @@ export class CommandManager {
 		await Promise.all(promisesSetCommands);
 
 		// Creating the permissions object for owner reserved commands
-		if (!process.env.OWNERS) {
-			throw Error("Environment variable OWNERS is not set, this is not normal");
-		}
-		const owners = process.env.OWNERS.split(",");
 		const permissions: ApplicationCommandPermissionData[] =
-			owners.map(owner => ({
+			EnvVariables.owners.map(owner => ({
 				id: owner,
 				type: "USER",
 				permission: true

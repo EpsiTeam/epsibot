@@ -5,6 +5,7 @@ import { Client, Intents } from "discord.js";
 import { createConnection } from "typeorm";
 import { subscribeDiscordEvents } from "./subscribe-discord-events.js";
 import { Logger } from "./utils/logger/Logger.js";
+import { EnvVariables } from "./utils/env/EnvVariables.js";
 
 // Stopping node if there is unexpected config
 checkStartup();
@@ -27,7 +28,7 @@ checkStartup();
 		],
 		presence: {
 			activities: [{
-				name: `v${process.env.VERSION}`
+				name: `v${EnvVariables.version}`
 			}]
 		}
 	});
@@ -37,7 +38,7 @@ checkStartup();
 
 	try {
 		Logger.debug("Logging in to Discord...");
-		await client.login(process.env.DISCORD_TOKEN);
+		await client.login(EnvVariables.discordToken);
 	} catch (err) {
 		throw Error(`Failed to log to Discord: ${err.stack}`);
 	}

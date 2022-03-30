@@ -36,7 +36,7 @@ export async function registerCommands(client: Client) {
 	} catch (err) {
 		throw Error(`Impossible to register slash command: ${err}`);
 	}
-	Logger.debug(`Registered ${commandManager.commands.size} commands on each guild`);
+	Logger.debug(`Registered ${commandManager.commands.size} slash commands on ${guilds.length} guilds`);
 
 	return commandManager;
 }

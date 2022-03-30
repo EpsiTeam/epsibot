@@ -1,3 +1,4 @@
+import { checkEnvironmentVariables, EnvVariables } from "./utils/env/EnvVariables.js";
 import { Logger } from "./utils/logger/Logger.js";
 
 /**
@@ -5,23 +6,9 @@ import { Logger } from "./utils/logger/Logger.js";
  * and exit is something is not correctly set
  */
 export function checkStartup(): void {
-	const environmentVariables = [
-		"DISCORD_TOKEN",
-		"OWNERS"
-	];
+	checkEnvironmentVariables();
 
-	// Checking all environment variables exists
-	environmentVariables.map(checkEnv);
+	Logger.initialize(!EnvVariables.production);
 
-	process.env.VERSION = process.env.npm_package_version ?? "unknown";
-
-	Logger.initialize(process.env.PRODUCTION === "false");
-
-	Logger.info(`Epsibot v${process.env.VERSION} starting`);
+	Logger.info(`Epsibot v${EnvVariables.version} starting`);
 }
-
-const checkEnv = (variable: string): void => {
-	if (!process.env[variable]) {
-		throw Error(`No environment variable ${variable} found, make sure you created a .env file at the root of the project containing this variable`);
-	}
-};
