@@ -119,7 +119,7 @@ export async function list(interaction: CommandInteraction<"cached">) {
 			if (err.code === 10008) { // Message deleted
 				logger.info("Can't update list because message has been deleted");
 			} else {
-				logger.warn(`Impossible to update list: ${err.stack}`);
+				logger.error(`Impossible to update list: ${err.stack}`);
 			}
 		}
 	});
@@ -133,7 +133,7 @@ export async function list(interaction: CommandInteraction<"cached">) {
 			if (err.code === 10008) { // Message deleted
 				logger.info("Can't end list because message has been deleted");
 			} else {
-				logger.warn(`Impossible to end collector: ${err.stack}`);
+				logger.error(`Impossible to end collector: ${err.stack}`);
 			}
 		}
 	});

@@ -4,7 +4,7 @@ export const text = `__En n'étant pas admin:__
 - Voir toutes les commandes customs: \`/command list\`
 Les commandes customs permettent de créer des réponses personnalisées à certains messages. Ces réponses peuvent s'afficher dans un embed ou dans un message normal
 
-- Faire une partie de morpion: \`/tictactoe\`
+- Faire un minijeu contre quelqu'un: \`/tictactoe\` ou \`/shifumi\`
 
 - M'inviter sur un autre serveur: \`/invite_link\`
 
