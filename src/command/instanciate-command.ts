@@ -8,6 +8,7 @@ import { InviteLink } from "./InviteLink/InviteLink.js";
 import { Guide } from "./Guide/Guide.js";
 import { Help } from "./Help/Help.js";
 import { CommandManager } from "./CommandManager.js";
+import { Shifumi } from "./Shifumi/Shifumi.js";
 
 /**
  * CommandManager will read this list to create all commands,
@@ -19,6 +20,7 @@ export function instanciateCommands(manager: CommandManager): Command[] {
 		new Guide(),
 		new Help(manager),
 		new TicTacToe(),
+		new Shifumi(),
 		new GuildLog(),
 		new GuildCommand(),
 		new GuildAutoRole(),

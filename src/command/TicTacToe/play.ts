@@ -12,9 +12,6 @@ export async function play(interaction: CommandInteraction<"cached">) {
 	const user1 = interaction.options.getUser(PlayParam.user, true);
 	const user2 = interaction.member.user;
 
-	const logger =
-		Logger.contextualize(interaction.guild, interaction.member.user);
-
 	if (user1.id === user2.id) {
 		return interaction.reply({
 			embeds: [{
@@ -34,6 +31,8 @@ export async function play(interaction: CommandInteraction<"cached">) {
 
 	if (!accepted) return;
 
+	const logger =
+		Logger.contextualize(interaction.guild, interaction.member.user);
 	logger.debug(`Started a TicTacToe game against ${user1.tag}`);
 
 	const game = new TicTacToeGame(user1, user2);
