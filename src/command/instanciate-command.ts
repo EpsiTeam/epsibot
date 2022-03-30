@@ -5,14 +5,19 @@ import { GuildAutoRole } from "./GuildAutoRole/GuildAutoRole.js";
 import { Purge } from "./Purge/Purge.js";
 import { TicTacToe } from "./TicTacToe/TicTacToe.js";
 import { InviteLink } from "./InviteLink/InviteLink.js";
+import { Guide } from "./Guide/Guide.js";
+import { Help } from "./Help/Help.js";
+import { CommandManager } from "./CommandManager.js";
 
 /**
  * CommandManager will read this list to create all commands,
  * so fill it when you want your command to be added to the bot
  * @returns A list of instanciated commands
  */
-export function instanciateCommands(): Command[] {
+export function instanciateCommands(manager: CommandManager): Command[] {
 	return [
+		new Guide(),
+		new Help(manager),
 		new TicTacToe(),
 		new GuildLog(),
 		new GuildCommand(),

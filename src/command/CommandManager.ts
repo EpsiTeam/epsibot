@@ -11,14 +11,14 @@ export class CommandManager {
 	/**
 	 * An array of all the commands
 	 */
-	private commandList: Command[];
+	readonly commandList: Command[];
 	/**
 	 * A map of command name to commands
 	 */
 	readonly commands: Map<string, Command>;
 
 	constructor() {
-		this.commandList = instanciateCommands();
+		this.commandList = instanciateCommands(this);
 
 		this.commands = new Map();
 		for (const command of this.commandList) {
