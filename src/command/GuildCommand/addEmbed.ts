@@ -26,7 +26,7 @@ export async function addEmbed(
 
 	await interaction.followUp({
 		embeds: [{
-			description: `Quel sera le titre affiché pour la commande \`${name}\` ?`,
+			description: `Quel sera le **titre** affiché pour la commande \`${name}\` ?`,
 			color: EpsibotColor.question
 		}]
 	});
@@ -61,7 +61,7 @@ export async function addEmbed(
 
 	await interaction.followUp({
 		embeds: [{
-			description: `Quel sera la description affichée pour la commande \`${name}\` ?${helpArgument(name)}`,
+			description: `Quel sera la **description** affichée pour la commande \`${name}\` ?${helpArgument}`,
 			color: EpsibotColor.question
 		}],
 		ephemeral: false

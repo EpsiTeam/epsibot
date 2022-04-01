@@ -17,7 +17,7 @@ export async function addNormal(
 
 	await interaction.followUp({
 		embeds: [{
-			description: `Quel sera la réponse affiché par la commande \`${name}\` ?${helpArgument(name)}`,
+			description: `Quel sera la réponse affiché par la commande \`${name}\` ?${helpArgument}`,
 			color: EpsibotColor.question
 		}],
 		ephemeral: false
