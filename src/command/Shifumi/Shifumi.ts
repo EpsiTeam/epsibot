@@ -10,7 +10,7 @@ enum Subcommand {
 
 export class Shifumi extends Command {
 	constructor() {
-		super("shifumi", "Permet de joueur au shifumi");
+		super("shifumi", "Permet de jouer au shifumi");
 
 		this.options = [{
 			type: "SUB_COMMAND",
