@@ -1,21 +1,19 @@
-import { ColorResolvable, CommandInteraction, User } from "discord.js";
+import { CommandInteraction } from "discord.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 import { Logger } from "../../utils/logger/Logger.js";
 import { saveScore } from "./save-score.js";
+import { ShifumiChoice, ShifumiGame } from "./ShifumiGame.js";
 
 export enum PlayParam {
-	user = "user"
-}
-
-enum Shifumi {
-	rock = "rock",
-	paper = "paper",
-	scissors = "scissors"
+	user = "user",
+	turnsToWin = "nb_turns_to_win"
 }
 
 export async function play(interaction: CommandInteraction<"cached">) {
-	const user1 = interaction.member.user;
-	const user2 = interaction.options.getUser(PlayParam.user, true);
+	const user1 = interaction.member;
+	const user2 = interaction.options.getMember(PlayParam.user, true);
+	const turnsToWin =
+		interaction.options.getNumber(PlayParam.turnsToWin, false) ?? 3;
 
 	if (user1.id === user2.id) {
 		return interaction.reply({
@@ -28,35 +26,36 @@ export async function play(interaction: CommandInteraction<"cached">) {
 	}
 
 	const logger =
-		Logger.contextualize(interaction.guild, user1);
-	logger.debug(`Started a shifumi game against ${user2.tag}`);
+		Logger.contextualize(interaction.guild, user1.user);
+	logger.debug(`Started a shifumi game against ${user2.user.tag}`);
 
-	const description = `${user1} défie ${user2} à un shifumi !`;
-	let answer1: Shifumi | null = null;
-	let answer2: Shifumi | null = null;
+	const game = new ShifumiGame([user1, user2], turnsToWin);
+
+	const title = `Shifumi, premier à ${turnsToWin} point${turnsToWin > 1 ? "s" : ""} gagne`;
 
 	const message = await interaction.reply({
 		embeds: [{
-			description: description,
+			title,
+			description: game.getScore(),
 			color: EpsibotColor.question
 		}],
 		components: [{
 			type: "ACTION_ROW",
 			components: [{
 				type: "BUTTON",
-				label: getShifumiEmoji(Shifumi.rock) + " pierre",
+				label: getShifumiEmoji(ShifumiChoice.rock) + " pierre",
 				style: "SECONDARY",
-				customId: Shifumi.rock
+				customId: ShifumiChoice.rock
 			}, {
 				type: "BUTTON",
-				label: getShifumiEmoji(Shifumi.paper) + " feuille",
+				label: getShifumiEmoji(ShifumiChoice.paper) + " feuille",
 				style: "SECONDARY",
-				customId: Shifumi.paper
+				customId: ShifumiChoice.paper
 			}, {
 				type: "BUTTON",
-				label: getShifumiEmoji(Shifumi.scissors) + " ciseau",
+				label: getShifumiEmoji(ShifumiChoice.scissors) + " ciseau",
 				style: "SECONDARY",
-				customId: Shifumi.scissors
+				customId: ShifumiChoice.scissors
 			}]
 		}],
 		fetchReply: true
@@ -67,40 +66,29 @@ export async function play(interaction: CommandInteraction<"cached">) {
 		filter:
 			click => click.member.id === user1.id ||
 			click.member.id === user2.id,
-		time: 60_000
+		idle: 60_000
 	});
 
 	collector.on("collect", async click => {
 		// Shouldn't happen
-		if (answer1 && answer2) return;
+		if (game.gameFinished()) return;
 
-		let otherAnswer: Shifumi | null;
-		let user: User;
-		let otherUser: User;
-
-		if (click.member.id === user1.id) {
-			if (answer1) return;
-			answer1 = click.customId as Shifumi;
-			otherAnswer = answer2;
-			user = user1;
-			otherUser = user2;
-		} else {
-			if (answer2) return;
-			answer2 = click.customId as Shifumi;
-			otherAnswer = answer1;
-			user = user2;
-			otherUser = user1;
-		}
+		game.play(click.member, click.customId as ShifumiChoice);
 
 		try {
-			if (otherAnswer) {
+			if (game.turnFinished()) {
+				await saveScore(interaction.guildId, game);
+			}
+
+			if (game.gameFinished()) {
 				collector.stop();
 				return click.deferUpdate();
 			}
 
 			return click.update({
 				embeds: [{
-					description: `${description}\n\n${user} a fait son choix, en attente de ${otherUser}`,
+					title,
+					description: game.getScore(),
 					color: EpsibotColor.question
 				}]
 			});
@@ -114,49 +102,22 @@ export async function play(interaction: CommandInteraction<"cached">) {
 	});
 
 	collector.on("end", async () => {
-		let desc: string;
-		let color: ColorResolvable;
-
-		if (!answer1 && !answer2) {
-			desc = `Ni ${user1} ni ${user2} n'a répondu !`;
+		let color = EpsibotColor.success;
+		let waiting = "";
+		if (!game.gameFinished()) {
+			waiting = "\n__La partie est annulée, quelqu'un n'a pas répondu à temps__";
 			color = EpsibotColor.warning;
-		} else if (!answer1 || !answer2) {
-			const user = answer1 ? user2 : user1;
-			desc = `${user} n'a pas répondu, pas de gagnant !`;
-			color = EpsibotColor.warning;
-		} else {
-			const emoji1 = getShifumiEmoji(answer1);
-			const emoji2 = getShifumiEmoji(answer2);
-			desc = `${user1} a choisi ${emoji1}\n`;
-			desc += `${user2} a choisi ${emoji2}\n\n`;
-
-			if (answer1 === answer2) {
-				desc += "Égalité !";
-			} else if (
-				(answer1 === Shifumi.rock && answer2 === Shifumi.scissors) ||
-				(answer1 === Shifumi.paper && answer2 === Shifumi.rock) ||
-				(answer1 === Shifumi.scissors && answer2 === Shifumi.paper)
-			) {
-				desc += `${emoji1} > ${emoji2}, ${user1} gagne !`;
-			} else {
-				desc += `${emoji2} > ${emoji1}, ${user2} gagne !`;
-			}
-
-			color = EpsibotColor.success;
 		}
 
 		try {
 			await message.edit({
 				embeds: [{
-					description: `${description}\n\n${desc}`,
+					title,
+					description: game.getScore() + waiting,
 					color: color
 				}],
 				components: []
 			});
-
-			if (answer1 && answer2) {
-				await saveScore();
-			}
 		} catch (err) {
 			if (err.code === 10008) { // Message deleted
 				logger.info("Can't end shifumi because message has been deleted");
@@ -167,13 +128,13 @@ export async function play(interaction: CommandInteraction<"cached">) {
 	});
 }
 
-function getShifumiEmoji(str: Shifumi) {
+export function getShifumiEmoji(str: ShifumiChoice) {
 	switch (str) {
-		case Shifumi.rock:
+		case ShifumiChoice.rock:
 			return "🗿";
-		case Shifumi.paper:
+		case ShifumiChoice.paper:
 			return "📄";
-		case Shifumi.scissors:
+		case ShifumiChoice.scissors:
 			return "✂️";
 	}
 }

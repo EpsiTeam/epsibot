@@ -11,6 +11,12 @@ export class Shifumi extends Command {
 			name: PlayParam.user,
 			description: "L'utilisateur contre lequel vous souhaitez jouer",
 			required: true
+		}, {
+			type: "NUMBER",
+			name: PlayParam.turnsToWin,
+			description: "Le nombre de tours qu'un joueur doit gagner pour gagner la partie (3 par défaut)",
+			minValue: 1,
+			required: false
 		}];
 	}
 

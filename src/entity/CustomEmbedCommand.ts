@@ -51,7 +51,7 @@ export class CustomEmbedCommand {
 
 	@Column() description: string;
 
-	@Column() image?: string;
+	@Column({ nullable: true }) image: string;
 
 	@Column() color: number;
 
