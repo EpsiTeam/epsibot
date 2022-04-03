@@ -1,6 +1,6 @@
 {
 	"name": "epsibot",
-	"version": "2.2.2",
+	"version": "2.3.0",
 	"description": "Light discord bot for epsilon needs",
 	"main": "built/index.js",
 	"scripts": {
