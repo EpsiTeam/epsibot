@@ -9,6 +9,7 @@ import { Guide } from "./Guide/Guide.js";
 import { Help } from "./Help/Help.js";
 import { CommandManager } from "./CommandManager.js";
 import { Shifumi } from "./Shifumi/Shifumi.js";
+import { Queue } from "./Queue/Queue.js";
 
 /**
  * CommandManager will read this list to create all commands,
@@ -24,6 +25,7 @@ export function instanciateCommands(manager: CommandManager): Command[] {
 		new GuildLog(),
 		new GuildCommand(),
 		new GuildAutoRole(),
+		new Queue(),
 		new Purge(),
 		new InviteLink()
 	];
