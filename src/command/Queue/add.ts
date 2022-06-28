@@ -107,7 +107,7 @@ export async function add(interaction: CommandInteraction<"cached">) {
 
 	return interaction.reply({
 		embeds: [{
-			description: `Élement ajouté à la file en position ${position}`,
+			description: `Demande de ${requester} (${request}) ajoutée en position ${position}`,
 			color: EpsibotColor.success
 		}],
 		ephemeral: true

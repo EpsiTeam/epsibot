@@ -41,17 +41,3 @@ export class QueueElement {
 
 	@Column() hiddenInformation: string;
 }
-
-
-/* mode compact
-1 - jean claude - 3 emotes
-2 - michel - un grand dessin
-3 - lea - la suisse
-*/
-
-
-/* mode détaillé (admin only)
-1 - jean claude - 3 emotes - 30€ à faire vite
-2 - michel - un grand dessin - prix non défini
-3 - lea - la suisse - ?
-*/

@@ -5,27 +5,19 @@ import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 import { confirm } from "../../utils/confirm/confirm.js";
 import { removeElement } from "./remove.js";
 
-
-export enum CancelParams {
-	position = "position"
-}
-
-export async function cancel(interaction: CommandInteraction<"cached">) {
-	const position =
-		interaction.options.getInteger(CancelParams.position, true);
+export async function done(interaction: CommandInteraction<"cached">) {
 	const repo = getRepository(QueueElement);
-
 	const element = await repo.findOne({
 		where: {
 			guildId: interaction.guildId,
-			position: position
+			position: 1
 		}
 	});
 
 	if (!element) {
 		return interaction.reply({
 			embeds: [{
-				description: `Il n'y a pas d'élément en position ${position} !`,
+				description: "La file est vide !",
 				color: EpsibotColor.error
 			}],
 			ephemeral: true
@@ -33,19 +25,19 @@ export async function cancel(interaction: CommandInteraction<"cached">) {
 	}
 
 	const confirmation = await confirm(interaction, {
-		description: `Confirmer la suppression de la demande de ${element.requester} en position ${position} (${element.request})`,
+		description: `Marquer comme terminée la demande de ${element.requester} ? (${element.request})`,
 		labelYes: "Oui",
-		labelNo: "Non",
+		labelNo: "Non en fait j'ai pas fini",
 		returnOnTimout: false
 	});
 
 	if (!confirmation) return;
 
-	await removeElement(interaction.guildId, position);
+	await removeElement(interaction.guildId, 1);
 
 	return interaction.followUp({
 		embeds: [{
-			description: `Demande de ${element.requester} marquée comme annulée (position: ${position})`,
+			description: `Demande de ${element.requester} marquée comme terminée`,
 			color: EpsibotColor.success
 		}],
 		ephemeral: true

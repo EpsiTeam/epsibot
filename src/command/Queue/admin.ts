@@ -3,7 +3,7 @@ import { getRepository } from "typeorm";
 import { QueueElement } from "../../entity/QueueElement.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 
-export async function list(interaction: CommandInteraction<"cached">) {
+export async function admin(interaction: CommandInteraction<"cached">) {
 	const elements = await getRepository(QueueElement).find({
 		where: {
 			guildId: interaction.guildId
@@ -17,7 +17,8 @@ export async function list(interaction: CommandInteraction<"cached">) {
 	let list = "";
 	for (const element of sortedElements) {
 		list += `**${element.position} - ${element.requester}**\n`;
-		list += `${element.request}\n\n`;
+		list += `${element.request}\n`;
+		list += `${element.hiddenInformation}\n\n`;
 	}
 
 	if (elements.length === 0) {
@@ -29,6 +30,7 @@ export async function list(interaction: CommandInteraction<"cached">) {
 			title: "File d'attente",
 			description: list,
 			color: EpsibotColor.info
-		}]
+		}],
+		ephemeral: true
 	});
 }
