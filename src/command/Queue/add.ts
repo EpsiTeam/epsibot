@@ -1,5 +1,5 @@
-import { CommandInteraction } from "discord.js";
-import { getRepository } from "typeorm";
+import { ChatInputCommandInteraction } from "discord.js";
+import { DBConnection } from "../../DBConnection.js";
 import { QueueElement } from "../../entity/QueueElement.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 import { Logger } from "../../utils/logger/Logger.js";
@@ -10,7 +10,7 @@ export enum AddParam {
 	hiddenInformation = "hidden_information"
 }
 
-export async function add(interaction: CommandInteraction<"cached">) {
+export async function add(interaction: ChatInputCommandInteraction<"cached">) {
 	const requester = interaction.options.getString(AddParam.requester, true);
 	const request = interaction.options.getString(AddParam.request, true);
 	const hiddenInformation =
@@ -45,13 +45,11 @@ export async function add(interaction: CommandInteraction<"cached">) {
 		});
 	}
 
-	const repo = getRepository(QueueElement);
+	const repo = DBConnection.getRepository(QueueElement);
 
 	// Finding the position to set
 	const elements = await repo.find({
-		where: {
-			guildId: interaction.guildId
-		}
+		where: { guildId: interaction.guildId }
 	});
 	for (const element of elements) {
 		if (element.position >= position) {
@@ -82,9 +80,7 @@ export async function add(interaction: CommandInteraction<"cached">) {
 
 	// Checking that there is no overlap or holes in the positions
 	const newElements = await repo.find({
-		where: {
-			guildId: interaction.guildId
-		}
+		where: { guildId: interaction.guildId }
 	});
 	const sortedElements = newElements.sort(
 		(e1, e2) => e1.position - e2.position

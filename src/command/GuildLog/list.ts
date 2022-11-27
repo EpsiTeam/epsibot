@@ -1,18 +1,33 @@
-import { CommandInteraction } from "discord.js";
-import { getRepository } from "typeorm";
+import { CommandInteraction, DiscordAPIError } from "discord.js";
+import { DBConnection } from "../../DBConnection.js";
 import { ChannelLog } from "../../entity/ChannelLog.js";
 import { IgnoredChannel } from "../../entity/IgnoredChannel.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 
 export async function list(interaction: CommandInteraction<"cached">) {
-	const repo = getRepository(ChannelLog);
+	const repo = DBConnection.getRepository(ChannelLog);
 	const guildId = interaction.guildId;
 
 	// Retrieve all types of log
 	const [userLog, deletedLog, updatedLog] = await Promise.all([
-		repo.findOne(new ChannelLog(guildId, "userJoinLeave")),
-		repo.findOne(new ChannelLog(interaction.guildId, "deletedMessage")),
-		repo.findOne(new ChannelLog(interaction.guildId, "updatedMessage"))
+		repo.findOne({
+			where: {
+				guildId,
+				logType: "userJoinLeave"
+			}
+		}),
+		repo.findOne({
+			where: {
+				guildId,
+				logType: "deletedMessage"
+			}
+		}),
+		repo.findOne({
+			where: {
+				guildId,
+				logType: "updatedMessage"
+			}
+		})
 	]);
 
 	// -- Some function to help build the list --
@@ -25,13 +40,15 @@ export async function list(interaction: CommandInteraction<"cached">) {
 				await interaction.guild.channels.fetch(channelId);
 			return channel?.toString() ?? deletedChannel;
 		} catch (err) {
-			// This is a special case where we're sure
-			// the channel has been deleted
-			if (err?.code === 10003) { // Unknown channel
-				// Better clean our DB
-				await getRepository(IgnoredChannel).remove(
-					new IgnoredChannel(interaction.guildId, channelId)
-				);
+			if (err instanceof DiscordAPIError) {
+				// This is a special case where we're sure
+				// the channel has been deleted
+				if (err?.code === 10003) { // Unknown channel
+					// Better clean our DB
+					await DBConnection.getRepository(IgnoredChannel).remove(
+						new IgnoredChannel(interaction.guildId, channelId)
+					);
+				}
 			}
 			return deletedChannel;
 		}
@@ -46,7 +63,7 @@ export async function list(interaction: CommandInteraction<"cached">) {
 	};
 	// Print a line for a type of log
 	const configurationMsg = async (
-		channelLog: ChannelLog | undefined,
+		channelLog: ChannelLog | null,
 		logType: string
 	) => {
 		if (channelLog) {
@@ -63,11 +80,10 @@ export async function list(interaction: CommandInteraction<"cached">) {
 	message += "\n" + await configurationMsg(updatedLog, "Messages modifiés");
 
 	// Retrieve ignored channels
-	const ignoredChannels = await getRepository(IgnoredChannel).find({
-		where: {
-			guildId: interaction.guildId
-		}
-	});
+	const ignoredChannels =
+		await DBConnection.getRepository(IgnoredChannel).find({
+			where: { guildId: interaction.guildId }
+		});
 
 	// Finish building the list
 	if (ignoredChannels.length > 0) {

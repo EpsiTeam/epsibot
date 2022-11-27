@@ -1,12 +1,12 @@
 import { CommandInteraction } from "discord.js";
-import { getRepository } from "typeorm";
+import { DBConnection } from "../../DBConnection.js";
 import { QueueElement } from "../../entity/QueueElement.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 import { confirm } from "../../utils/confirm/confirm.js";
 import { removeElement } from "./remove.js";
 
 export async function done(interaction: CommandInteraction<"cached">) {
-	const repo = getRepository(QueueElement);
+	const repo = DBConnection.getRepository(QueueElement);
 	const element = await repo.findOne({
 		where: {
 			guildId: interaction.guildId,

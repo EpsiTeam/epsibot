@@ -5,7 +5,8 @@
 	},
 	"extends": [
 		"eslint:recommended",
-		"plugin:@typescript-eslint/recommended"
+		"plugin:@typescript-eslint/recommended",
+		"prettier"
 	],
 	"parser": "@typescript-eslint/parser",
 	"parserOptions": {
@@ -18,24 +19,25 @@
 	],
 	"rules": {
 		// Rules that result in an error:
-		"indent": ["error", "tab", { "SwitchCase": 1 }],
-		"linebreak-style": ["error", "unix"],
-		"quotes": ["error", "double"],
-		"semi": ["error", "always"],
-		"semi-spacing": "error",
-		"no-trailing-spaces": ["error"],
+		// "indent": ["error", "tab", { "SwitchCase": 1 }],
+		// "linebreak-style": ["error", "unix"],
+		// "quotes": ["error", "double"],
+		// "semi": ["error", "always"],
+		// "semi-spacing": "error",
+		// "no-trailing-spaces": ["error"],
 		"no-var": "error",
-		"object-curly-spacing": ["error", "always"],
-		"comma-dangle": ["error"],
-		"comma-spacing": "error",
-		"comma-style": "error",
-		"eol-last": "error",
-		// Rules that result in a warning:
-		"prefer-const": "warn",
+		// "object-curly-spacing": ["error", "always"],
+		// "comma-dangle": ["error"],
+		// "comma-spacing": "error",
+		// "comma-style": "error",
+		// "eol-last": "error",
 		"import/extensions": ["error", "always"],
-		"max-len": ["warn", {
-			"ignoreStrings": true,
-			"ignoreTemplateLiterals": true
-		}]
+		// Rules that result in a warning:
+		"prefer-const": "warn"
+		// "max-len": ["warn", {
+		// 	"code": 120,
+		// 	"ignoreStrings": true,
+		// 	"ignoreTemplateLiterals": true
+		// }]
 	}
 }

@@ -1,5 +1,5 @@
-import { CommandInteraction } from "discord.js";
-import { getRepository } from "typeorm";
+import { ChatInputCommandInteraction } from "discord.js";
+import { DBConnection } from "../../DBConnection.js";
 import { QueueElement } from "../../entity/QueueElement.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 import { confirm } from "../../utils/confirm/confirm.js";
@@ -10,10 +10,10 @@ export enum CancelParams {
 	position = "position"
 }
 
-export async function cancel(interaction: CommandInteraction<"cached">) {
+export async function cancel(interaction: ChatInputCommandInteraction<"cached">) {
 	const position =
 		interaction.options.getInteger(CancelParams.position, true);
-	const repo = getRepository(QueueElement);
+	const repo = DBConnection.getRepository(QueueElement);
 
 	const element = await repo.findOne({
 		where: {

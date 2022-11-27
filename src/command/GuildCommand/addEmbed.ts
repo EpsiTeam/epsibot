@@ -1,5 +1,5 @@
-import { CommandInteraction, Collection, Message, ColorResolvable, AwaitMessagesOptions } from "discord.js";
-import { getRepository } from "typeorm";
+import { CommandInteraction, Collection, Message, ColorResolvable, AwaitMessagesOptions, ComponentType } from "discord.js";
+import { DBConnection } from "../../DBConnection.js";
 import { CustomCommand } from "../../entity/CustomCommand.js";
 import { CustomEmbedCommand } from "../../entity/CustomEmbedCommand.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
@@ -161,18 +161,18 @@ export async function addEmbed(
 
 		try {
 			const selectResponse = await msgColor.awaitMessageComponent({
-				filter: (click) => click.member.id === interaction.member.id,
+				filter: (click) => click.user.id === interaction.member.id,
 				time: 60_000,
-				componentType: "SELECT_MENU"
+				componentType: ComponentType.SelectMenu
 			});
 			const colorOption = selectResponse.values;
 			color = colorOption[0] as ColorResolvable;
 
 			await selectResponse.update({
 				components: [{
-					type: "ACTION_ROW",
+					type: ComponentType.ActionRow,
 					components: [{
-						type: "SELECT_MENU",
+						type: ComponentType.SelectMenu,
 						placeholder: colorOption[0],
 						options: [{
 							label: "Ceci ne devrait pas être visible",
@@ -189,24 +189,10 @@ export async function addEmbed(
 	}
 
 	const [command] = await Promise.all([
-		getRepository(CustomEmbedCommand).save(
-			new CustomEmbedCommand(
-				interaction.guildId,
-				name,
-				title,
-				description,
-				image,
-				color,
-				adminOnly,
-				autoDelete
-			)
+		DBConnection.getRepository(CustomEmbedCommand).save(
+			new CustomEmbedCommand( interaction.guildId, name, title, description, image, color, adminOnly, autoDelete)
 		),
-		getRepository(CustomCommand).remove(
-			new CustomCommand(
-				interaction.guildId,
-				name
-			)
-		)
+		DBConnection.getRepository(CustomCommand).delete({ guildId: interaction.guildId, name })
 	]);
 
 	return interaction.followUp({

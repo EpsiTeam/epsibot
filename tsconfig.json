@@ -3,12 +3,12 @@
 		// Folder where the .js will be created
 		"outDir": "./built",
 		// Options for the compiler (we compile for node)
-		"lib": ["ES2021"],
-		"target": "ES2021",
-		"module": "ES2020",
-		"moduleResolution": "node",
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "NodeNext",
 		"allowSyntheticDefaultImports": true,
 		// Options for TS checks (we want clean TS)
+		"strict": true,
 		"noImplicitReturns": true,
 		"noImplicitAny": true,
 		"noImplicitThis": true,

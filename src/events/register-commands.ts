@@ -15,7 +15,7 @@ export async function registerCommands(client: Client) {
 
 	// Check admin perm
 	const [adminGuilds, notAdminGuilds] =
-		allGuilds.partition(guild => guild.me?.permissions.has("ADMINISTRATOR") ?? false);
+		allGuilds.partition(guild => guild.members.me?.permissions.has("Administrator") ?? false);
 
 	// Leave if not admin
 	notAdminGuilds.each(async guild => {
@@ -23,7 +23,11 @@ export async function registerCommands(client: Client) {
 			Logger.warn("No admin permission, leaving guild", guild);
 			await guild.leave();
 		} catch (err) {
-			Logger.error(`Failed to leave guild: ${err.stack}`, guild);
+			if (err instanceof Error)  {
+				Logger.error(`Failed to leave guild: ${err.stack}`, guild);
+			} else {
+				Logger.error(`Failed to leave guild with unknown error: ${err}`, guild);
+			}
 		}
 	});
 

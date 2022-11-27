@@ -1,6 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
-import { CommandInteraction, GuildMember, MessageEditOptions } from "discord.js";
-import { getRepository } from "typeorm";
+import { ButtonStyle, CommandInteraction, ComponentType, DiscordAPIError, GuildMember, MessageEditOptions } from "discord.js";
+import { DBConnection } from "../../DBConnection.js";
 import { ShifumiScore } from "../../entity/ShifumiScore.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 import { Logger } from "../../utils/logger/Logger.js";
@@ -22,10 +22,8 @@ export async function leaderboard(interaction: CommandInteraction<"cached">) {
 		fetchReply: true
 	});
 
-	const allScores = await getRepository(ShifumiScore).find({
-		where: {
-			guildId: interaction.guildId
-		},
+	const allScores = await DBConnection.getRepository(ShifumiScore).find({
+		where: { guildId: interaction.guildId },
 		order: {
 			win: "DESC",
 			lose: "ASC",
@@ -84,17 +82,17 @@ export async function leaderboard(interaction: CommandInteraction<"cached">) {
 				color: EpsibotColor.info
 			}],
 			components: [{
-				type: "ACTION_ROW",
+				type: ComponentType.ActionRow,
 				components: [{
-					type: "BUTTON",
+					type: ComponentType.Button,
 					label: "<",
-					style: "SECONDARY",
+					style: ButtonStyle.Secondary,
 					customId: ButtonAction.previous,
 					disabled: subscores.length <= 1
 				}, {
-					type: "BUTTON",
+					type: ComponentType.Button,
 					label: ">",
-					style: "SECONDARY",
+					style: ButtonStyle.Secondary,
 					customId: ButtonAction.next,
 					disabled: subscores.length <= 1
 				}]
@@ -104,7 +102,7 @@ export async function leaderboard(interaction: CommandInteraction<"cached">) {
 
 	const collector = message.createMessageComponentCollector({
 		idle: 60_000,
-		componentType: "BUTTON"
+		componentType: ComponentType.Button
 	});
 
 	collector.on("collect", async click => {
@@ -121,10 +119,14 @@ export async function leaderboard(interaction: CommandInteraction<"cached">) {
 			await click.deferUpdate();
 			await message.edit(await showList(currentIndex));
 		} catch (err) {
-			if (err.code === 10008) { // Message deleted
-				logger.info("Can't update list because message has been deleted");
+			if (err instanceof DiscordAPIError) {
+				if (err.code === 10008) { // Message deleted
+					logger.info("Can't update list because message has been deleted");
+				} else {
+					logger.error(`Impossible to update list: ${err.stack}`);
+				}
 			} else {
-				logger.error(`Impossible to update list: ${err.stack}`);
+				logger.error(`Impossible to update list with unknown error: ${err}`);
 			}
 		}
 	});
@@ -135,10 +137,14 @@ export async function leaderboard(interaction: CommandInteraction<"cached">) {
 				components: []
 			});
 		} catch (err) {
-			if (err.code === 10008) { // Message deleted
-				logger.info("Can't end list because message has been deleted");
+			if (err instanceof DiscordAPIError) {
+				if (err.code === 10008) { // Message deleted
+					logger.info("Can't end list because message has been deleted");
+				} else {
+					logger.error(`Impossible to end collector: ${err.stack}`);
+				}
 			} else {
-				logger.error(`Impossible to end collector: ${err.stack}`);
+				logger.error(`Impossible to end collector with unknown error: ${err}`);
 			}
 		}
 	});

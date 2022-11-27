@@ -1,4 +1,4 @@
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, ComponentType } from "discord.js";
 import { Logger } from "../../utils/logger/Logger.js";
 import { TicTacToeGame } from "./TicTacToeGame.js";
 import { confirm } from "../../utils/confirm/confirm.js";
@@ -64,8 +64,8 @@ export async function play(interaction: CommandInteraction<"cached">) {
 		}
 
 		const click = await gameMessage.awaitMessageComponent({
-			componentType: "BUTTON",
-			filter: (click) => click.member.id === player.id,
+			componentType: ComponentType.Button,
+			filter: (click) => click.user.id === player.id,
 			time: 60_000
 		});
 		await click.deferUpdate();
@@ -75,14 +75,18 @@ export async function play(interaction: CommandInteraction<"cached">) {
 		try {
 			game.play(parseInt(x, 10), parseInt(y, 10));
 		} catch (err) {
-			logger.error(`Something went wrong with TicTacToeGame: ${err.stack}`);
-			return gameMessage.edit({
-				embeds: [{
-					description: `Désolé, il y a eu une erreur avec la partie, considérons que c'est un match nul entre ${user1} et ${user2}`,
-					color: EpsibotColor.error
-				}],
-				components: []
-			});
+			if (err instanceof Error) {
+				logger.error(`Something went wrong with TicTacToeGame: ${err.stack}`);
+				return gameMessage.edit({
+					embeds: [{
+						description: `Désolé, il y a eu une erreur avec la partie, considérons que c'est un match nul entre ${user1} et ${user2}`,
+						color: EpsibotColor.error
+					}],
+					components: []
+				});
+			} {
+				logger.error(`Something went wrong with TicTacToeGame with unknown error: ${err}`);
+			}
 		}
 	}
 

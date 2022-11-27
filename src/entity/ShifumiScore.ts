@@ -5,15 +5,15 @@ export class ShifumiScore {
 	constructor(
 		guildId: string,
 		userId: string,
-		win?: number,
-		lose?: number,
-		draw?: number
+		win: number,
+		lose: number,
+		draw: number
 	) {
 		this.guildId = guildId;
 		this.userId = userId;
-		if (win) this.win = win;
-		if (lose) this.lose = lose;
-		if (draw) this.draw = draw;
+		this.win = win;
+		this.lose = lose;
+		this.draw = draw;
 	}
 
 	@PrimaryColumn() guildId: string;

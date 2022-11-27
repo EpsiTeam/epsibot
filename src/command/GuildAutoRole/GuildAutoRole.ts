@@ -1,4 +1,4 @@
-import { CommandInteraction } from "discord.js";
+import { ApplicationCommandOptionType, ChatInputCommandInteraction } from "discord.js";
 import { Command } from "../Command.js";
 import { disable } from "./disable.js";
 import { enable, EnableParam } from "./enable.js";
@@ -14,30 +14,30 @@ export class GuildAutoRole extends Command {
 	constructor() {
 		super("autorole", "Gère le rôle assigné automatiquement aux nouveaux membres");
 
-		this.needPermissions = ["ADMINISTRATOR"];
+		this.needPermissions = ["Administrator"];
 
 		this.options = [{
-			type: "SUB_COMMAND",
+			type: ApplicationCommandOptionType.Subcommand,
 			name: Subcommand.info,
 			description: "Affiche quel rôle est automatiquement assigné"
 		}, {
-			type: "SUB_COMMAND",
+			type: ApplicationCommandOptionType.Subcommand,
 			name: Subcommand.enable,
 			description: "Active le rôle automatique",
 			options: [{
-				type: "ROLE",
+				type: ApplicationCommandOptionType.Role,
 				name: EnableParam.role,
 				description: "Rôle à assigner automatiquement aux nouveaux membres",
 				required: true
 			}]
 		}, {
-			type: "SUB_COMMAND",
+			type: ApplicationCommandOptionType.Subcommand,
 			name: Subcommand.disable,
 			description: "Désactive le rôle automatique"
 		}];
 	}
 
-	async execute(interaction: CommandInteraction<"cached">) {
+	async execute(interaction: ChatInputCommandInteraction<"cached">) {
 		if (!this.hasPermissions(interaction)) {
 			return this.wrongPermissions(interaction);
 		}

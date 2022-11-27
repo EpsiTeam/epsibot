@@ -1,4 +1,4 @@
-import { User, MessageActionRow, ColorResolvable, MessageButtonStyle } from "discord.js";
+import { User, resolveColor, ActionRowData, MessageActionRowComponentData, ComponentType, ButtonStyle } from "discord.js";
 
 type playedCell = "X" | "O";
 type emptyCell = "";
@@ -62,20 +62,25 @@ export class TicTacToeGame {
 		return this.state.flat().every(this.isPlayedCell);
 	}
 
-	getComponents(locked: boolean): MessageActionRow[] {
-		const components: MessageActionRow[] = [];
+	getComponents(locked: boolean):
+		ActionRowData<MessageActionRowComponentData>[] {
+
+		const components: ActionRowData<MessageActionRowComponentData>[] = [];
 
 		for (const [x, line] of this.state.entries()) {
-			const row = new MessageActionRow();
+			const row: ActionRowData<MessageActionRowComponentData> = {
+				components: [],
+				type: ComponentType.ActionRow
+			};
 			components.push(row);
 
 			for (const [y, cell] of line.entries()) {
-				const color = this.getButtonColor(cell);
+				const style = this.getButtonStyle(cell);
 
-				row.addComponents({
-					type: "BUTTON",
+				row.components.push({
+					type: ComponentType.Button,
 					label: this.isPlayedCell(cell) ? cell : ".",
-					style: color,
+					style: style,
 					customId: `${x}/${y}`,
 					disabled: locked || this.isPlayedCell(cell)
 				});
@@ -85,18 +90,18 @@ export class TicTacToeGame {
 		return components;
 	}
 
-	getPlayerColor(user: User): ColorResolvable {
-		if (user.id === this.playerX.id) return "BLUE";
-		if (user.id === this.playerO.id) return "GREEN";
+	getPlayerColor(user: User): number {
+		if (user.id === this.playerX.id) return resolveColor("Blue");
+		if (user.id === this.playerO.id) return resolveColor("Green");
 
 		throw Error("Unknown player, impossible to get corresponding color");
 	}
 
-	private getButtonColor(cell: cell): MessageButtonStyle {
-		if (cell === "X") return "PRIMARY";
-		if (cell === "O") return "SUCCESS";
+	private getButtonStyle(cell: cell) {
+		if (cell === "X") return ButtonStyle.Primary;
+		if (cell === "O") return ButtonStyle.Success;
 
-		return "SECONDARY";
+		return ButtonStyle.Secondary;
 	}
 
 	private calculateWinner() {

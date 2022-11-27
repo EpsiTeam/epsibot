@@ -1,5 +1,5 @@
 import { addDays } from "date-fns";
-import { Collection, CommandInteraction, Message, TextBasedChannel, User } from "discord.js";
+import { ChatInputCommandInteraction, Collection, Message, TextBasedChannel, User } from "discord.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 
 export enum PurgeParam {
@@ -7,7 +7,7 @@ export enum PurgeParam {
 	user = "user"
 }
 
-export async function purge(interaction: CommandInteraction<"cached">) {
+export async function purge(interaction: ChatInputCommandInteraction<"cached">) {
 	if (!interaction.channel) {
 		throw Error("Channel is undefined while trying to purge");
 	}

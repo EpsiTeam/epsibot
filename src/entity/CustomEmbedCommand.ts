@@ -1,4 +1,4 @@
-import { ColorResolvable, MessageEmbedOptions, Util } from "discord.js";
+import { APIEmbed, ColorResolvable, resolveColor } from "discord.js";
 import { Column, Entity, PrimaryColumn } from "typeorm";
 import { CustomCommand } from "./CustomCommand.js";
 
@@ -11,34 +11,29 @@ export class CustomEmbedCommand {
 	constructor(
 		guildId: string,
 		name: string,
-		title?: string,
-		description?: string,
-		image?: string,
-		color?: ColorResolvable,
-		adminOnly?: boolean,
-		autoDelete?: boolean
+		title: string,
+		description: string,
+		image: string,
+		color: ColorResolvable,
+		adminOnly: boolean,
+		autoDelete: boolean
 	) {
 		this.guildId = guildId;
 		this.name = name;
-		if (title) this.title = title;
-		if (description) this.description = description;
-		if (image) this.image = image;
-		if (color) this.color = Util.resolveColor(color);
-		if (adminOnly !== undefined) this.adminOnly = adminOnly;
-		if (autoDelete !== undefined) this.autoDelete = autoDelete;
+		this.title = title;
+		this.description = description;
+		this.image = image;
+		this.color = resolveColor(color);
+		this.adminOnly = adminOnly;
+		this.autoDelete = autoDelete;
 
-		if (this.name && this.name.length > CustomEmbedCommand.maxNameLength) {
+		if (this.name.length > CustomEmbedCommand.maxNameLength) {
 			throw Error("Name too long");
 		}
-		if (
-			this.title && this.title.length > CustomEmbedCommand.maxTitleLength
-		) {
+		if (this.title.length > CustomEmbedCommand.maxTitleLength) {
 			throw Error("Title too long");
 		}
-		if (
-			this.description && this.description.length >
-			CustomEmbedCommand.maxDescriptionLength
-		) {
+		if (this.description.length > CustomEmbedCommand.maxDescriptionLength) {
 			throw Error("Description too long");
 		}
 	}
@@ -59,7 +54,7 @@ export class CustomEmbedCommand {
 
 	@Column() autoDelete: boolean;
 
-	public createEmbed(): MessageEmbedOptions {
+	public createEmbed(): APIEmbed {
 		return {
 			title: this.title,
 			description: this.description,

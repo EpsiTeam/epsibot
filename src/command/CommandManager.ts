@@ -1,5 +1,4 @@
-import { ApplicationCommandPermissionData, Guild } from "discord.js";
-import { EnvVariables } from "../utils/env/EnvVariables.js";
+import { Guild } from "discord.js";
 import { Logger } from "../utils/logger/Logger.js";
 import { Command } from "./Command.js";
 import { instanciateCommands } from "./instanciate-command.js";
@@ -36,12 +35,11 @@ export class CommandManager {
 	 */
 	async registerCommands(guilds: Guild[]): Promise<void> {
 		const promisesSetCommands: Promise<unknown>[] = [];
-		const promisesUpdatePermissions: Promise<unknown[]>[] = [];
 
 		// Setting all commands
 		for (const guild of guilds) {
-			if (!guild.me?.permissions.has("ADMINISTRATOR")) {
-				Logger.error("Epsibot don't have the ADMINISTRATOR permission", guild);
+			if (!guild.members.me?.permissions.has("Administrator")) {
+				Logger.error("Epsibot don't have the Administrator permission", guild);
 			} else {
 				promisesSetCommands.push(
 					guild.commands.set(this.commandList)
@@ -50,31 +48,5 @@ export class CommandManager {
 		}
 		// Waiting for pending change
 		await Promise.all(promisesSetCommands);
-
-		// Creating the permissions object for owner reserved commands
-		const permissions: ApplicationCommandPermissionData[] =
-			EnvVariables.owners.map(owner => ({
-				id: owner,
-				type: "USER",
-				permission: true
-			}));
-
-		// Updating the permissions of the commands for owners
-		for (const guild of guilds) {
-			for (const remoteCommand of guild.commands.cache.values()) {
-				// Only updating owner commands
-				const command = this.commands.get(remoteCommand.name);
-				if (!command || command.availableTo !== "owner") continue;
-
-				promisesUpdatePermissions.push(
-					guild.commands.permissions.add({
-						command: remoteCommand.id,
-						permissions: permissions
-					})
-				);
-			}
-		}
-		// Waiting for pending change
-		await Promise.all(promisesUpdatePermissions);
 	}
 }

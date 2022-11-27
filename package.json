@@ -1,24 +1,16 @@
 {
 	"name": "epsibot",
-	"version": "2.4.0",
+	"version": "2.5.0",
 	"description": "Light discord bot for epsilon needs",
-	"main": "built/index.js",
+	"main": "built/main.js",
 	"scripts": {
-		"about:check": "echo 'Check that your code is good by running eslint'",
 		"check": "eslint src/ && echo 'All good, no problem found'",
-		"about:build": "echo 'Will compile the .ts files to .js and put them in built/'",
 		"build": "rm -rf built/ && npm run check && tsc && echo 'Build finished'",
-		"about:start": "echo 'Will build and start Epsibot'",
 		"start": "npm run build && clear && node --enable-source-maps -r dotenv/config built/main.js",
-		"about:clean": "echo 'Clean your directory by deleting build/ and logs/'",
 		"clean": "rm -rf built/ logs/",
-		"about:fix": "echo 'Fix everyting it can in your code (like missing semicolons)'",
 		"fix": "eslint --fix src/",
-		"about:migrate": "echo 'Will execute all migrations, creating the DB if needed'",
 		"migrate": "typeorm migration:run",
-		"about:start:builded": "echo 'Will start Epsibot without rebuilding it'",
 		"start:builded": "node --enable-source-maps -r dotenv/config built/main.js",
-		"about:test": "echo 'Will launch all tests'",
 		"test": "echo 'Sorry, there is no tests for now'"
 	},
 	"private": true,
@@ -26,20 +18,25 @@
 	"license": "ISC",
 	"type": "module",
 	"dependencies": {
-		"@types/node": "^17.0.21",
-		"better-sqlite3": "^7.5.0",
-		"chalk": "^5.0.1",
-		"date-fns": "^2.28.0",
-		"discord.js": "^13.6.0",
-		"dotenv": "^16.0.0",
-		"reflect-metadata": "^0.1.13",
-		"typeorm": "^0.2.41",
-		"typescript": "^4.6.2"
+		"@types/node": "18.11.9",
+		"better-sqlite3": "7.6.2",
+		"chalk": "5.1.2",
+		"date-fns": "2.29.3",
+		"discord.js": "14.6.0",
+		"dotenv": "16.0.3",
+		"reflect-metadata": "0.1.13",
+		"typeorm": "0.3.10",
+		"typescript": "4.9.3"
 	},
 	"devDependencies": {
-		"@typescript-eslint/eslint-plugin": "^5.14.0",
-		"@typescript-eslint/parser": "^5.14.0",
-		"eslint": "^8.11.0",
-		"eslint-plugin-import": "^2.25.4"
+		"@typescript-eslint/eslint-plugin": "5.44.0",
+		"@typescript-eslint/parser": "5.44.0",
+		"eslint": "8.28.0",
+		"eslint-config-prettier": "8.5.0",
+		"eslint-plugin-import": "2.26.0",
+		"prettier": "2.8.0"
+	},
+	"overrides": {
+		"discord-api-types": "0.37.14"
 	}
 }
