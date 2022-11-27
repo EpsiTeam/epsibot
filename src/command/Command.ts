@@ -20,7 +20,7 @@ export abstract class Command implements ChatInputApplicationCommandData {
 	/**
 	 * Description of the command, users will be able to see this in
 	 * the list of commands
-	*/
+	 */
 	readonly description: string;
 	/**
 	 * Type of the command, CHAT_INPUT being a slash command
@@ -56,11 +56,14 @@ export abstract class Command implements ChatInputApplicationCommandData {
 	 */
 	hasPermissions(interaction: CommandInteraction<"cached">): boolean {
 		if (!interaction.channel) {
-			throw Error(`Command ${interaction.commandName} not executed in a channel, or the channel was not in the cache`);
+			throw Error(
+				`Command ${interaction.commandName} not executed in a channel, or the channel was not in the cache`
+			);
 		}
 
-		const memberPerms =
-			interaction.member.permissionsIn(interaction.channel);
+		const memberPerms = interaction.member.permissionsIn(
+			interaction.channel
+		);
 
 		return memberPerms.has(this.needPermissions);
 	}
@@ -72,11 +75,14 @@ export abstract class Command implements ChatInputApplicationCommandData {
 	 */
 	async wrongPermissions(interaction: CommandInteraction<"cached">) {
 		return interaction.reply({
-			embeds: [{
-				title: "Action impossible",
-				description: "Permissions insuffisantes pour lancer cette commande",
-				color: EpsibotColor.error
-			}],
+			embeds: [
+				{
+					title: "Action impossible",
+					description:
+						"Permissions insuffisantes pour lancer cette commande",
+					color: EpsibotColor.error
+				}
+			],
 			ephemeral: true
 		});
 	}
@@ -85,5 +91,7 @@ export abstract class Command implements ChatInputApplicationCommandData {
 	 * Execute the command
 	 * @param interaction Slash command interaction that called this command
 	 */
-	abstract execute(interaction: ChatInputCommandInteraction<"cached">): Promise<unknown>
+	abstract execute(
+		interaction: ChatInputCommandInteraction<"cached">
+	): Promise<unknown>;
 }

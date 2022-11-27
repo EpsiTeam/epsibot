@@ -16,10 +16,12 @@ export async function done(interaction: CommandInteraction<"cached">) {
 
 	if (!element) {
 		return interaction.reply({
-			embeds: [{
-				description: "La file est vide !",
-				color: EpsibotColor.error
-			}],
+			embeds: [
+				{
+					description: "La file est vide !",
+					color: EpsibotColor.error
+				}
+			],
 			ephemeral: true
 		});
 	}
@@ -36,10 +38,12 @@ export async function done(interaction: CommandInteraction<"cached">) {
 	await removeElement(interaction.guildId, 1);
 
 	return interaction.followUp({
-		embeds: [{
-			description: `Demande de ${element.requester} marquée comme terminée`,
-			color: EpsibotColor.success
-		}],
+		embeds: [
+			{
+				description: `Demande de ${element.requester} marquée comme terminée`,
+				color: EpsibotColor.success
+			}
+		],
 		ephemeral: true
 	});
 }

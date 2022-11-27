@@ -1,5 +1,12 @@
 /* eslint-disable no-irregular-whitespace */
-import { ButtonStyle, CommandInteraction, ComponentType, DiscordAPIError, GuildMember, MessageEditOptions } from "discord.js";
+import {
+	ButtonStyle,
+	CommandInteraction,
+	ComponentType,
+	DiscordAPIError,
+	GuildMember,
+	MessageEditOptions
+} from "discord.js";
 import { DBConnection } from "../../DBConnection.js";
 import { ShifumiScore } from "../../entity/ShifumiScore.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
@@ -11,14 +18,18 @@ enum ButtonAction {
 }
 
 export async function leaderboard(interaction: CommandInteraction<"cached">) {
-	const logger =
-		Logger.contextualize(interaction.guild, interaction.member.user);
+	const logger = Logger.contextualize(
+		interaction.guild,
+		interaction.member.user
+	);
 
 	const message = await interaction.reply({
-		embeds: [{
-			description: "Construction de la liste en cours...",
-			color: EpsibotColor.info
-		}],
+		embeds: [
+			{
+				description: "Construction de la liste en cours...",
+				color: EpsibotColor.info
+			}
+		],
 		fetchReply: true
 	});
 
@@ -33,10 +44,13 @@ export async function leaderboard(interaction: CommandInteraction<"cached">) {
 
 	if (allScores.length === 0) {
 		return message.edit({
-			embeds: [{
-				description: "Il n'y a aucun score de shifumi sur ce serveur\n`/shifumi play` permet de jouer, les scores sont enregistrés automatiquement",
-				color: EpsibotColor.warning
-			}]
+			embeds: [
+				{
+					description:
+						"Il n'y a aucun score de shifumi sur ce serveur\n`/shifumi play` permet de jouer, les scores sont enregistrés automatiquement",
+					color: EpsibotColor.warning
+				}
+			]
 		});
 	}
 
@@ -51,52 +65,63 @@ export async function leaderboard(interaction: CommandInteraction<"cached">) {
 
 	const showList = async (index: number): Promise<MessageEditOptions> => {
 		const scores = subscores[index];
-		const playerScores = await Promise.all(scores.map(async score => {
-			let member: GuildMember;
-			let user: string;
+		const playerScores = await Promise.all(
+			scores.map(async (score) => {
+				let member: GuildMember;
+				let user: string;
 
-			try {
-				member = await interaction.guild.members.fetch(score.userId);
-				user = `${member} (${member.user.tag}):`;
-			} catch (err) {
-				// member does not exists
-				user = "(Ancien membre):";
-			}
+				try {
+					member = await interaction.guild.members.fetch(
+						score.userId
+					);
+					user = `${member} (${member.user.tag}):`;
+				} catch (err) {
+					// member does not exists
+					user = "(Ancien membre):";
+				}
 
-			let scoreText = `${user}\n`;
-			scoreText += `　　Tours gagnés: ${score.win}\n`;
-			scoreText += `　　Tours égalés: ${score.draw}\n`;
-			scoreText += `　　Tours perdus: ${score.lose}`;
+				let scoreText = `${user}\n`;
+				scoreText += `　　Tours gagnés: ${score.win}\n`;
+				scoreText += `　　Tours égalés: ${score.draw}\n`;
+				scoreText += `　　Tours perdus: ${score.lose}`;
 
-			return scoreText;
-		}));
+				return scoreText;
+			})
+		);
 		const text = playerScores.join("\n\n");
 
 		return {
-			embeds: [{
-				title: "Leaderboard du shifumi",
-				description: text,
-				footer: {
-					text: `Page ${index + 1}/${subscores.length}`
-				},
-				color: EpsibotColor.info
-			}],
-			components: [{
-				type: ComponentType.ActionRow,
-				components: [{
-					type: ComponentType.Button,
-					label: "<",
-					style: ButtonStyle.Secondary,
-					customId: ButtonAction.previous,
-					disabled: subscores.length <= 1
-				}, {
-					type: ComponentType.Button,
-					label: ">",
-					style: ButtonStyle.Secondary,
-					customId: ButtonAction.next,
-					disabled: subscores.length <= 1
-				}]
-			}]
+			embeds: [
+				{
+					title: "Leaderboard du shifumi",
+					description: text,
+					footer: {
+						text: `Page ${index + 1}/${subscores.length}`
+					},
+					color: EpsibotColor.info
+				}
+			],
+			components: [
+				{
+					type: ComponentType.ActionRow,
+					components: [
+						{
+							type: ComponentType.Button,
+							label: "<",
+							style: ButtonStyle.Secondary,
+							customId: ButtonAction.previous,
+							disabled: subscores.length <= 1
+						},
+						{
+							type: ComponentType.Button,
+							label: ">",
+							style: ButtonStyle.Secondary,
+							customId: ButtonAction.next,
+							disabled: subscores.length <= 1
+						}
+					]
+				}
+			]
 		};
 	};
 
@@ -105,7 +130,7 @@ export async function leaderboard(interaction: CommandInteraction<"cached">) {
 		componentType: ComponentType.Button
 	});
 
-	collector.on("collect", async click => {
+	collector.on("collect", async (click) => {
 		if (click.customId === ButtonAction.next) {
 			currentIndex++;
 			if (currentIndex >= subscores.length) currentIndex = 0;
@@ -120,13 +145,18 @@ export async function leaderboard(interaction: CommandInteraction<"cached">) {
 			await message.edit(await showList(currentIndex));
 		} catch (err) {
 			if (err instanceof DiscordAPIError) {
-				if (err.code === 10008) { // Message deleted
-					logger.info("Can't update list because message has been deleted");
+				if (err.code === 10008) {
+					// Message deleted
+					logger.info(
+						"Can't update list because message has been deleted"
+					);
 				} else {
 					logger.error(`Impossible to update list: ${err.stack}`);
 				}
 			} else {
-				logger.error(`Impossible to update list with unknown error: ${err}`);
+				logger.error(
+					`Impossible to update list with unknown error: ${err}`
+				);
 			}
 		}
 	});
@@ -138,13 +168,18 @@ export async function leaderboard(interaction: CommandInteraction<"cached">) {
 			});
 		} catch (err) {
 			if (err instanceof DiscordAPIError) {
-				if (err.code === 10008) { // Message deleted
-					logger.info("Can't end list because message has been deleted");
+				if (err.code === 10008) {
+					// Message deleted
+					logger.info(
+						"Can't end list because message has been deleted"
+					);
 				} else {
 					logger.error(`Impossible to end collector: ${err.stack}`);
 				}
 			} else {
-				logger.error(`Impossible to end collector with unknown error: ${err}`);
+				logger.error(
+					`Impossible to end collector with unknown error: ${err}`
+				);
 			}
 		}
 	});

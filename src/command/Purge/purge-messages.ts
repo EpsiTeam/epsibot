@@ -1,5 +1,11 @@
 import { addDays } from "date-fns";
-import { ChatInputCommandInteraction, Collection, Message, TextBasedChannel, User } from "discord.js";
+import {
+	ChatInputCommandInteraction,
+	Collection,
+	Message,
+	TextBasedChannel,
+	User
+} from "discord.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 
 export enum PurgeParam {
@@ -7,7 +13,9 @@ export enum PurgeParam {
 	user = "user"
 }
 
-export async function purge(interaction: ChatInputCommandInteraction<"cached">) {
+export async function purge(
+	interaction: ChatInputCommandInteraction<"cached">
+) {
 	if (!interaction.channel) {
 		throw Error("Channel is undefined while trying to purge");
 	}
@@ -24,21 +32,20 @@ export async function purge(interaction: ChatInputCommandInteraction<"cached">) 
 			user
 		);
 	} else {
-		msgToDelete = await getMessagesToDelete(
-			nb,
-			interaction.channel
-		);
+		msgToDelete = await getMessagesToDelete(nb, interaction.channel);
 	}
 
 	if (msgToDelete.length === 0) {
 		return interaction.reply({
-			embeds: [{
-				description: "Aucun message à purger trouvé",
-				footer: {
-					text: "Pour information, les messages plus vieux que 2 semaines ne peuvent pas être purgé"
-				},
-				color: EpsibotColor.error
-			}],
+			embeds: [
+				{
+					description: "Aucun message à purger trouvé",
+					footer: {
+						text: "Pour information, les messages plus vieux que 2 semaines ne peuvent pas être purgé"
+					},
+					color: EpsibotColor.error
+				}
+			],
 			ephemeral: true
 		});
 	}
@@ -49,10 +56,14 @@ export async function purge(interaction: ChatInputCommandInteraction<"cached">) 
 		await message.delete();
 
 		return interaction.reply({
-			embeds: [{
-				description: `Un message ${user ? `de ${user} ` : ""}a été supprimé`,
-				color: EpsibotColor.success
-			}],
+			embeds: [
+				{
+					description: `Un message ${
+						user ? `de ${user} ` : ""
+					}a été supprimé`,
+					color: EpsibotColor.success
+				}
+			],
 			ephemeral: true
 		});
 	}
@@ -60,10 +71,14 @@ export async function purge(interaction: ChatInputCommandInteraction<"cached">) 
 	await interaction.channel.bulkDelete(msgToDelete);
 
 	return interaction.reply({
-		embeds: [{
-			description: `${msgToDelete.length} message ${user ? `de ${user} ` : ""}ont été supprimés`,
-			color: EpsibotColor.success
-		}],
+		embeds: [
+			{
+				description: `${msgToDelete.length} message ${
+					user ? `de ${user} ` : ""
+				}ont été supprimés`,
+				color: EpsibotColor.success
+			}
+		],
 		ephemeral: true
 	});
 }
@@ -93,8 +108,9 @@ async function getMemberMessagesToDelete(
 		(msg1, msg2) => msg2.createdTimestamp - msg1.createdTimestamp
 	);
 
-	const userMessages =
-		lastMessages.filter(message => message.author.id === user.id);
+	const userMessages = lastMessages.filter(
+		(message) => message.author.id === user.id
+	);
 
 	return userMessages.first(nb);
 }
@@ -102,5 +118,5 @@ async function getMemberMessagesToDelete(
 function filterMessages(messages: Collection<string, Message>) {
 	const twoWeeksAgo = addDays(new Date(), -14);
 
-	return messages.filter(message => message.createdAt > twoWeeksAgo);
+	return messages.filter((message) => message.createdAt > twoWeeksAgo);
 }

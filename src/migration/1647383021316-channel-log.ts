@@ -19,5 +19,4 @@ export class channelLog1647383021316 implements MigrationInterface {
 			DROP TABLE "channel_log"
 		`);
 	}
-
 }

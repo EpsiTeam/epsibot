@@ -18,5 +18,4 @@ export class ignoredChannel1647983769589 implements MigrationInterface {
 			DROP TABLE "ignored_channel"
 		`);
 	}
-
 }

@@ -2,10 +2,7 @@ import { DBConnection } from "../../DBConnection.js";
 import { QueueElement } from "../../entity/QueueElement.js";
 
 // Remove an element from the queue and update all positions
-export async function removeElement(
-	guildId: string,
-	position: number
-) {
+export async function removeElement(guildId: string, position: number) {
 	const repo = DBConnection.getRepository(QueueElement);
 
 	const elements = await repo.find({

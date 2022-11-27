@@ -10,7 +10,10 @@ export async function channelDeleted(
 	if (channel instanceof DMChannel) return;
 
 	try {
-		Logger.info(`Channel ${channel.name} has been deleted, cleaning DB`, channel.guild);
+		Logger.info(
+			`Channel ${channel.name} has been deleted, cleaning DB`,
+			channel.guild
+		);
 
 		await Promise.all([
 			getRepository(ChannelLog).delete({

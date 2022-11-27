@@ -30,7 +30,11 @@ export async function saveScore(guildId: string, game: ShifumiGame) {
 	throw Error("Don't know who win this shifumi game, can't save score");
 }
 
-async function updateOne(guildId: string, userId: string, type: "win" | "lose" | "draw") {
+async function updateOne(
+	guildId: string,
+	userId: string,
+	type: "win" | "lose" | "draw"
+) {
 	const repo = DBConnection.getRepository(ShifumiScore);
 
 	const existing = await repo.findOne({
@@ -48,8 +52,12 @@ async function updateOne(guildId: string, userId: string, type: "win" | "lose" |
 		return repo.save(new ShifumiScore(guildId, userId, win, lose, draw));
 	}
 
-	return repo.increment({
-		guildId,
-		userId
-	}, type, 1);
+	return repo.increment(
+		{
+			guildId,
+			userId
+		},
+		type,
+		1
+	);
 }

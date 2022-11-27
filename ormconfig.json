@@ -1,12 +1,8 @@
 {
 	"type": "better-sqlite3",
 	"database": "data.db",
-	"entities": [
-		"built/entity/*.js"
-	],
-	"migrations": [
-		"built/migration/*.js"
-	],
+	"entities": ["built/entity/*.js"],
+	"migrations": ["built/migration/*.js"],
 	"cli": {
 		"entitiesDir": "src/entity",
 		"migrationsDir": "src/migration"

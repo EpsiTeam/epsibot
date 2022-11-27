@@ -17,9 +17,7 @@ export async function move(interaction: ChatInputCommandInteraction<"cached">) {
 		where: { guildId: interaction.guildId }
 	});
 
-	const sortedElements = elements.sort(
-		(e1, e2) => e1.position - e2.position
-	);
+	const sortedElements = elements.sort((e1, e2) => e1.position - e2.position);
 	const elementsToUpdate: QueueElement[] = [];
 	let expected = 1;
 	let moved = false;
@@ -38,15 +36,12 @@ export async function move(interaction: ChatInputCommandInteraction<"cached">) {
 
 			// Moving other elements if needed
 			if (
-				(
-					from > to &&
+				(from > to &&
 					element.position >= to &&
-					element.position <= from
-				) || (
-					from < to &&
+					element.position <= from) ||
+				(from < to &&
 					element.position >= from &&
-					element.position <= to
-				)
+					element.position <= to)
 			) {
 				if (from > to) {
 					element.position++;
@@ -61,10 +56,12 @@ export async function move(interaction: ChatInputCommandInteraction<"cached">) {
 
 	if (!moved) {
 		return interaction.reply({
-			embeds: [{
-				description: `Aucun élément n'a été trouvé à la position ${from}`,
-				color: EpsibotColor.error
-			}],
+			embeds: [
+				{
+					description: `Aucun élément n'a été trouvé à la position ${from}`,
+					color: EpsibotColor.error
+				}
+			],
 			ephemeral: true
 		});
 	}
@@ -72,10 +69,15 @@ export async function move(interaction: ChatInputCommandInteraction<"cached">) {
 	await repo.save(elementsToUpdate);
 
 	return interaction.reply({
-		embeds: [{
-			description: `L'élément à la position ${from} a été déplacé à la position ${Math.min(to, elements.length)}`,
-			color: EpsibotColor.success
-		}],
+		embeds: [
+			{
+				description: `L'élément à la position ${from} a été déplacé à la position ${Math.min(
+					to,
+					elements.length
+				)}`,
+				color: EpsibotColor.success
+			}
+		],
 		ephemeral: true
 	});
 }

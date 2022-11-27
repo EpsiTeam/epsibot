@@ -23,5 +23,4 @@ export class customEmbedCommand1648076315265 implements MigrationInterface {
 			DROP TABLE "custom_embed_command"
 		`);
 	}
-
 }

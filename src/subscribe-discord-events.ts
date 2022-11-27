@@ -2,7 +2,11 @@ import { Client, ClientEvents } from "discord.js";
 import { executeCommand } from "./events/execute-slash-command.js";
 import { logMemberJoined, logMemberLeft } from "./events/log-member.js";
 import { registerCommands } from "./events/register-commands.js";
-import { logBulkMessageDelete, logMessageDelete, logMessageUpdate } from "./events/log-message.js";
+import {
+	logBulkMessageDelete,
+	logMessageDelete,
+	logMessageUpdate
+} from "./events/log-message.js";
 import { botInvited, botRemoved } from "./events/bot-join-left.js";
 import { executeCustomCommand } from "./events/execute-custom-command.js";
 import { addAutorole } from "./events/add-autorole.js";
@@ -17,6 +21,7 @@ import { Logger } from "./utils/logger/Logger.js";
 export function subscribeDiscordEvents(client: Client): void {
 	// Waiting for the bot to be ready before doing anything
 	client.once("ready", async (client) => {
+		// Custom fonction to listen to a discord event and catch any error
 		const listenAndCatch = <E extends keyof ClientEvents>(
 			event: E,
 			listener: (...args: ClientEvents[E]) => Promise<unknown>
@@ -38,8 +43,9 @@ export function subscribeDiscordEvents(client: Client): void {
 
 		/* ------------------ EPSIBOT LIFECYCLE ------------------ */
 		// Epsibot has been invited to a new guild
-		listenAndCatch("guildCreate", async guild =>
-			await botInvited(commandManager, guild)
+		listenAndCatch(
+			"guildCreate",
+			async (guild) => await botInvited(commandManager, guild)
 		);
 		// Epsibot has been removed from a guild
 		listenAndCatch("guildDelete", botRemoved);
@@ -64,7 +70,9 @@ export function subscribeDiscordEvents(client: Client): void {
 
 		/* ------------------- COMMANDS ------------------- */
 		// Someone used a slash command
-		listenAndCatch("interactionCreate", async (interaction) => executeCommand(commandManager, interaction));
+		listenAndCatch("interactionCreate", async (interaction) =>
+			executeCommand(commandManager, interaction)
+		);
 		// A new message has been written, maybe a custom command?
 		listenAndCatch("messageCreate", executeCustomCommand);
 

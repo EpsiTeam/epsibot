@@ -13,34 +13,42 @@ export enum AddParam {
 export async function add(interaction: ChatInputCommandInteraction<"cached">) {
 	const requester = interaction.options.getString(AddParam.requester, true);
 	const request = interaction.options.getString(AddParam.request, true);
-	const hiddenInformation =
-		interaction.options.getString(AddParam.hiddenInformation, true);
+	const hiddenInformation = interaction.options.getString(
+		AddParam.hiddenInformation,
+		true
+	);
 	let position = 1;
 
 	if (requester.length > QueueElement.maxRequesterLength) {
 		return interaction.reply({
-			embeds: [{
-				description: `Le requester doit faire moins de ${QueueElement.maxRequesterLength} caractères !`,
-				color: EpsibotColor.error
-			}],
+			embeds: [
+				{
+					description: `Le requester doit faire moins de ${QueueElement.maxRequesterLength} caractères !`,
+					color: EpsibotColor.error
+				}
+			],
 			ephemeral: true
 		});
 	}
 	if (request.length > QueueElement.maxRequestLength) {
 		return interaction.reply({
-			embeds: [{
-				description: `La request doit faire moins de ${QueueElement.maxRequestLength} caractères !`,
-				color: EpsibotColor.error
-			}],
+			embeds: [
+				{
+					description: `La request doit faire moins de ${QueueElement.maxRequestLength} caractères !`,
+					color: EpsibotColor.error
+				}
+			],
 			ephemeral: true
 		});
 	}
 	if (hiddenInformation.length > QueueElement.maxInformationLength) {
 		return interaction.reply({
-			embeds: [{
-				description: `Les informations complémentaires doivent faire moins de ${QueueElement.maxInformationLength} caractères !`,
-				color: EpsibotColor.error
-			}],
+			embeds: [
+				{
+					description: `Les informations complémentaires doivent faire moins de ${QueueElement.maxInformationLength} caractères !`,
+					color: EpsibotColor.error
+				}
+			],
 			ephemeral: true
 		});
 	}
@@ -59,10 +67,12 @@ export async function add(interaction: ChatInputCommandInteraction<"cached">) {
 
 	if (position > QueueElement.maxElements) {
 		return interaction.reply({
-			embeds: [{
-				description: `La file d'attente est déjà pleine ! (${QueueElement.maxElements} elements maximum)`,
-				color: EpsibotColor.error
-			}],
+			embeds: [
+				{
+					description: `La file d'attente est déjà pleine ! (${QueueElement.maxElements} elements maximum)`,
+					color: EpsibotColor.error
+				}
+			],
 			ephemeral: true
 		});
 	}
@@ -90,7 +100,11 @@ export async function add(interaction: ChatInputCommandInteraction<"cached">) {
 	for (const element of sortedElements) {
 		if (element.position !== expected) {
 			// Something is wrong with the position of this element rewriting it
-			Logger.warn(`Found queue element with wrong position, moving it from ${element.position} to ${expected}`, interaction.guild, interaction.user);
+			Logger.warn(
+				`Found queue element with wrong position, moving it from ${element.position} to ${expected}`,
+				interaction.guild,
+				interaction.user
+			);
 			element.position = expected;
 			elementsToSave.push(element);
 		}
@@ -102,10 +116,12 @@ export async function add(interaction: ChatInputCommandInteraction<"cached">) {
 	}
 
 	return interaction.reply({
-		embeds: [{
-			description: `Demande de ${requester} (${request}) ajoutée en position ${position}`,
-			color: EpsibotColor.success
-		}],
+		embeds: [
+			{
+				description: `Demande de ${requester} (${request}) ajoutée en position ${position}`,
+				color: EpsibotColor.success
+			}
+		],
 		ephemeral: true
 	});
 

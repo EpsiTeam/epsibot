@@ -1,4 +1,11 @@
-import { CommandInteraction, Collection, Message, ColorResolvable, AwaitMessagesOptions, ComponentType } from "discord.js";
+import {
+	CommandInteraction,
+	Collection,
+	Message,
+	ColorResolvable,
+	AwaitMessagesOptions,
+	ComponentType
+} from "discord.js";
 import { DBConnection } from "../../DBConnection.js";
 import { CustomCommand } from "../../entity/CustomCommand.js";
 import { CustomEmbedCommand } from "../../entity/CustomEmbedCommand.js";
@@ -25,10 +32,12 @@ export async function addEmbed(
 	};
 
 	await interaction.followUp({
-		embeds: [{
-			description: `Quel sera le **titre** affiché pour la commande \`${name}\` ?`,
-			color: EpsibotColor.question
-		}]
+		embeds: [
+			{
+				description: `Quel sera le **titre** affiché pour la commande \`${name}\` ?`,
+				color: EpsibotColor.question
+			}
+		]
 	});
 
 	let answer: Collection<string, Message<boolean>>;
@@ -44,26 +53,27 @@ export async function addEmbed(
 		throw Error("Collector returned with empty collection");
 	}
 	const title = msgTitle.content;
-	if (
-		title.length == 0 ||
-		title.length > CustomEmbedCommand.maxTitleLength
-	) {
+	if (title.length == 0 || title.length > CustomEmbedCommand.maxTitleLength) {
 		await msgTitle.react("❌");
 		return interaction.followUp({
-			embeds: [{
-				title: `Création de la commande \`${name}\` annulée`,
-				description: `Le titre choisi a une taille de ${title.length}, la taille doit être entre 1 et ${CustomEmbedCommand.maxTitleLength} caractères`,
-				color: EpsibotColor.error
-			}]
+			embeds: [
+				{
+					title: `Création de la commande \`${name}\` annulée`,
+					description: `Le titre choisi a une taille de ${title.length}, la taille doit être entre 1 et ${CustomEmbedCommand.maxTitleLength} caractères`,
+					color: EpsibotColor.error
+				}
+			]
 		});
 	}
 	await msgTitle.react("✅");
 
 	await interaction.followUp({
-		embeds: [{
-			description: `Quel sera la **description** affichée pour la commande \`${name}\` ?${helpArgument}`,
-			color: EpsibotColor.question
-		}],
+		embeds: [
+			{
+				description: `Quel sera la **description** affichée pour la commande \`${name}\` ?${helpArgument}`,
+				color: EpsibotColor.question
+			}
+		],
 		ephemeral: false
 	});
 
@@ -84,11 +94,13 @@ export async function addEmbed(
 	) {
 		await msgDescription.react("❌");
 		return interaction.followUp({
-			embeds: [{
-				title: `Création de la commande \`${name}\` annulée`,
-				description: `La description choisie a une taille de ${description.length}, la taille doit être entre 1 et ${CustomEmbedCommand.maxDescriptionLength} caractères`,
-				color: EpsibotColor.error
-			}],
+			embeds: [
+				{
+					title: `Création de la commande \`${name}\` annulée`,
+					description: `La description choisie a une taille de ${description.length}, la taille doit être entre 1 et ${CustomEmbedCommand.maxDescriptionLength} caractères`,
+					color: EpsibotColor.error
+				}
+			],
 			ephemeral: false
 		});
 	}
@@ -106,10 +118,12 @@ export async function addEmbed(
 	let image = "";
 	if (hasImage) {
 		await interaction.followUp({
-			embeds: [{
-				description: `Quelle sera l'image affichée pour la commande \`${name}\` ?`,
-				color: EpsibotColor.question
-			}],
+			embeds: [
+				{
+					description: `Quelle sera l'image affichée pour la commande \`${name}\` ?`,
+					color: EpsibotColor.question
+				}
+			],
 			ephemeral: false
 		});
 
@@ -124,13 +138,19 @@ export async function addEmbed(
 			throw Error("Collector returned with empty collection");
 		}
 		const attachment = msgImage.attachments.first();
-		if (!attachment || !attachment.contentType || !attachment.contentType.startsWith("image")) {
+		if (
+			!attachment ||
+			!attachment.contentType ||
+			!attachment.contentType.startsWith("image")
+		) {
 			await msgImage.react("❌");
 			return interaction.followUp({
-				embeds: [{
-					description: `Création de la commande \`${name}\` annulée, une image était attendue`,
-					color: EpsibotColor.error
-				}],
+				embeds: [
+					{
+						description: `Création de la commande \`${name}\` annulée, une image était attendue`,
+						color: EpsibotColor.error
+					}
+				],
 				ephemeral: false
 			});
 		}
@@ -151,10 +171,12 @@ export async function addEmbed(
 	let color: ColorResolvable = EpsibotColor.default;
 	if (hasColor) {
 		const msgColor = await interaction.followUp({
-			embeds: [{
-				description: `Choisissez la couleur pour la commande \`${name}\``,
-				color: EpsibotColor.question
-			}],
+			embeds: [
+				{
+					description: `Choisissez la couleur pour la commande \`${name}\``,
+					color: EpsibotColor.question
+				}
+			],
 			components: [SelectMenuColor.actionRow],
 			ephemeral: false
 		});
@@ -169,19 +191,25 @@ export async function addEmbed(
 			color = colorOption[0] as ColorResolvable;
 
 			await selectResponse.update({
-				components: [{
-					type: ComponentType.ActionRow,
-					components: [{
-						type: ComponentType.SelectMenu,
-						placeholder: colorOption[0],
-						options: [{
-							label: "Ceci ne devrait pas être visible",
-							value: "Shouldn't be visible"
-						}],
-						customId: "selectColor",
-						disabled: true
-					}]
-				}]
+				components: [
+					{
+						type: ComponentType.ActionRow,
+						components: [
+							{
+								type: ComponentType.SelectMenu,
+								placeholder: colorOption[0],
+								options: [
+									{
+										label: "Ceci ne devrait pas être visible",
+										value: "Shouldn't be visible"
+									}
+								],
+								customId: "selectColor",
+								disabled: true
+							}
+						]
+					}
+				]
 			});
 		} catch (err) {
 			return interaction.followUp(timeoutEmbed(name));
@@ -190,20 +218,35 @@ export async function addEmbed(
 
 	const [command] = await Promise.all([
 		DBConnection.getRepository(CustomEmbedCommand).save(
-			new CustomEmbedCommand( interaction.guildId, name, title, description, image, color, adminOnly, autoDelete)
+			new CustomEmbedCommand(
+				interaction.guildId,
+				name,
+				title,
+				description,
+				image,
+				color,
+				adminOnly,
+				autoDelete
+			)
 		),
-		DBConnection.getRepository(CustomCommand).delete({ guildId: interaction.guildId, name })
+		DBConnection.getRepository(CustomCommand).delete({
+			guildId: interaction.guildId,
+			name
+		})
 	]);
 
 	return interaction.followUp({
-		embeds: [{
-			title: `Commande embed \`${command.name}\` créée`,
-			fields: commandFields(command),
-			footer: {
-				text: "Réponse de la commande:"
+		embeds: [
+			{
+				title: `Commande embed \`${command.name}\` créée`,
+				fields: commandFields(command),
+				footer: {
+					text: "Réponse de la commande:"
+				},
+				color: EpsibotColor.success
 			},
-			color: EpsibotColor.success
-		}, command.createEmbed()],
+			command.createEmbed()
+		],
 		ephemeral: false
 	});
 }

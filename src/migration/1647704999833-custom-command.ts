@@ -21,5 +21,4 @@ export class customCommand1647704999833 implements MigrationInterface {
 			DROP TABLE "custom_command"
 		`);
 	}
-
 }

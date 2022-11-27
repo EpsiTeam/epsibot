@@ -1,4 +1,8 @@
-import { ApplicationCommandOptionData, ApplicationCommandOptionType as CmdType, ChatInputCommandInteraction } from "discord.js";
+import {
+	ApplicationCommandOptionData,
+	ApplicationCommandOptionType as CmdType,
+	ChatInputCommandInteraction
+} from "discord.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 import { Command } from "../Command.js";
 import { CommandManager } from "../CommandManager.js";
@@ -11,12 +15,15 @@ export class Help extends Command {
 	constructor(readonly manager: CommandManager) {
 		super("help", "Affiche toutes les commandes disponibles");
 
-		this.options = [{
-			type: CmdType.Boolean,
-			name: HelpParam.everyone,
-			description: "Est-ce que le message qui affiche l'aide doit s'afficher pour tout le monde ?",
-			required: false
-		}];
+		this.options = [
+			{
+				type: CmdType.Boolean,
+				name: HelpParam.everyone,
+				description:
+					"Est-ce que le message qui affiche l'aide doit s'afficher pour tout le monde ?",
+				required: false
+			}
+		];
 	}
 
 	async execute(interaction: ChatInputCommandInteraction<"cached">) {
@@ -58,14 +65,16 @@ export class Help extends Command {
 		}
 
 		return interaction.reply({
-			embeds: [{
-				title: "Liste des slash commandes",
-				description: text,
-				footer: {
-					text: "Tip: commencer un message par / affichera la liste des slash commandes disponibles"
-				},
-				color: EpsibotColor.info
-			}],
+			embeds: [
+				{
+					title: "Liste des slash commandes",
+					description: text,
+					footer: {
+						text: "Tip: commencer un message par / affichera la liste des slash commandes disponibles"
+					},
+					color: EpsibotColor.info
+				}
+			],
 			ephemeral: !everyone
 		});
 	}

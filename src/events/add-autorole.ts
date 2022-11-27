@@ -21,7 +21,9 @@ export async function addAutorole(member: GuildMember) {
 	}
 
 	if (!member.guild.members.me) {
-		logger.error("Can't add autorole because guild.me is null, has the bot been kicked?");
+		logger.error(
+			"Can't add autorole because guild.me is null, has the bot been kicked?"
+		);
 		return;
 	}
 

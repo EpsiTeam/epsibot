@@ -8,8 +8,7 @@
 export function fillArguments(message: string, response: string): string {
 	const trimmed = message.trim();
 
-	if (trimmed.length === 0)
-		return response;
+	if (trimmed.length === 0) return response;
 
 	const args = cleanArguments(trimmed.split(" "));
 	let filledResponse = response;
@@ -40,7 +39,7 @@ export function cleanArguments(args: string[]) {
 		let arg = args.shift() as string;
 
 		// A quoted argument, damn it
-		if (arg.startsWith("\"") || arg.startsWith("'")) {
+		if (arg.startsWith('"') || arg.startsWith("'")) {
 			arg = findQuotedArgument(arg, args);
 		}
 

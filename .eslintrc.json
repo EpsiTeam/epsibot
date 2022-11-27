@@ -13,10 +13,7 @@
 		"ecmaVersion": "latest",
 		"sourceType": "module"
 	},
-	"plugins": [
-		"@typescript-eslint",
-		"import"
-	],
+	"plugins": ["@typescript-eslint", "import"],
 	"rules": {
 		// Rules that result in an error:
 		// "indent": ["error", "tab", { "SwitchCase": 1 }],

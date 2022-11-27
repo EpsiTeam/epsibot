@@ -19,10 +19,12 @@ export async function add(interaction: ChatInputCommandInteraction<"cached">) {
 
 	if (name.length > CustomCommand.maxNameLength) {
 		return interaction.reply({
-			embeds: [{
-				description: `Le nom de la commande doit faire moins de ${CustomCommand.maxNameLength} caractères !`,
-				color: EpsibotColor.error
-			}],
+			embeds: [
+				{
+					description: `Le nom de la commande doit faire moins de ${CustomCommand.maxNameLength} caractères !`,
+					color: EpsibotColor.error
+				}
+			],
 			ephemeral: true
 		});
 	}
