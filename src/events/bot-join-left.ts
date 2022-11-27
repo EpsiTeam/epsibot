@@ -7,16 +7,20 @@ export async function botInvited(
 	guild: Guild
 ) {
 	const logger = Logger.contextualize(guild);
-	if (!guild.me) {
+	if (!guild.members.me) {
 		logger.error("Epsibot has been invited, but guild.me is not defined");
 		return;
 	}
-	if (!guild.me.permissions.has("ADMINISTRATOR")) {
+	if (!guild.members.me.permissions.has("Administrator")) {
 		logger.error("Epsibot has been invited without admin permissions, leaving guild...");
 		try {
 			return guild.leave();
 		} catch (err) {
-			logger.error(`Failed to leave guild: ${err.stack}`);
+			if (err instanceof Error) {
+				logger.error(`Failed to leave guild: ${err.stack}`);
+			} else {
+				logger.error(`Failed to leave guild with unknown error: ${err}`);
+			}
 			return;
 		}
 	}
@@ -25,7 +29,11 @@ export async function botInvited(
 	try {
 		return commandManager.registerCommands([guild]);
 	} catch (err) {
-		logger.error(`Failed to register commands: ${err.stack}`);
+		if (err instanceof Error) {
+			logger.error(`Failed to register commands: ${err.stack}`);
+		} else {
+			logger.error(`Failed to register commands with unknown error: ${err}`);
+		}
 		return;
 	}
 }

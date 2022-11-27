@@ -1,4 +1,4 @@
-import { CommandInteraction } from "discord.js";
+import { ApplicationCommandOptionType, ChatInputCommandInteraction } from "discord.js";
 import { Command } from "../Command.js";
 import { list } from "./list.js";
 import { add, AddParam } from "./add.js";
@@ -14,41 +14,41 @@ export class GuildCommand extends Command {
 	constructor() {
 		super("command", "Gère les commandes custom");
 
-		this.needPermissions = ["ADMINISTRATOR"];
+		this.needPermissions = ["Administrator"];
 
 		this.options = [{
-			type: "SUB_COMMAND",
+			type: ApplicationCommandOptionType.Subcommand,
 			name: Subcommand.list,
 			description: "Liste les commandes custom existantes"
 		}, {
-			type: "SUB_COMMAND",
+			type: ApplicationCommandOptionType.Subcommand,
 			name: Subcommand.add,
 			description: "Ajoute une commande custom",
 			options: [{
-				type: "STRING",
+				type: ApplicationCommandOptionType.String,
 				name: AddParam.name,
 				description: "Nom de la commande custom à ajouter, tout message qui commencera par ce nom appelera cette commande",
 				required: true
 			}, {
-				type: "BOOLEAN",
+				type: ApplicationCommandOptionType.Boolean,
 				name: AddParam.embed,
 				description: "Est-ce que la command doit s'afficher dans un embed ?",
 				required: true
 			}, {
-				type: "BOOLEAN",
+				type: ApplicationCommandOptionType.Boolean,
 				name: AddParam.adminOnly,
 				description: "Est-ce que seulement les admins pourront lancer cete commande custom ?"
 			}, {
-				type: "BOOLEAN",
+				type: ApplicationCommandOptionType.Boolean,
 				name: AddParam.autoDelete,
 				description: "Est-ce que le message qui active la commande doit être supprimé automatiquement ?"
 			}]
 		}, {
-			type: "SUB_COMMAND",
+			type: ApplicationCommandOptionType.Subcommand,
 			name: Subcommand.remove,
 			description: "Supprime une commande custom",
 			options: [{
-				type: "STRING",
+				type: ApplicationCommandOptionType.String,
 				name: RemoveParam.name,
 				description: "Nom de la commande custom à supprimer",
 				required: true
@@ -56,7 +56,7 @@ export class GuildCommand extends Command {
 		}];
 	}
 
-	async execute(interaction: CommandInteraction<"cached">) {
+	async execute(interaction: ChatInputCommandInteraction<"cached">) {
 		const subcommand = interaction.options.getSubcommand();
 
 		if (subcommand === Subcommand.list)

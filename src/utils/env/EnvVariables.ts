@@ -1,8 +1,8 @@
 export class EnvVariables {
 	static readonly production = process.env.PRODUCTION === "true";
-	static readonly discordToken = process.env.DISCORD_TOKEN as string;
-	static readonly owners = (process.env.OWNERS as string).split(",");
-	static readonly version = process.env.npm_package_version as string;
+	static readonly discordToken = process.env.DISCORD_TOKEN ?? "";
+	static readonly owners = (process.env.OWNERS ?? "").split(",");
+	static readonly version = process.env.npm_package_version ?? "";
 }
 
 export function checkEnvironmentVariables() {

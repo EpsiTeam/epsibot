@@ -1,6 +1,8 @@
 import {
 	ApplicationCommandOptionData,
+	ApplicationCommandType,
 	ChatInputApplicationCommandData,
+	ChatInputCommandInteraction,
 	CommandInteraction,
 	PermissionResolvable
 } from "discord.js";
@@ -23,7 +25,7 @@ export abstract class Command implements ChatInputApplicationCommandData {
 	/**
 	 * Type of the command, CHAT_INPUT being a slash command
 	 */
-	readonly type = "CHAT_INPUT";
+	readonly type = ApplicationCommandType.ChatInput;
 	/**
 	 * Options for this command (parameters, subcommand and so and so)
 	 */
@@ -83,5 +85,5 @@ export abstract class Command implements ChatInputApplicationCommandData {
 	 * Execute the command
 	 * @param interaction Slash command interaction that called this command
 	 */
-	abstract execute(interaction: CommandInteraction<"cached">): Promise<unknown>
+	abstract execute(interaction: ChatInputCommandInteraction<"cached">): Promise<unknown>
 }

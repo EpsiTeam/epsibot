@@ -1,5 +1,5 @@
-import { CommandInteraction } from "discord.js";
-import { getRepository } from "typeorm";
+import { ChatInputCommandInteraction } from "discord.js";
+import { DBConnection } from "../../DBConnection.js";
 import { AutoRole } from "../../entity/AutoRole.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 
@@ -7,7 +7,7 @@ export enum EnableParam {
 	role = "role"
 }
 
-export async function enable(interaction: CommandInteraction<"cached">) {
+export async function enable(interaction: ChatInputCommandInteraction<"cached">) {
 	const role = interaction.options.getRole(EnableParam.role, true);
 
 	if (role.id === interaction.guild.roles.everyone.id) {
@@ -20,11 +20,11 @@ export async function enable(interaction: CommandInteraction<"cached">) {
 		});
 	}
 
-	if (!interaction.guild.me) {
+	if (!interaction.guild.members.me) {
 		throw Error("guild.me is null, no idea why (has the bot been kicked?)");
 	}
 
-	const highestRole = interaction.guild.me.roles.highest;
+	const highestRole = interaction.guild.members.me.roles.highest;
 	const roleBelowBot: boolean =
 		interaction.guild.roles.comparePositions(
 			role,
@@ -41,7 +41,7 @@ export async function enable(interaction: CommandInteraction<"cached">) {
 		});
 	}
 
-	await getRepository(AutoRole).save(
+	await DBConnection.getRepository(AutoRole).save(
 		new AutoRole(interaction.guildId, role.id)
 	);
 

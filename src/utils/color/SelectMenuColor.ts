@@ -1,33 +1,33 @@
-import { BaseMessageComponentOptions, ColorResolvable, MessageActionRowOptions, MessageSelectOptionData } from "discord.js";
+import { ActionRowData, ColorResolvable, ComponentType, MessageActionRowComponentData, SelectMenuComponentOptionData } from "discord.js";
 
 const colors: [string, ColorResolvable][] = [
-	["Rouge", "RED"],
-	["Rouge foncé", "DARK_RED"],
-	["Orange", "ORANGE"],
-	["Orange foncé", "DARK_ORANGE"],
-	["Jaune", "YELLOW"],
-	["Or", "GOLD"],
-	["Or foncé", "DARK_GOLD"],
-	["Vert", "GREEN"],
-	["Vert foncé", "DARK_GREEN"],
-	["Turquoise", "AQUA"],
-	["Turquoise foncé", "DARK_AQUA"],
-	["Bleu", "BLUE"],
-	["Bleu foncé", "DARK_BLUE"],
-	["Bleu marine", "NAVY"],
-	["Bleu marine foncé", "DARK_NAVY"],
-	["Violet", "PURPLE"],
-	["Fushia", "LUMINOUS_VIVID_PINK"],
-	["Fushia foncé", "DARK_VIVID_PINK"],
-	["Blanc", "WHITE"],
-	["Gris clair", "LIGHT_GREY"],
-	["Gris", "GREY"],
-	["Gris foncé", "DARK_GREY"],
-	["Gris très foncé", "DARKER_GREY"],
-	["Noir", "DEFAULT"]
+	["Rouge", "Red"],
+	["Rouge foncé", "DarkRed"],
+	["Orange", "Orange"],
+	["Orange foncé", "DarkOrange"],
+	["Jaune", "Yellow"],
+	["Or", "Gold"],
+	["Or foncé", "DarkGold"],
+	["Vert", "Green"],
+	["Vert foncé", "DarkGreen"],
+	["Turquoise", "Aqua"],
+	["Turquoise foncé", "DarkAqua"],
+	["Bleu", "Blue"],
+	["Bleu foncé", "DarkBlue"],
+	["Bleu marine", "Navy"],
+	["Bleu marine foncé", "DarkNavy"],
+	["Violet", "Purple"],
+	["Fushia", "LuminousVividPink"],
+	["Fushia foncé", "DarkVividPink"],
+	["Blanc", "White"],
+	["Gris clair", "LightGrey"],
+	["Gris", "Grey"],
+	["Gris foncé", "DarkGrey"],
+	["Gris très foncé", "DarkerGrey"],
+	["Noir", "Default"]
 ];
 
-const colorOptions: MessageSelectOptionData[] =
+const colorOptions: SelectMenuComponentOptionData[] =
 	colors.map(([colorName, color]) => {
 		return {
 			label: colorName,
@@ -35,14 +35,11 @@ const colorOptions: MessageSelectOptionData[] =
 		};
 	});
 
-type ColorActionRow =
-	Required<BaseMessageComponentOptions> & MessageActionRowOptions;
-
 export class SelectMenuColor {
-	static actionRow: ColorActionRow = {
-		type: "ACTION_ROW",
+	static actionRow: ActionRowData<MessageActionRowComponentData> = {
+		type: ComponentType.ActionRow,
 		components: [{
-			type: "SELECT_MENU",
+			type: ComponentType.SelectMenu,
 			options: colorOptions,
 			minValues: 1,
 			maxValues: 1,

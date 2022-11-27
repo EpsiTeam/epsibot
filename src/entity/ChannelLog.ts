@@ -7,11 +7,11 @@ export class ChannelLog {
 	constructor(
 		guildId: string,
 		logType: logType,
-		channelId?: string
+		channelId: string
 	) {
 		this.guildId = guildId;
 		this.logType = logType;
-		if (channelId) this.channelId = channelId;
+		this.channelId = channelId;
 	}
 
 	@PrimaryColumn() guildId: string;

@@ -1,4 +1,4 @@
-import { CommandInteraction } from "discord.js";
+import { ButtonStyle, ChatInputCommandInteraction, ComponentType, DiscordAPIError } from "discord.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 import { Logger } from "../../utils/logger/Logger.js";
 import { saveScore } from "./save-score.js";
@@ -9,11 +9,21 @@ export enum PlayParam {
 	turnsToWin = "nb_turns_to_win"
 }
 
-export async function play(interaction: CommandInteraction<"cached">) {
+export async function play(interaction: ChatInputCommandInteraction<"cached">) {
 	const user1 = interaction.member;
-	const user2 = interaction.options.getMember(PlayParam.user, true);
+	const user2 = interaction.options.getMember(PlayParam.user);
 	const turnsToWin =
 		interaction.options.getNumber(PlayParam.turnsToWin, false) ?? 3;
+
+	if (!user2) {
+		return interaction.reply({
+			embeds: [{
+				description: "Joueur introuvable",
+				color: EpsibotColor.error
+			}],
+			ephemeral: true
+		});
+	}
 
 	if (user1.id === user2.id) {
 		return interaction.reply({
@@ -40,21 +50,21 @@ export async function play(interaction: CommandInteraction<"cached">) {
 			color: EpsibotColor.question
 		}],
 		components: [{
-			type: "ACTION_ROW",
+			type: ComponentType.ActionRow,
 			components: [{
-				type: "BUTTON",
+				type: ComponentType.Button,
 				label: getShifumiEmoji(ShifumiChoice.rock) + " pierre",
-				style: "SECONDARY",
+				style: ButtonStyle.Secondary,
 				customId: ShifumiChoice.rock
 			}, {
-				type: "BUTTON",
+				type: ComponentType.Button,
 				label: getShifumiEmoji(ShifumiChoice.paper) + " feuille",
-				style: "SECONDARY",
+				style: ButtonStyle.Secondary,
 				customId: ShifumiChoice.paper
 			}, {
-				type: "BUTTON",
+				type: ComponentType.Button,
 				label: getShifumiEmoji(ShifumiChoice.scissors) + " ciseau",
-				style: "SECONDARY",
+				style: ButtonStyle.Secondary,
 				customId: ShifumiChoice.scissors
 			}]
 		}],
@@ -62,7 +72,7 @@ export async function play(interaction: CommandInteraction<"cached">) {
 	});
 
 	const collector = message.createMessageComponentCollector({
-		componentType: "BUTTON",
+		componentType: ComponentType.Button,
 		filter:
 			click => click.member.id === user1.id ||
 			click.member.id === user2.id,
@@ -70,33 +80,39 @@ export async function play(interaction: CommandInteraction<"cached">) {
 	});
 
 	collector.on("collect", async click => {
-		// Shouldn't happen
-		if (game.gameFinished()) return;
-
-		game.play(click.member, click.customId as ShifumiChoice);
-
 		try {
+			await click.deferUpdate();
+
+			// Shouldn't happen
+			if (game.gameFinished()) return;
+
+			game.play(click.member, click.customId as ShifumiChoice);
+
 			if (game.turnFinished()) {
 				await saveScore(interaction.guildId, game);
 			}
 
 			if (game.gameFinished()) {
 				collector.stop();
-				return click.deferUpdate();
+			} else {
+				await click.update({
+					embeds: [{
+						title,
+						description: game.getScore(),
+						color: EpsibotColor.question
+					}]
+				});
 			}
 
-			return click.update({
-				embeds: [{
-					title,
-					description: game.getScore(),
-					color: EpsibotColor.question
-				}]
-			});
 		} catch (err) {
-			if (err.code === 10008) { // Message deleted
-				logger.info("Can't update shifumi because message has been deleted");
+			if (err instanceof DiscordAPIError) {
+				if (err.code === 10008) { // Message deleted
+					logger.info("Can't update shifumi because message has been deleted");
+				} else {
+					logger.error(`Impossible to update shifumi: ${err.stack}`);
+				}
 			} else {
-				logger.error(`Impossible to update shifumi: ${err.stack}`);
+				logger.error(`Impossible to update shifumi with unknown error: ${err}`);
 			}
 		}
 	});
@@ -119,13 +135,19 @@ export async function play(interaction: CommandInteraction<"cached">) {
 				components: []
 			});
 		} catch (err) {
-			if (err.code === 10008) { // Message deleted
-				logger.info("Can't end shifumi because message has been deleted");
+			if (err instanceof DiscordAPIError) {
+				if (err.code === 10008) { // Message deleted
+					logger.info("Can't end shifumi because message has been deleted");
+				} else {
+					logger.error(`Impossible to end shifumi: ${err.stack}`);
+				}
 			} else {
-				logger.error(`Impossible to end shifumi: ${err.stack}`);
+				logger.error(`Impossible to update shifumi with unknown error: ${err}`);
 			}
 		}
 	});
+
+	return message;
 }
 
 export function getShifumiEmoji(str: ShifumiChoice) {

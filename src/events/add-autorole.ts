@@ -1,12 +1,12 @@
 import { GuildMember } from "discord.js";
-import { getRepository } from "typeorm";
+import { DBConnection } from "../DBConnection.js";
 import { AutoRole } from "../entity/AutoRole.js";
 import { Logger } from "../utils/logger/Logger.js";
 
 export async function addAutorole(member: GuildMember) {
-	const autorole = await getRepository(AutoRole).findOne(
-		new AutoRole(member.guild.id)
-	);
+	const autorole = await DBConnection.getRepository(AutoRole).findOne({
+		where: { guildId: member.guild.id }
+	});
 
 	// Autorole not configured
 	if (!autorole) return;
@@ -20,7 +20,7 @@ export async function addAutorole(member: GuildMember) {
 		return;
 	}
 
-	if (!member.guild.me) {
+	if (!member.guild.members.me) {
 		logger.error("Can't add autorole because guild.me is null, has the bot been kicked?");
 		return;
 	}
@@ -28,7 +28,7 @@ export async function addAutorole(member: GuildMember) {
 	const roleBelowBot: boolean =
 		member.guild.roles.comparePositions(
 			role,
-			member.guild.me.roles.highest
+			member.guild.members.me.roles.highest
 		) < 0;
 
 	if (!roleBelowBot) {

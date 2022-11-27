@@ -14,17 +14,18 @@ export class QueueElement {
 		request: string,
 		hiddenInformation: string
 	) {
+		this.id = 0;
 		this.guildId = guildId;
 		this.position = position;
 		this.requester = requester;
 		this.request = request;
 		this.hiddenInformation = hiddenInformation;
 
-		if (this.requester?.length > QueueElement.maxRequesterLength)
+		if (this.requester.length > QueueElement.maxRequesterLength)
 			throw Error("Requester too long");
-		if (this.request?.length > QueueElement.maxRequestLength)
+		if (this.request.length > QueueElement.maxRequestLength)
 			throw Error("Request too long");
-		if (this.hiddenInformation?.length > QueueElement.maxInformationLength)
+		if (this.hiddenInformation.length > QueueElement.maxInformationLength)
 			throw Error("Hidden information too long");
 	}
 

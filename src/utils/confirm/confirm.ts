@@ -1,7 +1,8 @@
 import {
 	ButtonInteraction,
-	ColorResolvable,
+	ButtonStyle,
 	CommandInteraction,
+	ComponentType,
 	InteractionReplyOptions,
 	Message
 } from "discord.js";
@@ -30,7 +31,7 @@ export async function confirm(
 		 * Color of the message sent
 		 * Default to EpsibotColor.success
 		 */
-		color?: ColorResolvable,
+		color?: number,
 		/**
 		 * User that will be able to click on the buttons<br>
 		 * Will use the interaction user by default
@@ -86,16 +87,16 @@ export async function confirm(
 			color: color
 		}],
 		components: [{
-			type: "ACTION_ROW",
+			type: ComponentType.ActionRow,
 			components: [{
-				type: "BUTTON",
+				type: ComponentType.Button,
 				label: labelYes,
-				style: "SUCCESS",
+				style: ButtonStyle.Success,
 				customId: ButtonAction.yes
 			}, {
-				type: "BUTTON",
+				type: ComponentType.Button,
 				label: labelNo,
-				style: "DANGER",
+				style: ButtonStyle.Danger,
 				customId: ButtonAction.no
 			}]
 		}],
@@ -112,11 +113,11 @@ export async function confirm(
 	}
 
 	let answer: boolean | null;
-	let click: ButtonInteraction<"cached"> | undefined = undefined;
+	let click: ButtonInteraction | undefined = undefined;
 
 	try {
 		click = await messageConfirm.awaitMessageComponent({
-			componentType: "BUTTON",
+			componentType: ComponentType.Button,
 			filter: click => click.member.id === userId,
 			time: timeout
 		});
@@ -133,11 +134,11 @@ export async function confirm(
 	} else {
 		await interaction.webhook.editMessage(messageConfirm, {
 			components: [{
-				type: "ACTION_ROW",
+				type: ComponentType.ActionRow,
 				components: [{
-					type: "BUTTON",
+					type: ComponentType.Button,
 					label: answer ? labelYes : labelNo,
-					style: answer ? "SUCCESS" : "DANGER",
+					style: answer ? ButtonStyle.Success : ButtonStyle.Success,
 					customId: answer ? ButtonAction.yes : ButtonAction.no,
 					disabled: true
 				}]

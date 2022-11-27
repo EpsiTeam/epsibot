@@ -1,5 +1,5 @@
-import { CommandInteraction } from "discord.js";
-import { getRepository } from "typeorm";
+import { ChatInputCommandInteraction } from "discord.js";
+import { DBConnection } from "../../DBConnection.js";
 import { QueueElement } from "../../entity/QueueElement.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 
@@ -8,15 +8,13 @@ export enum MoveParams {
 	to = "to"
 }
 
-export async function move(interaction: CommandInteraction<"cached">) {
+export async function move(interaction: ChatInputCommandInteraction<"cached">) {
 	const from = interaction.options.getInteger(MoveParams.from, true);
 	const to = interaction.options.getInteger(MoveParams.to, true);
-	const repo = getRepository(QueueElement);
+	const repo = DBConnection.getRepository(QueueElement);
 
 	const elements = await repo.find({
-		where: {
-			guildId: interaction.guildId
-		}
+		where: { guildId: interaction.guildId }
 	});
 
 	const sortedElements = elements.sort(

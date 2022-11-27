@@ -1,16 +1,16 @@
-import { CommandInteraction } from "discord.js";
-import { getRepository } from "typeorm";
+import { ChatInputCommandInteraction } from "discord.js";
 import { ChannelLog } from "../../entity/ChannelLog.js";
 import { getChannelLogType, getLogDescription, GuildLogType } from "./channel-log-type.js";
 import { logType } from "../../entity/ChannelLog.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
+import { DBConnection } from "../../DBConnection.js";
 
 export enum EnableParam {
 	logType = "log_type",
 	channel = "channel"
 }
 
-export async function enable(interaction: CommandInteraction<"cached">) {
+export async function enable(interaction: ChatInputCommandInteraction<"cached">) {
 	// The type of log we should enable
 	const paramLogType = interaction.options.getString(
 		EnableParam.logType,
@@ -23,9 +23,9 @@ export async function enable(interaction: CommandInteraction<"cached">) {
 	return enableLog(interaction, getChannelLogType(paramLogType));
 }
 
-async function enableAllLog(interaction: CommandInteraction<"cached">) {
+async function enableAllLog(interaction: ChatInputCommandInteraction<"cached">) {
 	const channel = interaction.options.getChannel(EnableParam.channel, true);
-	const repo = getRepository(ChannelLog);
+	const repo = DBConnection.getRepository(ChannelLog);
 
 	await repo.save([
 		new ChannelLog(interaction.guildId, "userJoinLeave", channel.id),
@@ -42,11 +42,11 @@ async function enableAllLog(interaction: CommandInteraction<"cached">) {
 	});
 }
 
-async function enableLog(interaction: CommandInteraction<"cached">, logType: logType) {
+async function enableLog(interaction: ChatInputCommandInteraction<"cached">, logType: logType) {
 	const channel = interaction.options.getChannel(EnableParam.channel, true);
 	const logDescription = getLogDescription(logType);
 
-	await getRepository(ChannelLog).save(new ChannelLog(
+	await DBConnection.getRepository(ChannelLog).save(new ChannelLog(
 		interaction.guildId,
 		logType,
 		channel.id

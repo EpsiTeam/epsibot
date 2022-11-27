@@ -1,6 +1,6 @@
 import { format } from "date-fns";
-import { Collection, Message, PartialMessage } from "discord.js";
-import { getRepository } from "typeorm";
+import { ChannelType, Collection, Message, PartialMessage } from "discord.js";
+import { DBConnection } from "../DBConnection.js";
 import { ChannelLog } from "../entity/ChannelLog.js";
 import { IgnoredChannel } from "../entity/IgnoredChannel.js";
 import { EpsibotColor } from "../utils/color/EpsibotColor.js";
@@ -17,20 +17,26 @@ export async function logMessageDelete(message: Message | PartialMessage) {
 	Logger.debug("Message deleted", guild, message.author);
 
 	// Retrieve the channel where we should log this
-	const channelLog = await getRepository(ChannelLog).findOne(
-		new ChannelLog(guild.id, "deletedMessage")
-	);
+	const channelLog = await DBConnection.getRepository(ChannelLog).findOne({
+		where: {
+			guildId: guild.id,
+			logType: "deletedMessage"
+		}
+	});
 	if (!channelLog) return;
 
 	// Check if this channel is ignored
-	const ignored = await getRepository(IgnoredChannel).count(
-		new IgnoredChannel(guild.id, message.channel.id)
-	);
+	const ignored = await DBConnection.getRepository(IgnoredChannel).count({
+		where: {
+			guildId: guild.id,
+			channelId: message.channelId
+		}
+	});
 	if (ignored > 0) return;
 
 	// Retrieve the Discord channel
 	const channel = await guild.channels.fetch(channelLog.channelId);
-	if (!channel || !channel.isText()) {
+	if (!channel || channel.type !== ChannelType.GuildText) {
 		Logger.error(`Impossible to send logs on channel ${channelLog.channelId}, maybe it has been deleted or modified`, guild, message.author);
 		return;
 	}
@@ -41,7 +47,7 @@ export async function logMessageDelete(message: Message | PartialMessage) {
 		embeds: [{
 			description: `Un message de ${message.member} (${message.author.tag}) a été supprimé dans ${message.channel}:\n\n${message.content}`,
 			footer: {
-				iconURL: message.author.displayAvatarURL(),
+				icon_url: message.author.displayAvatarURL(),
 				text: `Message crée le ${creationDate}`
 			},
 			color: EpsibotColor.warning
@@ -67,23 +73,29 @@ export async function logBulkMessageDelete(
 	logger.info(`${messages.size} messages purged`);
 
 	// Retrieve the channel where we should log this
-	const channelLog = await getRepository(ChannelLog).findOne(
-		new ChannelLog(guild.id, "deletedMessage")
-	);
+	const channelLog = await DBConnection.getRepository(ChannelLog).findOne({
+		where: {
+			guildId: guild.id,
+			logType: "deletedMessage"
+		}
+	});
 	if (!channelLog) return;
 
 	const channel = messages.find(message => message.channel !== null)?.channel;
 	if (channel) {
 		// Check if this channel is ignored
-		const ignored = await getRepository(IgnoredChannel).count(
-			new IgnoredChannel(guild.id, channel.id)
-		);
+		const ignored = await DBConnection.getRepository(IgnoredChannel).count({
+			where: {
+				guildId: guild.id,
+				channelId: channel.id
+			}
+		});
 		if (ignored > 0) return;
 	}
 
 	// Retrieve the Discord channel
 	const logChannel = await guild.channels.fetch(channelLog.channelId);
-	if (!logChannel || !logChannel.isText()) {
+	if (!logChannel || logChannel.type !== ChannelType.GuildText) {
 		logger.error(`Impossible to send logs on channel ${channelLog.channelId}, maybe it has been deleted or modified`);
 		return;
 	}
@@ -131,10 +143,7 @@ export async function logBulkMessageDelete(
 /**
  * Log an updated message
  */
-export async function logMessageUpdate(
-	oldMsg: Message | PartialMessage,
-	newMsg: Message | PartialMessage
-) {
+export async function logMessageUpdate(oldMsg: Message | PartialMessage, newMsg: Message | PartialMessage) {
 	if (!oldMsg.content) return;
 	if (oldMsg.content === newMsg.content) return;
 
@@ -147,20 +156,26 @@ export async function logMessageUpdate(
 	Logger.debug("Message updated", guild, author);
 
 	// Retrieve the channel where we should log this
-	const channelLog = await getRepository(ChannelLog).findOne(
-		new ChannelLog(guild.id, "updatedMessage")
-	);
+	const channelLog = await DBConnection.getRepository(ChannelLog).findOne({
+		where: {
+			guildId: guild.id,
+			logType: "updatedMessage"
+		}
+	});
 	if (!channelLog) return;
 
 	// Check if this channel is ignored
-	const ignored = await getRepository(IgnoredChannel).count(
-		new IgnoredChannel(guild.id, newMsg.channel.id)
-	);
+	const ignored = await DBConnection.getRepository(IgnoredChannel).count({
+		where: {
+			guildId: guild.id,
+			channelId: newMsg.channelId
+		}
+	});
 	if (ignored > 0) return;
 
 	// Retrieve the Discord channel
 	const channel = await guild.channels.fetch(channelLog.channelId);
-	if (!channel || !channel.isText()) {
+	if (!channel || channel.type !== ChannelType.GuildText) {
 		Logger.error(`Impossible to send logs on channel ${channelLog.channelId}, maybe it has been deleted or modified`, guild, author);
 		return;
 	}
@@ -171,7 +186,7 @@ export async function logMessageUpdate(
 		embeds: [{
 			description: `Un message de ${newMsg.member} (${author.tag}) a été modifié dans ${newMsg.channel}\n[Voir le message modifié](${newMsg.url})\n__Ancien message:__\n\n${oldMsg.content}`,
 			footer: {
-				iconURL: author.displayAvatarURL(),
+				icon_url: author.displayAvatarURL(),
 				text: `Message original crée le ${creationDate}`
 			},
 			color: EpsibotColor.info

@@ -1,5 +1,5 @@
 import { Collection, CommandInteraction, Message } from "discord.js";
-import { getRepository } from "typeorm";
+import { DBConnection } from "../../DBConnection.js";
 import { CustomCommand } from "../../entity/CustomCommand.js";
 import { CustomEmbedCommand } from "../../entity/CustomEmbedCommand.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
@@ -58,7 +58,7 @@ export async function addNormal(
 	await msgAnswer.react("✅");
 
 	const [command] = await Promise.all([
-		getRepository(CustomCommand).save(
+		DBConnection.getRepository(CustomCommand).save(
 			new CustomCommand(
 				interaction.guildId,
 				name,
@@ -67,12 +67,10 @@ export async function addNormal(
 				autoDelete
 			)
 		),
-		getRepository(CustomEmbedCommand).remove(
-			new CustomEmbedCommand(
-				interaction.guildId,
-				name
-			)
-		)
+		DBConnection.getRepository(CustomEmbedCommand).delete({
+			guildId: interaction.guildId,
+			name
+		})
 	]);
 
 	return interaction.followUp({

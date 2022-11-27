@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionData, CommandInteraction } from "discord.js";
+import { ApplicationCommandOptionData, ApplicationCommandOptionType as CmdType, ChatInputCommandInteraction } from "discord.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 import { Command } from "../Command.js";
 import { CommandManager } from "../CommandManager.js";
@@ -12,14 +12,14 @@ export class Help extends Command {
 		super("help", "Affiche toutes les commandes disponibles");
 
 		this.options = [{
-			type: "BOOLEAN",
+			type: CmdType.Boolean,
 			name: HelpParam.everyone,
 			description: "Est-ce que le message qui affiche l'aide doit s'afficher pour tout le monde ?",
 			required: false
 		}];
 	}
 
-	async execute(interaction: CommandInteraction<"cached">) {
+	async execute(interaction: ChatInputCommandInteraction<"cached">) {
 		const everyone =
 			interaction.options.getBoolean(HelpParam.everyone) ?? false;
 
@@ -32,16 +32,20 @@ export class Help extends Command {
 			text += `\n\n\`/${command.name}\`: ${command.description}`;
 
 			for (const subcommand of command.options ?? []) {
-				if (subcommand.type !== "SUB_COMMAND" && subcommand.type !== "SUB_COMMAND_GROUP")
+				if (
+					subcommand.type !== CmdType.Subcommand &&
+					subcommand.type !== CmdType.SubcommandGroup
+				) {
 					continue;
+				}
 
 				const subcommands: ApplicationCommandOptionData[] = [];
 
-				if (subcommand.type === "SUB_COMMAND") {
+				if (subcommand.type === CmdType.Subcommand) {
 					subcommands.push(subcommand);
 				} else {
 					for (const subsubcommand of subcommand.options ?? []) {
-						if (subsubcommand.type === "SUB_COMMAND")
+						if (subsubcommand.type === CmdType.Subcommand)
 							subcommands.push(subsubcommand);
 					}
 				}

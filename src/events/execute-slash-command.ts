@@ -10,7 +10,7 @@ export async function executeCommand(
 	interaction: Interaction
 ) {
 	// Only taking care of slash commands
-	if (!interaction.isCommand()) return;
+	if (!interaction.isChatInputCommand()) return;
 
 	// Only if command is in guild
 	if (!interaction.inCachedGuild()) {
@@ -33,6 +33,10 @@ export async function executeCommand(
 		await command.execute(interaction);
 		logger.debug(`Executed command ${fullCommand}`);
 	} catch (err) {
-		logger.error(`Error on command ${fullCommand}: ${err.stack}`);
+		if (err instanceof Error) {
+			logger.error(`Error on command ${fullCommand}: ${err.stack}`);
+		} else {
+			logger.error(`Error on command ${fullCommand} with unknown error: ${err}`);
+		}
 	}
 }

@@ -8,17 +8,17 @@ export class CustomCommand {
 	constructor(
 		guildId: string,
 		name: string,
-		response?: string,
-		adminOnly?: boolean,
-		autoDelete?: boolean
+		response: string,
+		adminOnly: boolean,
+		autoDelete: boolean
 	) {
 		this.guildId = guildId;
 		this.name = name;
-		if (response) this.response = response;
-		if (adminOnly !== undefined) this.adminOnly = adminOnly;
-		if (autoDelete !== undefined) this.autoDelete = autoDelete;
+		this.response = response;
+		this.adminOnly = adminOnly;
+		this.autoDelete = autoDelete;
 
-		if (this.name && this.name.length > CustomCommand.maxNameLength) {
+		if (this.name.length > CustomCommand.maxNameLength) {
 			throw Error("Name too long");
 		}
 	}

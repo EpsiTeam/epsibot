@@ -1,5 +1,5 @@
-import { CommandInteraction } from "discord.js";
-import { getRepository } from "typeorm";
+import { ChatInputCommandInteraction } from "discord.js";
+import { DBConnection } from "../../DBConnection.js";
 import { IgnoredChannel } from "../../entity/IgnoredChannel.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 
@@ -8,10 +8,10 @@ export enum IgnoreParam {
 	ignored = "ignored"
 }
 
-export async function ignore(interaction: CommandInteraction<"cached">) {
+export async function ignore(interaction: ChatInputCommandInteraction<"cached">) {
 	const ignored = interaction.options.getBoolean(IgnoreParam.ignored, true);
 	const channel = interaction.options.getChannel(IgnoreParam.channel, true);
-	const repo = getRepository(IgnoredChannel);
+	const repo = DBConnection.getRepository(IgnoredChannel);
 
 	if (!ignored) {
 		await repo.remove(new IgnoredChannel(

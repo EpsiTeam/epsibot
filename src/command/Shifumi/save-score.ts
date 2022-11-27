@@ -1,4 +1,4 @@
-import { getRepository } from "typeorm";
+import { DBConnection } from "../../DBConnection.js";
 import { ShifumiScore } from "../../entity/ShifumiScore.js";
 import { ShifumiGame } from "./ShifumiGame.js";
 
@@ -31,18 +31,25 @@ export async function saveScore(guildId: string, game: ShifumiGame) {
 }
 
 async function updateOne(guildId: string, userId: string, type: "win" | "lose" | "draw") {
-	const repo = getRepository(ShifumiScore);
-	const shifumiScore = new ShifumiScore(guildId, userId);
+	const repo = DBConnection.getRepository(ShifumiScore);
 
-	const existing = await repo.findOne(shifumiScore);
+	const existing = await repo.findOne({
+		where: {
+			guildId,
+			userId
+		}
+	});
 
 	if (!existing) {
-		shifumiScore.win = type === "win" ? 1 : 0;
-		shifumiScore.lose = type === "lose" ? 1 : 0;
-		shifumiScore.draw = type === "draw" ? 1 : 0;
+		const win = type === "win" ? 1 : 0;
+		const lose = type === "lose" ? 1 : 0;
+		const draw = type === "draw" ? 1 : 0;
 
-		return repo.save(shifumiScore);
+		return repo.save(new ShifumiScore(guildId, userId, win, lose, draw));
 	}
 
-	return repo.increment(shifumiScore, type, 1);
+	return repo.increment({
+		guildId,
+		userId
+	}, type, 1);
 }

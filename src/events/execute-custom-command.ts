@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { getRepository } from "typeorm";
+import { DBConnection } from "../DBConnection.js";
 import { CustomCommand } from "../entity/CustomCommand.js";
 import { CustomEmbedCommand } from "../entity/CustomEmbedCommand.js";
 import { EpsibotColor } from "../utils/color/EpsibotColor.js";
@@ -21,15 +21,11 @@ export async function executeCustomCommand(message: Message) {
 
 	// Retrieving all custom commands for this guild
 	const [normalCommands, embedCommands] = await Promise.all([
-		getRepository(CustomCommand).find({
-			where: {
-				guildId: message.guild.id
-			}
+		DBConnection.getRepository(CustomCommand).find({
+			where: { guildId: message.guild.id }
 		}),
-		getRepository(CustomEmbedCommand).find({
-			where: {
-				guildId: message.guild.id
-			}
+		DBConnection.getRepository(CustomEmbedCommand).find({
+			where: { guildId: message.guild.id }
 		})
 	]);
 
@@ -54,7 +50,7 @@ export async function executeCustomCommand(message: Message) {
 	// No custom command in this message!
 	if (!choosenCommand) return;
 
-	if (choosenCommand.adminOnly && !message.member.permissions.has("ADMINISTRATOR")) {
+	if (choosenCommand.adminOnly && !message.member.permissions.has("Administrator")) {
 		await message.reply({
 			embeds: [{
 				description: "Cette commande est réservée aux administrateurs",
@@ -119,6 +115,10 @@ export async function executeCustomCommand(message: Message) {
 
 		logger.debug(`Executed custom command '${choosenCommand.name}'`);
 	} catch (err) {
-		logger.error(`Error on custom command '${choosenCommand.name}': ${err.stack}`);
+		if (err instanceof Error) {
+			logger.error(`Error on custom command '${choosenCommand.name}': ${err.stack}`);
+		} else {
+			logger.error(`Error on custom command '${choosenCommand.name}' with unknown error: ${err}`);
+		}
 	}
 }
