@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction } from "discord.js";
-import { DBConnection } from "../../DBConnection.js";
-import { CustomCommand } from "../../entity/CustomCommand.js";
-import { CustomEmbedCommand } from "../../entity/CustomEmbedCommand.js";
+import { DBConnection } from "../../database/DBConnection.js";
+import { CustomCommand } from "../../database/entity/CustomCommand.js";
+import { CustomEmbedCommand } from "../../database/entity/CustomEmbedCommand.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 import { confirm } from "../../utils/confirm/confirm.js";
 
@@ -15,17 +15,13 @@ export async function remove(
 	const name = interaction.options.getString(RemoveParam.name, true);
 
 	const [command, embedCommand] = await Promise.all([
-		DBConnection.getRepository(CustomCommand).findOne({
-			where: {
-				guildId: interaction.guildId,
-				name
-			}
+		DBConnection.getRepository(CustomCommand).findOneBy({
+			guildId: interaction.guildId,
+			name
 		}),
-		DBConnection.getRepository(CustomEmbedCommand).findOne({
-			where: {
-				guildId: interaction.guildId,
-				name
-			}
+		DBConnection.getRepository(CustomEmbedCommand).findOneBy({
+			guildId: interaction.guildId,
+			name
 		})
 	]);
 

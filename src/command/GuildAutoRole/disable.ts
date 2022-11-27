@@ -1,13 +1,13 @@
 import { CommandInteraction } from "discord.js";
-import { DBConnection } from "../../DBConnection.js";
-import { AutoRole } from "../../entity/AutoRole.js";
+import { DBConnection } from "../../database/DBConnection.js";
+import { AutoRole } from "../../database/entity/AutoRole.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 
 export async function disable(interaction: CommandInteraction<"cached">) {
 	const repo = DBConnection.getRepository(AutoRole);
 
-	const autorole = await repo.findOne({
-		where: { guildId: interaction.guildId }
+	const autorole = await repo.findOneBy({
+		guildId: interaction.guildId
 	});
 
 	if (!autorole) {

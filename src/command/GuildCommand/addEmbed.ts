@@ -6,9 +6,9 @@ import {
 	AwaitMessagesOptions,
 	ComponentType
 } from "discord.js";
-import { DBConnection } from "../../DBConnection.js";
-import { CustomCommand } from "../../entity/CustomCommand.js";
-import { CustomEmbedCommand } from "../../entity/CustomEmbedCommand.js";
+import { DBConnection } from "../../database/DBConnection.js";
+import { CustomCommand } from "../../database/entity/CustomCommand.js";
+import { CustomEmbedCommand } from "../../database/entity/CustomEmbedCommand.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 import { SelectMenuColor } from "../../utils/color/SelectMenuColor.js";
 import { confirm } from "../../utils/confirm/confirm.js";

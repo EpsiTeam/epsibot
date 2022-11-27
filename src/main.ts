@@ -1,11 +1,9 @@
-import "reflect-metadata";
-
 import { checkStartup } from "./check-startup.js";
 import { Client, GatewayIntentBits } from "discord.js";
 import { subscribeDiscordEvents } from "./subscribe-discord-events.js";
 import { Logger } from "./utils/logger/Logger.js";
 import { EnvVariables } from "./utils/env/EnvVariables.js";
-import { DBConnection } from "./DBConnection.js";
+import { DBConnection } from "./database/DBConnection.js";
 
 // Stopping node if there is unexpected config
 checkStartup();
@@ -27,7 +25,8 @@ const client = new Client({
 	intents: [
 		GatewayIntentBits.Guilds,
 		GatewayIntentBits.GuildMembers,
-		GatewayIntentBits.GuildMessages
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.MessageContent
 	],
 	presence: {
 		activities: [

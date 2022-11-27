@@ -1,11 +1,10 @@
 import { format, formatDuration, intervalToDuration } from "date-fns";
 import { ChannelType, GuildMember, PartialGuildMember } from "discord.js";
-import { ChannelLog } from "../entity/ChannelLog.js";
+import { ChannelLog } from "../database/entity/ChannelLog.js";
 import { Logger } from "../utils/logger/Logger.js";
 import { EpsibotColor } from "../utils/color/EpsibotColor.js";
-import { DBConnection } from "../DBConnection.js";
-// eslint-disable-next-line import/extensions
-import { fr } from "date-fns/locale";
+import { DBConnection } from "../database/DBConnection.js";
+import fr from "date-fns/locale/fr/index.js";
 
 /**
  * Log a new member on guild
@@ -17,11 +16,9 @@ export async function logMemberJoined(member: GuildMember) {
 
 	const repo = DBConnection.getRepository(ChannelLog);
 
-	const channelLog = await repo.findOne({
-		where: {
-			guildId: guild.id,
-			logType: "userJoinLeave"
-		}
+	const channelLog = await repo.findOneBy({
+		guildId: guild.id,
+		logType: "userJoinLeave"
 	});
 
 	// Should we display logs?
@@ -62,11 +59,9 @@ export async function logMemberLeft(member: GuildMember | PartialGuildMember) {
 
 	const repo = DBConnection.getRepository(ChannelLog);
 
-	const channelLog = await repo.findOne({
-		where: {
-			guildId: guild.id,
-			logType: "userJoinLeave"
-		}
+	const channelLog = await repo.findOneBy({
+		guildId: guild.id,
+		logType: "userJoinLeave"
 	});
 
 	if (!channelLog) return;

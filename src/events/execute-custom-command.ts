@@ -1,7 +1,7 @@
 import { Message } from "discord.js";
-import { DBConnection } from "../DBConnection.js";
-import { CustomCommand } from "../entity/CustomCommand.js";
-import { CustomEmbedCommand } from "../entity/CustomEmbedCommand.js";
+import { DBConnection } from "../database/DBConnection.js";
+import { CustomCommand } from "../database/entity/CustomCommand.js";
+import { CustomEmbedCommand } from "../database/entity/CustomEmbedCommand.js";
 import { EpsibotColor } from "../utils/color/EpsibotColor.js";
 import { fillArguments } from "../utils/custom-command/command-argument.js";
 import { Logger } from "../utils/logger/Logger.js";
@@ -21,11 +21,11 @@ export async function executeCustomCommand(message: Message) {
 
 	// Retrieving all custom commands for this guild
 	const [normalCommands, embedCommands] = await Promise.all([
-		DBConnection.getRepository(CustomCommand).find({
-			where: { guildId: message.guild.id }
+		DBConnection.getRepository(CustomCommand).findBy({
+			guildId: message.guild.id
 		}),
-		DBConnection.getRepository(CustomEmbedCommand).find({
-			where: { guildId: message.guild.id }
+		DBConnection.getRepository(CustomEmbedCommand).findBy({
+			guildId: message.guild.id
 		})
 	]);
 

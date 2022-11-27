@@ -1,11 +1,11 @@
 import { GuildMember } from "discord.js";
-import { DBConnection } from "../DBConnection.js";
-import { AutoRole } from "../entity/AutoRole.js";
+import { DBConnection } from "../database/DBConnection.js";
+import { AutoRole } from "../database/entity/AutoRole.js";
 import { Logger } from "../utils/logger/Logger.js";
 
 export async function addAutorole(member: GuildMember) {
-	const autorole = await DBConnection.getRepository(AutoRole).findOne({
-		where: { guildId: member.guild.id }
+	const autorole = await DBConnection.getRepository(AutoRole).findOneBy({
+		guildId: member.guild.id
 	});
 
 	// Autorole not configured

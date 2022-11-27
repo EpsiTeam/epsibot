@@ -1,7 +1,7 @@
 import { CommandInteraction, DiscordAPIError } from "discord.js";
-import { DBConnection } from "../../DBConnection.js";
-import { ChannelLog } from "../../entity/ChannelLog.js";
-import { IgnoredChannel } from "../../entity/IgnoredChannel.js";
+import { DBConnection } from "../../database/DBConnection.js";
+import { ChannelLog } from "../../database/entity/ChannelLog.js";
+import { IgnoredChannel } from "../../database/entity/IgnoredChannel.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 
 export async function list(interaction: CommandInteraction<"cached">) {
@@ -10,23 +10,17 @@ export async function list(interaction: CommandInteraction<"cached">) {
 
 	// Retrieve all types of log
 	const [userLog, deletedLog, updatedLog] = await Promise.all([
-		repo.findOne({
-			where: {
-				guildId,
-				logType: "userJoinLeave"
-			}
+		repo.findOneBy({
+			guildId,
+			logType: "userJoinLeave"
 		}),
-		repo.findOne({
-			where: {
-				guildId,
-				logType: "deletedMessage"
-			}
+		repo.findOneBy({
+			guildId,
+			logType: "deletedMessage"
 		}),
-		repo.findOne({
-			where: {
-				guildId,
-				logType: "updatedMessage"
-			}
+		repo.findOneBy({
+			guildId,
+			logType: "updatedMessage"
 		})
 	]);
 
@@ -82,9 +76,7 @@ export async function list(interaction: CommandInteraction<"cached">) {
 	// Retrieve ignored channels
 	const ignoredChannels = await DBConnection.getRepository(
 		IgnoredChannel
-	).find({
-		where: { guildId: interaction.guildId }
-	});
+	).findBy({ guildId: interaction.guildId });
 
 	// Finish building the list
 	if (ignoredChannels.length > 0) {

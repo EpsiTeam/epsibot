@@ -8,9 +8,9 @@ import {
 	MessageActionRowComponentData,
 	MessageEditOptions
 } from "discord.js";
-import { DBConnection } from "../../DBConnection.js";
-import { CustomCommand } from "../../entity/CustomCommand.js";
-import { CustomEmbedCommand } from "../../entity/CustomEmbedCommand.js";
+import { DBConnection } from "../../database/DBConnection.js";
+import { CustomCommand } from "../../database/entity/CustomCommand.js";
+import { CustomEmbedCommand } from "../../database/entity/CustomEmbedCommand.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 import { Logger } from "../../utils/logger/Logger.js";
 import { commandFields } from "./helper.js";
@@ -37,11 +37,11 @@ export async function list(interaction: CommandInteraction<"cached">) {
 	});
 
 	const [normalCommands, embedCommands] = await Promise.all([
-		DBConnection.getRepository(CustomCommand).find({
-			where: { guildId: interaction.guildId }
+		DBConnection.getRepository(CustomCommand).findBy({
+			guildId: interaction.guildId
 		}),
-		DBConnection.getRepository(CustomEmbedCommand).find({
-			where: { guildId: interaction.guildId }
+		DBConnection.getRepository(CustomEmbedCommand).findBy({
+			guildId: interaction.guildId
 		})
 	]);
 
@@ -50,7 +50,6 @@ export async function list(interaction: CommandInteraction<"cached">) {
 		normalCommands
 	)).concat(embedCommands);
 
-	// const commands = await getRepository(CustomCommand).find();
 	if (commands.length === 0) {
 		return message.edit({
 			embeds: [

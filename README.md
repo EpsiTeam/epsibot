@@ -30,12 +30,11 @@ Il faut une version de node supérieur ou égal à 16.16.0 pour pouvoir lancer l
 ```sh
 npm i
 npm run migrate
-npm run build
 ```
 
 Après ça, tout devrait être prêt pour lancer Epsibot.<br>
 Vous pouvez le faire avec `npm start`.<br>
-Vous pouvez aussi utiliser `npm run start:builded` pour lancer Epsibot sans régénérer les fichiers js.
+Vous pouvez aussi utiliser `npm run start:builded` pour lancer Epsibot sans régénérer les fichiers js, pour lancer le bot plus rapidement si aucune modification du code source n'a été faite.
 
 D'autres script npm sont définis, faites `npm run` pour voir la liste disponible.
 

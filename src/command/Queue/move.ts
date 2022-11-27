@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction } from "discord.js";
-import { DBConnection } from "../../DBConnection.js";
-import { QueueElement } from "../../entity/QueueElement.js";
+import { DBConnection } from "../../database/DBConnection.js";
+import { QueueElement } from "../../database/entity/QueueElement.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 
 export enum MoveParams {
@@ -13,9 +13,7 @@ export async function move(interaction: ChatInputCommandInteraction<"cached">) {
 	const to = interaction.options.getInteger(MoveParams.to, true);
 	const repo = DBConnection.getRepository(QueueElement);
 
-	const elements = await repo.find({
-		where: { guildId: interaction.guildId }
-	});
+	const elements = await repo.findBy({ guildId: interaction.guildId });
 
 	const sortedElements = elements.sort((e1, e2) => e1.position - e2.position);
 	const elementsToUpdate: QueueElement[] = [];

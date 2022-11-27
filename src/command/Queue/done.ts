@@ -1,17 +1,15 @@
 import { CommandInteraction } from "discord.js";
-import { DBConnection } from "../../DBConnection.js";
-import { QueueElement } from "../../entity/QueueElement.js";
+import { DBConnection } from "../../database/DBConnection.js";
+import { QueueElement } from "../../database/entity/QueueElement.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 import { confirm } from "../../utils/confirm/confirm.js";
 import { removeElement } from "./remove.js";
 
 export async function done(interaction: CommandInteraction<"cached">) {
 	const repo = DBConnection.getRepository(QueueElement);
-	const element = await repo.findOne({
-		where: {
-			guildId: interaction.guildId,
-			position: 1
-		}
+	const element = await repo.findOneBy({
+		guildId: interaction.guildId,
+		position: 1
 	});
 
 	if (!element) {

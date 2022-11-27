@@ -1,11 +1,11 @@
 import { ColorResolvable, CommandInteraction } from "discord.js";
-import { DBConnection } from "../../DBConnection.js";
-import { AutoRole } from "../../entity/AutoRole.js";
+import { DBConnection } from "../../database/DBConnection.js";
+import { AutoRole } from "../../database/entity/AutoRole.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 
 export async function info(interaction: CommandInteraction<"cached">) {
-	const autorole = await DBConnection.getRepository(AutoRole).findOne({
-		where: { guildId: interaction.guildId }
+	const autorole = await DBConnection.getRepository(AutoRole).findOneBy({
+		guildId: interaction.guildId
 	});
 
 	let message: string;

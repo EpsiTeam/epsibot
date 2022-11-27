@@ -1,8 +1,9 @@
 import { Collection, CommandInteraction, Message } from "discord.js";
-import { DBConnection } from "../../DBConnection.js";
-import { CustomCommand } from "../../entity/CustomCommand.js";
-import { CustomEmbedCommand } from "../../entity/CustomEmbedCommand.js";
+import { DBConnection } from "../../database/DBConnection.js";
+import { CustomCommand } from "../../database/entity/CustomCommand.js";
+import { CustomEmbedCommand } from "../../database/entity/CustomEmbedCommand.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
+import { Logger } from "../../utils/logger/Logger.js";
 import { timeoutEmbed, helpArgument, commandFields } from "./helper.js";
 
 export async function addNormal(
@@ -43,6 +44,7 @@ export async function addNormal(
 		throw Error("Collector returned with empty collection");
 	}
 	const response = msgAnswer.content;
+	Logger.debug(response);
 	if (
 		response.length == 0 ||
 		response.length > CustomCommand.maxResponseLength
@@ -52,7 +54,7 @@ export async function addNormal(
 			embeds: [
 				{
 					title: `Création de la commande \`${name}\` annulée`,
-					description: `Le titre choisi a une taille de ${response.length}, la taille doit être entre 1 et ${CustomCommand.maxResponseLength} caractères`,
+					description: `La réponse choisie a une taille de ${response.length}, la taille doit être entre 1 et ${CustomCommand.maxResponseLength} caractères`,
 					color: EpsibotColor.error
 				}
 			],

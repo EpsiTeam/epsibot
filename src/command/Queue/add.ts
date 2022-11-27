@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction } from "discord.js";
-import { DBConnection } from "../../DBConnection.js";
-import { QueueElement } from "../../entity/QueueElement.js";
+import { DBConnection } from "../../database/DBConnection.js";
+import { QueueElement } from "../../database/entity/QueueElement.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 import { Logger } from "../../utils/logger/Logger.js";
 
@@ -56,9 +56,7 @@ export async function add(interaction: ChatInputCommandInteraction<"cached">) {
 	const repo = DBConnection.getRepository(QueueElement);
 
 	// Finding the position to set
-	const elements = await repo.find({
-		where: { guildId: interaction.guildId }
-	});
+	const elements = await repo.findBy({ guildId: interaction.guildId });
 	for (const element of elements) {
 		if (element.position >= position) {
 			position = element.position + 1;
@@ -89,9 +87,7 @@ export async function add(interaction: ChatInputCommandInteraction<"cached">) {
 	);
 
 	// Checking that there is no overlap or holes in the positions
-	const newElements = await repo.find({
-		where: { guildId: interaction.guildId }
-	});
+	const newElements = await repo.findBy({ guildId: interaction.guildId });
 	const sortedElements = newElements.sort(
 		(e1, e2) => e1.position - e2.position
 	);

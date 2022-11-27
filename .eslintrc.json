@@ -20,5 +20,6 @@
 		"import/extensions": ["error", "always"],
 		// Rules that result in a warning:
 		"prefer-const": "warn"
-	}
+	},
+	"ignorePatterns": ["built/**"]
 }

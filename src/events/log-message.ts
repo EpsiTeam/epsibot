@@ -1,8 +1,8 @@
 import { format } from "date-fns";
 import { ChannelType, Collection, Message, PartialMessage } from "discord.js";
-import { DBConnection } from "../DBConnection.js";
-import { ChannelLog } from "../entity/ChannelLog.js";
-import { IgnoredChannel } from "../entity/IgnoredChannel.js";
+import { DBConnection } from "../database/DBConnection.js";
+import { ChannelLog } from "../database/entity/ChannelLog.js";
+import { IgnoredChannel } from "../database/entity/IgnoredChannel.js";
 import { EpsibotColor } from "../utils/color/EpsibotColor.js";
 import { Logger } from "../utils/logger/Logger.js";
 
@@ -17,20 +17,16 @@ export async function logMessageDelete(message: Message | PartialMessage) {
 	Logger.debug("Message deleted", guild, message.author);
 
 	// Retrieve the channel where we should log this
-	const channelLog = await DBConnection.getRepository(ChannelLog).findOne({
-		where: {
-			guildId: guild.id,
-			logType: "deletedMessage"
-		}
+	const channelLog = await DBConnection.getRepository(ChannelLog).findOneBy({
+		guildId: guild.id,
+		logType: "deletedMessage"
 	});
 	if (!channelLog) return;
 
 	// Check if this channel is ignored
-	const ignored = await DBConnection.getRepository(IgnoredChannel).count({
-		where: {
-			guildId: guild.id,
-			channelId: message.channelId
-		}
+	const ignored = await DBConnection.getRepository(IgnoredChannel).countBy({
+		guildId: guild.id,
+		channelId: message.channelId
 	});
 	if (ignored > 0) return;
 
@@ -79,11 +75,9 @@ export async function logBulkMessageDelete(
 	logger.info(`${messages.size} messages purged`);
 
 	// Retrieve the channel where we should log this
-	const channelLog = await DBConnection.getRepository(ChannelLog).findOne({
-		where: {
-			guildId: guild.id,
-			logType: "deletedMessage"
-		}
+	const channelLog = await DBConnection.getRepository(ChannelLog).findOneBy({
+		guildId: guild.id,
+		logType: "deletedMessage"
 	});
 	if (!channelLog) return;
 
@@ -92,12 +86,9 @@ export async function logBulkMessageDelete(
 	)?.channel;
 	if (channel) {
 		// Check if this channel is ignored
-		const ignored = await DBConnection.getRepository(IgnoredChannel).count({
-			where: {
-				guildId: guild.id,
-				channelId: channel.id
-			}
-		});
+		const ignored = await DBConnection.getRepository(
+			IgnoredChannel
+		).countBy({ guildId: guild.id, channelId: channel.id });
 		if (ignored > 0) return;
 	}
 
@@ -181,20 +172,16 @@ export async function logMessageUpdate(
 	Logger.debug("Message updated", guild, author);
 
 	// Retrieve the channel where we should log this
-	const channelLog = await DBConnection.getRepository(ChannelLog).findOne({
-		where: {
-			guildId: guild.id,
-			logType: "updatedMessage"
-		}
+	const channelLog = await DBConnection.getRepository(ChannelLog).findOneBy({
+		guildId: guild.id,
+		logType: "updatedMessage"
 	});
 	if (!channelLog) return;
 
 	// Check if this channel is ignored
-	const ignored = await DBConnection.getRepository(IgnoredChannel).count({
-		where: {
-			guildId: guild.id,
-			channelId: newMsg.channelId
-		}
+	const ignored = await DBConnection.getRepository(IgnoredChannel).countBy({
+		guildId: guild.id,
+		channelId: newMsg.channelId
 	});
 	if (ignored > 0) return;
 

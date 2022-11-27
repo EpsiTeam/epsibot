@@ -1,4 +1,4 @@
-import { logType } from "../../entity/ChannelLog.js";
+import { logType } from "../../database/entity/ChannelLog.js";
 
 export enum GuildLogType {
 	all = "all",

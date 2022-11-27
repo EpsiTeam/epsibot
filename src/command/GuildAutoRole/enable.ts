@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction } from "discord.js";
-import { DBConnection } from "../../DBConnection.js";
-import { AutoRole } from "../../entity/AutoRole.js";
+import { DBConnection } from "../../database/DBConnection.js";
+import { AutoRole } from "../../database/entity/AutoRole.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 
 export enum EnableParam {
