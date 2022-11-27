@@ -8,9 +8,7 @@ export async function list(interaction: CommandInteraction<"cached">) {
 		where: { guildId: interaction.guildId }
 	});
 
-	const sortedElements = elements.sort(
-		(e1, e2) => e1.position - e2.position
-	);
+	const sortedElements = elements.sort((e1, e2) => e1.position - e2.position);
 
 	let list = "";
 	for (const element of sortedElements) {
@@ -23,10 +21,12 @@ export async function list(interaction: CommandInteraction<"cached">) {
 	}
 
 	return interaction.reply({
-		embeds: [{
-			title: "File d'attente",
-			description: list,
-			color: EpsibotColor.info
-		}]
+		embeds: [
+			{
+				title: "File d'attente",
+				description: list,
+				color: EpsibotColor.info
+			}
+		]
 	});
 }

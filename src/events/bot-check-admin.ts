@@ -1,4 +1,10 @@
-import { DiscordAPIError, Guild, GuildMember, PartialGuildMember, Role } from "discord.js";
+import {
+	DiscordAPIError,
+	Guild,
+	GuildMember,
+	PartialGuildMember,
+	Role
+} from "discord.js";
 import { Logger } from "../utils/logger/Logger.js";
 
 export async function botCheckAdmin(guild: Guild): Promise<void> {
@@ -12,13 +18,18 @@ export async function botCheckAdmin(guild: Guild): Promise<void> {
 			await guild.leave();
 		} catch (err) {
 			if (err instanceof DiscordAPIError) {
-				if (err?.code === 10004) { // Unknown guild
-					logger.debug("Tried to leave guild, but guild not found (already left)");
+				if (err?.code === 10004) {
+					// Unknown guild
+					logger.debug(
+						"Tried to leave guild, but guild not found (already left)"
+					);
 				} else {
 					logger.error(`Failed to leave guild: ${err.stack}`);
 				}
 			} else {
-				logger.error(`Failed to leave guild with unknown error: ${err}`);
+				logger.error(
+					`Failed to leave guild with unknown error: ${err}`
+				);
 			}
 		}
 	}
@@ -34,10 +45,7 @@ export async function botUpdated(
 	await botCheckAdmin(guild);
 }
 
-export async function botRoleUpdated(
-	_old: Role,
-	newRole: Role
-) {
+export async function botRoleUpdated(_old: Role, newRole: Role) {
 	const guild = newRole.guild;
 	Logger.info("Role updated, checking if bot still admin", guild);
 	await botCheckAdmin(guild);

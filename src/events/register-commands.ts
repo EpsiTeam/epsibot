@@ -11,22 +11,28 @@ export async function registerCommands(client: Client) {
 	Logger.debug("Logged to Discord");
 
 	const allGuilds = client.guilds.cache;
-	Logger.info(`Connected on ${allGuilds.size} guild${allGuilds.size ? "" : "s"}`);
+	Logger.info(
+		`Connected on ${allGuilds.size} guild${allGuilds.size ? "" : "s"}`
+	);
 
 	// Check admin perm
-	const [adminGuilds, notAdminGuilds] =
-		allGuilds.partition(guild => guild.members.me?.permissions.has("Administrator") ?? false);
+	const [adminGuilds, notAdminGuilds] = allGuilds.partition(
+		(guild) => guild.members.me?.permissions.has("Administrator") ?? false
+	);
 
 	// Leave if not admin
-	notAdminGuilds.each(async guild => {
+	notAdminGuilds.each(async (guild) => {
 		try {
 			Logger.warn("No admin permission, leaving guild", guild);
 			await guild.leave();
 		} catch (err) {
-			if (err instanceof Error)  {
+			if (err instanceof Error) {
 				Logger.error(`Failed to leave guild: ${err.stack}`, guild);
 			} else {
-				Logger.error(`Failed to leave guild with unknown error: ${err}`, guild);
+				Logger.error(
+					`Failed to leave guild with unknown error: ${err}`,
+					guild
+				);
 			}
 		}
 	});
@@ -40,7 +46,9 @@ export async function registerCommands(client: Client) {
 	} catch (err) {
 		throw Error(`Impossible to register slash command: ${err}`);
 	}
-	Logger.debug(`Registered ${commandManager.commands.size} slash commands on ${guilds.length} guilds`);
+	Logger.debug(
+		`Registered ${commandManager.commands.size} slash commands on ${guilds.length} guilds`
+	);
 
 	return commandManager;
 }

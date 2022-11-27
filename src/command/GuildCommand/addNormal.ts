@@ -16,10 +16,12 @@ export async function addNormal(
 	}
 
 	await interaction.followUp({
-		embeds: [{
-			description: `Quel sera la réponse affiché par la commande \`${name}\` ?${helpArgument}`,
-			color: EpsibotColor.question
-		}],
+		embeds: [
+			{
+				description: `Quel sera la réponse affiché par la commande \`${name}\` ?${helpArgument}`,
+				color: EpsibotColor.question
+			}
+		],
 		ephemeral: false
 	});
 
@@ -47,11 +49,13 @@ export async function addNormal(
 	) {
 		await msgAnswer.react("❌");
 		return interaction.followUp({
-			embeds: [{
-				title: `Création de la commande \`${name}\` annulée`,
-				description: `Le titre choisi a une taille de ${response.length}, la taille doit être entre 1 et ${CustomCommand.maxResponseLength} caractères`,
-				color: EpsibotColor.error
-			}],
+			embeds: [
+				{
+					title: `Création de la commande \`${name}\` annulée`,
+					description: `Le titre choisi a une taille de ${response.length}, la taille doit être entre 1 et ${CustomCommand.maxResponseLength} caractères`,
+					color: EpsibotColor.error
+				}
+			],
 			ephemeral: false
 		});
 	}
@@ -74,12 +78,14 @@ export async function addNormal(
 	]);
 
 	return interaction.followUp({
-		embeds: [{
-			title: `Commande \`${command.name}\` créée, elle répondra:`,
-			description: command.response,
-			fields: commandFields(command),
-			color: EpsibotColor.success
-		}],
+		embeds: [
+			{
+				title: `Commande \`${command.name}\` créée, elle répondra:`,
+				description: command.response,
+				fields: commandFields(command),
+				color: EpsibotColor.success
+			}
+		],
 		ephemeral: false
 	});
 }

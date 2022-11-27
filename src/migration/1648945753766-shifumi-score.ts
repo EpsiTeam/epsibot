@@ -21,5 +21,4 @@ export class shifumiScore1648945753766 implements MigrationInterface {
 			DROP TABLE "shifumi_score"
 		`);
 	}
-
 }

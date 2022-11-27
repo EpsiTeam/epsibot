@@ -29,19 +29,23 @@ export async function logMemberJoined(member: GuildMember) {
 
 	const channel = await guild.channels.fetch(channelLog.channelId);
 
-	if (!channel || channel.type !== ChannelType.GuildText ) {
-		throw Error(`Impossible to send logs on channel ${channel}, maybe it has been deleted or modified`);
+	if (!channel || channel.type !== ChannelType.GuildText) {
+		throw Error(
+			`Impossible to send logs on channel ${channel}, maybe it has been deleted or modified`
+		);
 	}
 
 	await channel.send({
-		embeds: [{
-			description: `${member} (${member.user.tag}) a rejoint le serveur`,
-			footer: {
-				icon_url: member.displayAvatarURL(),
-				text: getMemberJoinedDate(member)
-			},
-			color: EpsibotColor.success
-		}]
+		embeds: [
+			{
+				description: `${member} (${member.user.tag}) a rejoint le serveur`,
+				footer: {
+					icon_url: member.displayAvatarURL(),
+					text: getMemberJoinedDate(member)
+				},
+				color: EpsibotColor.success
+			}
+		]
 	});
 }
 
@@ -70,18 +74,24 @@ export async function logMemberLeft(member: GuildMember | PartialGuildMember) {
 	const channel = await guild.channels.fetch(channelLog.channelId);
 
 	if (!channel || channel.type !== ChannelType.GuildText) {
-		throw Error(`Impossible to send logs on channel ${channel}, maybe it has been deleted or modified`);
+		throw Error(
+			`Impossible to send logs on channel ${channel}, maybe it has been deleted or modified`
+		);
 	}
 
 	await channel.send({
-		embeds: [{
-			description: `${member} (${member.user.tag}) a quitté le serveur ${getMemberDuration(member)}`,
-			footer: {
-				icon_url: member.user.displayAvatarURL(),
-				text: getMemberJoinedDate(member)
-			},
-			color: EpsibotColor.error
-		}]
+		embeds: [
+			{
+				description: `${member} (${
+					member.user.tag
+				}) a quitté le serveur ${getMemberDuration(member)}`,
+				footer: {
+					icon_url: member.user.displayAvatarURL(),
+					text: getMemberJoinedDate(member)
+				},
+				color: EpsibotColor.error
+			}
+		]
 	});
 }
 
@@ -90,12 +100,15 @@ function getMemberDuration(member: GuildMember | PartialGuildMember) {
 		return "(impossible de savoir combien de temps il est resté)";
 	}
 
-	const duration = formatDuration(intervalToDuration({
-		start: member.joinedTimestamp,
-		end: Date.now()
-	}), {
-		locale: fr
-	});
+	const duration = formatDuration(
+		intervalToDuration({
+			start: member.joinedTimestamp,
+			end: Date.now()
+		}),
+		{
+			locale: fr
+		}
+	);
 
 	return `après être resté ${duration}`;
 }

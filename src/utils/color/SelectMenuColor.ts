@@ -1,4 +1,10 @@
-import { ActionRowData, ColorResolvable, ComponentType, MessageActionRowComponentData, SelectMenuComponentOptionData } from "discord.js";
+import {
+	ActionRowData,
+	ColorResolvable,
+	ComponentType,
+	MessageActionRowComponentData,
+	SelectMenuComponentOptionData
+} from "discord.js";
 
 const colors: [string, ColorResolvable][] = [
 	["Rouge", "Red"],
@@ -27,23 +33,26 @@ const colors: [string, ColorResolvable][] = [
 	["Noir", "Default"]
 ];
 
-const colorOptions: SelectMenuComponentOptionData[] =
-	colors.map(([colorName, color]) => {
+const colorOptions: SelectMenuComponentOptionData[] = colors.map(
+	([colorName, color]) => {
 		return {
 			label: colorName,
 			value: String(color)
 		};
-	});
+	}
+);
 
 export class SelectMenuColor {
 	static actionRow: ActionRowData<MessageActionRowComponentData> = {
 		type: ComponentType.ActionRow,
-		components: [{
-			type: ComponentType.SelectMenu,
-			options: colorOptions,
-			minValues: 1,
-			maxValues: 1,
-			customId: "selectColor"
-		}]
+		components: [
+			{
+				type: ComponentType.SelectMenu,
+				options: colorOptions,
+				minValues: 1,
+				maxValues: 1,
+				customId: "selectColor"
+			}
+		]
 	};
 }

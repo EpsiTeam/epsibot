@@ -21,5 +21,4 @@ export class queueElement1656247849048 implements MigrationInterface {
 			DROP TABLE "queue_element"
 		`);
 	}
-
 }

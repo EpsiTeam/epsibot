@@ -9,7 +9,9 @@ export enum RemoveParam {
 	name = "name"
 }
 
-export async function remove(interaction: ChatInputCommandInteraction<"cached">) {
+export async function remove(
+	interaction: ChatInputCommandInteraction<"cached">
+) {
 	const name = interaction.options.getString(RemoveParam.name, true);
 
 	const [command, embedCommand] = await Promise.all([
@@ -29,29 +31,36 @@ export async function remove(interaction: ChatInputCommandInteraction<"cached">)
 
 	if (!command && !embedCommand) {
 		return interaction.reply({
-			embeds: [{
-				description: `Commande custom \`${name}\` inexistente, impossible de la supprimer`,
-				color: EpsibotColor.error
-			}],
+			embeds: [
+				{
+					description: `Commande custom \`${name}\` inexistente, impossible de la supprimer`,
+					color: EpsibotColor.error
+				}
+			],
 			ephemeral: true
 		});
 	}
 
 	if (embedCommand) {
 		await interaction.reply({
-			embeds: [{
-				title: `Commande \`${embedCommand.name}\`:`,
-				color: EpsibotColor.info
-			}, embedCommand.createEmbed()],
+			embeds: [
+				{
+					title: `Commande \`${embedCommand.name}\`:`,
+					color: EpsibotColor.info
+				},
+				embedCommand.createEmbed()
+			],
 			ephemeral: true
 		});
 	} else if (command) {
 		await interaction.reply({
-			embeds: [{
-				title: `Commande \`${command.name}\`:`,
-				description: command.response,
-				color: EpsibotColor.info
-			}],
+			embeds: [
+				{
+					title: `Commande \`${command.name}\`:`,
+					description: command.response,
+					color: EpsibotColor.info
+				}
+			],
 			ephemeral: true
 		});
 	}
@@ -68,14 +77,17 @@ export async function remove(interaction: ChatInputCommandInteraction<"cached">)
 	if (command)
 		await DBConnection.getRepository(CustomCommand).remove(command);
 	if (embedCommand)
-		await DBConnection.getRepository(CustomEmbedCommand)
-			.remove(embedCommand);
+		await DBConnection.getRepository(CustomEmbedCommand).remove(
+			embedCommand
+		);
 
 	return interaction.followUp({
-		embeds: [{
-			description: `Commande custom \`${name}\` supprimée`,
-			color: EpsibotColor.success
-		}],
+		embeds: [
+			{
+				description: `Commande custom \`${name}\` supprimée`,
+				color: EpsibotColor.success
+			}
+		],
 		ephemeral: true
 	});
 }

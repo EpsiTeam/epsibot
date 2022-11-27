@@ -16,7 +16,8 @@ export async function info(interaction: CommandInteraction<"cached">) {
 	} else {
 		const role = await interaction.guild.roles.fetch(autorole.roleId);
 		if (!role) {
-			message = "Il semblerait que le rôle qui devait être automatiquement assigné n'existe plus";
+			message =
+				"Il semblerait que le rôle qui devait être automatiquement assigné n'existe plus";
 			color = EpsibotColor.error;
 		} else {
 			message = `Les nouveaux membres auront automatiquement le rôle ${role}`;
@@ -25,10 +26,12 @@ export async function info(interaction: CommandInteraction<"cached">) {
 	}
 
 	return interaction.reply({
-		embeds: [{
-			description: message,
-			color: color
-		}],
+		embeds: [
+			{
+				description: message,
+				color: color
+			}
+		],
 		ephemeral: true
 	});
 }

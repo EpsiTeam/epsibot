@@ -26,42 +26,42 @@ export async function confirm(
 		/**
 		 * Description of the message sent
 		 */
-		description: string,
+		description: string;
 		/**
 		 * Color of the message sent
 		 * Default to EpsibotColor.success
 		 */
-		color?: number,
+		color?: number;
 		/**
 		 * User that will be able to click on the buttons<br>
 		 * Will use the interaction user by default
 		 */
-		userId?: string,
+		userId?: string;
 		/**
 		 * Label to put on the yes button<br>
 		 * Default to 'Oui'
 		 */
-		labelYes?: string,
+		labelYes?: string;
 		/**
 		 * Label to put on the no button<br>
 		 * Default to 'Non'
 		 */
-		labelNo?: string,
+		labelNo?: string;
 		/**
 		 * Time in seconds to wait for an answer<br>
 		 * Default to 60s
 		 */
-		timeout?: number,
+		timeout?: number;
 		/**
 		 * Set this if you want to return a default value after
 		 * a timeout instead of null
 		 */
-		returnOnTimout?: boolean,
+		returnOnTimout?: boolean;
 		/**
 		 * Should the message be hidden?<br>
 		 * Default to true
 		 */
-		ephemeral?: boolean
+		ephemeral?: boolean;
 	}
 ): Promise<boolean | null> {
 	const {
@@ -76,30 +76,39 @@ export async function confirm(
 	} = options;
 
 	if (ephemeral && userId !== interaction.member.id) {
-		throw Error("You can't set a confirm message as ephemeral if you want this user to see it!");
+		throw Error(
+			"You can't set a confirm message as ephemeral if you want this user to see it!"
+		);
 	}
 
 	const isFollowUp = interaction.deferred || interaction.replied;
 
 	const messageContent: InteractionReplyOptions & { fetchReply: true } = {
-		embeds: [{
-			description: description,
-			color: color
-		}],
-		components: [{
-			type: ComponentType.ActionRow,
-			components: [{
-				type: ComponentType.Button,
-				label: labelYes,
-				style: ButtonStyle.Success,
-				customId: ButtonAction.yes
-			}, {
-				type: ComponentType.Button,
-				label: labelNo,
-				style: ButtonStyle.Danger,
-				customId: ButtonAction.no
-			}]
-		}],
+		embeds: [
+			{
+				description: description,
+				color: color
+			}
+		],
+		components: [
+			{
+				type: ComponentType.ActionRow,
+				components: [
+					{
+						type: ComponentType.Button,
+						label: labelYes,
+						style: ButtonStyle.Success,
+						customId: ButtonAction.yes
+					},
+					{
+						type: ComponentType.Button,
+						label: labelNo,
+						style: ButtonStyle.Danger,
+						customId: ButtonAction.no
+					}
+				]
+			}
+		],
 		fetchReply: true,
 		ephemeral: ephemeral
 	};
@@ -118,7 +127,7 @@ export async function confirm(
 	try {
 		click = await messageConfirm.awaitMessageComponent({
 			componentType: ComponentType.Button,
-			filter: click => click.member.id === userId,
+			filter: (click) => click.member.id === userId,
 			time: timeout
 		});
 		answer = click.customId === ButtonAction.yes;
@@ -133,16 +142,24 @@ export async function confirm(
 		});
 	} else {
 		await interaction.webhook.editMessage(messageConfirm, {
-			components: [{
-				type: ComponentType.ActionRow,
-				components: [{
-					type: ComponentType.Button,
-					label: answer ? labelYes : labelNo,
-					style: answer ? ButtonStyle.Success : ButtonStyle.Success,
-					customId: answer ? ButtonAction.yes : ButtonAction.no,
-					disabled: true
-				}]
-			}]
+			components: [
+				{
+					type: ComponentType.ActionRow,
+					components: [
+						{
+							type: ComponentType.Button,
+							label: answer ? labelYes : labelNo,
+							style: answer
+								? ButtonStyle.Success
+								: ButtonStyle.Success,
+							customId: answer
+								? ButtonAction.yes
+								: ButtonAction.no,
+							disabled: true
+						}
+					]
+				}
+			]
 		});
 	}
 

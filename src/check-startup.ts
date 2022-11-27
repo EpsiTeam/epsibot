@@ -1,4 +1,7 @@
-import { checkEnvironmentVariables, EnvVariables } from "./utils/env/EnvVariables.js";
+import {
+	checkEnvironmentVariables,
+	EnvVariables
+} from "./utils/env/EnvVariables.js";
 import { Logger } from "./utils/logger/Logger.js";
 
 /**

@@ -37,21 +37,27 @@ export async function logMessageDelete(message: Message | PartialMessage) {
 	// Retrieve the Discord channel
 	const channel = await guild.channels.fetch(channelLog.channelId);
 	if (!channel || channel.type !== ChannelType.GuildText) {
-		Logger.error(`Impossible to send logs on channel ${channelLog.channelId}, maybe it has been deleted or modified`, guild, message.author);
+		Logger.error(
+			`Impossible to send logs on channel ${channelLog.channelId}, maybe it has been deleted or modified`,
+			guild,
+			message.author
+		);
 		return;
 	}
 
 	const creationDate = format(message.createdTimestamp, "dd/MM/yyyy HH:mm");
 
 	await channel.send({
-		embeds: [{
-			description: `Un message de ${message.member} (${message.author.tag}) a été supprimé dans ${message.channel}:\n\n${message.content}`,
-			footer: {
-				icon_url: message.author.displayAvatarURL(),
-				text: `Message crée le ${creationDate}`
-			},
-			color: EpsibotColor.warning
-		}]
+		embeds: [
+			{
+				description: `Un message de ${message.member} (${message.author.tag}) a été supprimé dans ${message.channel}:\n\n${message.content}`,
+				footer: {
+					icon_url: message.author.displayAvatarURL(),
+					text: `Message crée le ${creationDate}`
+				},
+				color: EpsibotColor.warning
+			}
+		]
 	});
 }
 
@@ -62,7 +68,7 @@ export async function logMessageDelete(message: Message | PartialMessage) {
 export async function logBulkMessageDelete(
 	messages: Collection<string, Message<boolean> | PartialMessage>
 ) {
-	const guild = messages.find(message => message.guild !== null)?.guild;
+	const guild = messages.find((message) => message.guild !== null)?.guild;
 
 	if (!guild) {
 		Logger.warn(`${messages.size} messages purged (unknown guild)`);
@@ -81,7 +87,9 @@ export async function logBulkMessageDelete(
 	});
 	if (!channelLog) return;
 
-	const channel = messages.find(message => message.channel !== null)?.channel;
+	const channel = messages.find(
+		(message) => message.channel !== null
+	)?.channel;
 	if (channel) {
 		// Check if this channel is ignored
 		const ignored = await DBConnection.getRepository(IgnoredChannel).count({
@@ -96,7 +104,9 @@ export async function logBulkMessageDelete(
 	// Retrieve the Discord channel
 	const logChannel = await guild.channels.fetch(channelLog.channelId);
 	if (!logChannel || logChannel.type !== ChannelType.GuildText) {
-		logger.error(`Impossible to send logs on channel ${channelLog.channelId}, maybe it has been deleted or modified`);
+		logger.error(
+			`Impossible to send logs on channel ${channelLog.channelId}, maybe it has been deleted or modified`
+		);
 		return;
 	}
 
@@ -108,14 +118,18 @@ export async function logBulkMessageDelete(
 		file += "\n\n----------------------------------------------------\n\n";
 
 		const msgDate = format(message.createdAt, "dd/MM/yyyy HH:mm:ss");
-		file += `Message de ${message.author?.tag ?? "[inconnu]"} le ${msgDate}`;
+		file += `Message de ${
+			message.author?.tag ?? "[inconnu]"
+		} le ${msgDate}`;
 		if (message.embeds.length) {
 			file += `\nContient ${message.embeds.length} embeds`;
 		}
 		if (message.attachments.size) {
 			file += `\nContient ${message.attachments.size} liens:`;
 			for (const attachment of message.attachments.values()) {
-				file += `\n\t${attachment.url} [${attachment.contentType ?? "type inconnu"}]`;
+				file += `\n\t${attachment.url} [${
+					attachment.contentType ?? "type inconnu"
+				}]`;
 			}
 		}
 		if (message.content) {
@@ -125,25 +139,36 @@ export async function logBulkMessageDelete(
 	const buffer = Buffer.from(file, "ascii");
 
 	await logChannel.send({
-		embeds: [{
-			description: `${messages.size} messages ont été supprimés dans ${channel ?? "(channel inconnu)"}`,
-			footer: {
-				text: `Messages supprimés le ${deletedDate}`
-			},
-			color: EpsibotColor.warning
-		}],
-		files: [{
-			name: "deleted_message.txt",
-			description: "Sauvegarde des messages supprimés",
-			attachment: buffer
-		}]
+		embeds: [
+			{
+				description: `${
+					messages.size
+				} messages ont été supprimés dans ${
+					channel ?? "(channel inconnu)"
+				}`,
+				footer: {
+					text: `Messages supprimés le ${deletedDate}`
+				},
+				color: EpsibotColor.warning
+			}
+		],
+		files: [
+			{
+				name: "deleted_message.txt",
+				description: "Sauvegarde des messages supprimés",
+				attachment: buffer
+			}
+		]
 	});
 }
 
 /**
  * Log an updated message
  */
-export async function logMessageUpdate(oldMsg: Message | PartialMessage, newMsg: Message | PartialMessage) {
+export async function logMessageUpdate(
+	oldMsg: Message | PartialMessage,
+	newMsg: Message | PartialMessage
+) {
 	if (!oldMsg.content) return;
 	if (oldMsg.content === newMsg.content) return;
 
@@ -176,20 +201,26 @@ export async function logMessageUpdate(oldMsg: Message | PartialMessage, newMsg:
 	// Retrieve the Discord channel
 	const channel = await guild.channels.fetch(channelLog.channelId);
 	if (!channel || channel.type !== ChannelType.GuildText) {
-		Logger.error(`Impossible to send logs on channel ${channelLog.channelId}, maybe it has been deleted or modified`, guild, author);
+		Logger.error(
+			`Impossible to send logs on channel ${channelLog.channelId}, maybe it has been deleted or modified`,
+			guild,
+			author
+		);
 		return;
 	}
 
 	const creationDate = format(oldMsg.createdTimestamp, "dd/MM/yyyy HH:mm");
 
 	await channel.send({
-		embeds: [{
-			description: `Un message de ${newMsg.member} (${author.tag}) a été modifié dans ${newMsg.channel}\n[Voir le message modifié](${newMsg.url})\n__Ancien message:__\n\n${oldMsg.content}`,
-			footer: {
-				icon_url: author.displayAvatarURL(),
-				text: `Message original crée le ${creationDate}`
-			},
-			color: EpsibotColor.info
-		}]
+		embeds: [
+			{
+				description: `Un message de ${newMsg.member} (${author.tag}) a été modifié dans ${newMsg.channel}\n[Voir le message modifié](${newMsg.url})\n__Ancien message:__\n\n${oldMsg.content}`,
+				footer: {
+					icon_url: author.displayAvatarURL(),
+					text: `Message original crée le ${creationDate}`
+				},
+				color: EpsibotColor.info
+			}
+		]
 	});
 }

@@ -30,5 +30,7 @@ export function getChannelLogType(guildLogType: GuildLogType): logType {
 			return "updatedMessage";
 	}
 
-	throw Error(`logType ${guildLogType} is not recognized, don't how which ChannelLog.logType to assign`);
+	throw Error(
+		`logType ${guildLogType} is not recognized, don't how which ChannelLog.logType to assign`
+	);
 }

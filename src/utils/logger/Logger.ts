@@ -4,9 +4,9 @@ import { Guild, User } from "discord.js";
 
 enum LogLevel {
 	error = "ERROR",
-	warn  = "WARN ",
-	done  = "DONE ",
-	info  = "INFO ",
+	warn = "WARN ",
+	done = "DONE ",
+	info = "INFO ",
 	debug = "DEBUG"
 }
 
@@ -159,7 +159,9 @@ export class Logger {
 
 	private static check(instance?: Logger): asserts instance {
 		if (!instance) {
-			throw Error("Logger was used before initializing it, you must first call Logger.initialize()");
+			throw Error(
+				"Logger was used before initializing it, you must first call Logger.initialize()"
+			);
 		}
 	}
 }

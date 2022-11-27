@@ -1,6 +1,10 @@
 import { ChatInputCommandInteraction } from "discord.js";
 import { ChannelLog } from "../../entity/ChannelLog.js";
-import { getChannelLogType, getLogDescription, GuildLogType } from "./channel-log-type.js";
+import {
+	getChannelLogType,
+	getLogDescription,
+	GuildLogType
+} from "./channel-log-type.js";
 import { logType } from "../../entity/ChannelLog.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 import { DBConnection } from "../../DBConnection.js";
@@ -10,20 +14,23 @@ export enum EnableParam {
 	channel = "channel"
 }
 
-export async function enable(interaction: ChatInputCommandInteraction<"cached">) {
+export async function enable(
+	interaction: ChatInputCommandInteraction<"cached">
+) {
 	// The type of log we should enable
 	const paramLogType = interaction.options.getString(
 		EnableParam.logType,
 		true
 	) as GuildLogType;
 
-	if (paramLogType === GuildLogType.all)
-		return enableAllLog(interaction);
+	if (paramLogType === GuildLogType.all) return enableAllLog(interaction);
 
 	return enableLog(interaction, getChannelLogType(paramLogType));
 }
 
-async function enableAllLog(interaction: ChatInputCommandInteraction<"cached">) {
+async function enableAllLog(
+	interaction: ChatInputCommandInteraction<"cached">
+) {
 	const channel = interaction.options.getChannel(EnableParam.channel, true);
 	const repo = DBConnection.getRepository(ChannelLog);
 
@@ -34,29 +41,34 @@ async function enableAllLog(interaction: ChatInputCommandInteraction<"cached">) 
 	]);
 
 	return interaction.reply({
-		embeds: [{
-			description: `Tous les logs sont désormais actif sur le channel ${channel}`,
-			color: EpsibotColor.success
-		}],
+		embeds: [
+			{
+				description: `Tous les logs sont désormais actif sur le channel ${channel}`,
+				color: EpsibotColor.success
+			}
+		],
 		ephemeral: true
 	});
 }
 
-async function enableLog(interaction: ChatInputCommandInteraction<"cached">, logType: logType) {
+async function enableLog(
+	interaction: ChatInputCommandInteraction<"cached">,
+	logType: logType
+) {
 	const channel = interaction.options.getChannel(EnableParam.channel, true);
 	const logDescription = getLogDescription(logType);
 
-	await DBConnection.getRepository(ChannelLog).save(new ChannelLog(
-		interaction.guildId,
-		logType,
-		channel.id
-	));
+	await DBConnection.getRepository(ChannelLog).save(
+		new ChannelLog(interaction.guildId, logType, channel.id)
+	);
 
 	return interaction.reply({
-		embeds: [{
-			description: `Les logs ${logDescription} sont désormais actif sur le channel ${channel}`,
-			color: EpsibotColor.success
-		}],
+		embeds: [
+			{
+				description: `Les logs ${logDescription} sont désormais actif sur le channel ${channel}`,
+				color: EpsibotColor.success
+			}
+		],
 		ephemeral: true
 	});
 }

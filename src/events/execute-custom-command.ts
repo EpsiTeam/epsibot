@@ -30,13 +30,13 @@ export async function executeCustomCommand(message: Message) {
 	]);
 
 	// Typescript shenanigan to correctly type commands
-	const commands = (
-		<(CustomCommand | CustomEmbedCommand)[]>embedCommands
-	).concat(normalCommands);
+	const commands = (<(CustomCommand | CustomEmbedCommand)[]>(
+		embedCommands
+	)).concat(normalCommands);
 
 	// Checking if there is a custom command to execute
-	let choosenCommand:
-		CustomCommand | CustomEmbedCommand | undefined = undefined;
+	let choosenCommand: CustomCommand | CustomEmbedCommand | undefined =
+		undefined;
 	for (const command of commands) {
 		const name = command.name;
 		if (lowercase.startsWith(name.toLowerCase())) {
@@ -50,12 +50,18 @@ export async function executeCustomCommand(message: Message) {
 	// No custom command in this message!
 	if (!choosenCommand) return;
 
-	if (choosenCommand.adminOnly && !message.member.permissions.has("Administrator")) {
+	if (
+		choosenCommand.adminOnly &&
+		!message.member.permissions.has("Administrator")
+	) {
 		await message.reply({
-			embeds: [{
-				description: "Cette commande est réservée aux administrateurs",
-				color: EpsibotColor.error
-			}]
+			embeds: [
+				{
+					description:
+						"Cette commande est réservée aux administrateurs",
+					color: EpsibotColor.error
+				}
+			]
 		});
 		return;
 	}
@@ -80,12 +86,16 @@ export async function executeCustomCommand(message: Message) {
 
 		if (choosenCommand instanceof CustomCommand) {
 			if (filledContent.length > CustomCommand.maxResponseLength) {
-				logger.warn(`Custom command '${choosenCommand.name}' response was too long`);
+				logger.warn(
+					`Custom command '${choosenCommand.name}' response was too long`
+				);
 				await message.channel.send({
-					embeds: [{
-						description: `Je ne peux pas répondre à la commande \`${choosenCommand.name}\`, car la réponse devrait faire ${filledContent.length} caractères et la limite est de ${CustomCommand.maxResponseLength} caractères`,
-						color: EpsibotColor.error
-					}]
+					embeds: [
+						{
+							description: `Je ne peux pas répondre à la commande \`${choosenCommand.name}\`, car la réponse devrait faire ${filledContent.length} caractères et la limite est de ${CustomCommand.maxResponseLength} caractères`,
+							color: EpsibotColor.error
+						}
+					]
 				});
 				return;
 			}
@@ -97,12 +107,16 @@ export async function executeCustomCommand(message: Message) {
 			if (
 				filledContent.length > CustomEmbedCommand.maxDescriptionLength
 			) {
-				logger.warn(`Custom command '${choosenCommand.name}' description was too long`);
+				logger.warn(
+					`Custom command '${choosenCommand.name}' description was too long`
+				);
 				await message.channel.send({
-					embeds: [{
-						description: `Je ne peux pas répondre à la commande \`${choosenCommand.name}\`, car la description devrait faire ${filledContent.length} caractères et la limite est de ${CustomEmbedCommand.maxDescriptionLength} caractères`,
-						color: EpsibotColor.error
-					}]
+					embeds: [
+						{
+							description: `Je ne peux pas répondre à la commande \`${choosenCommand.name}\`, car la description devrait faire ${filledContent.length} caractères et la limite est de ${CustomEmbedCommand.maxDescriptionLength} caractères`,
+							color: EpsibotColor.error
+						}
+					]
 				});
 				return;
 			}
@@ -116,9 +130,13 @@ export async function executeCustomCommand(message: Message) {
 		logger.debug(`Executed custom command '${choosenCommand.name}'`);
 	} catch (err) {
 		if (err instanceof Error) {
-			logger.error(`Error on custom command '${choosenCommand.name}': ${err.stack}`);
+			logger.error(
+				`Error on custom command '${choosenCommand.name}': ${err.stack}`
+			);
 		} else {
-			logger.error(`Error on custom command '${choosenCommand.name}' with unknown error: ${err}`);
+			logger.error(
+				`Error on custom command '${choosenCommand.name}' with unknown error: ${err}`
+			);
 		}
 	}
 }

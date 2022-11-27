@@ -30,9 +30,11 @@ const client = new Client({
 		GatewayIntentBits.GuildMessages
 	],
 	presence: {
-		activities: [{
-			name: `v${EnvVariables.version}`
-		}]
+		activities: [
+			{
+				name: `v${EnvVariables.version}`
+			}
+		]
 	}
 });
 

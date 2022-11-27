@@ -1,4 +1,7 @@
-import { ApplicationCommandOptionType, ChatInputCommandInteraction } from "discord.js";
+import {
+	ApplicationCommandOptionType,
+	ChatInputCommandInteraction
+} from "discord.js";
 import { Command } from "../Command.js";
 import { purge } from "./purge-messages.js";
 
@@ -13,19 +16,23 @@ export class Purge extends Command {
 
 		this.needPermissions = ["ManageMessages"];
 
-		this.options = [{
-			type: ApplicationCommandOptionType.Integer,
-			name: Param.nb,
-			description: "Le nombre de messages à supprimer",
-			minValue: 1,
-			maxValue: 100,
-			required: true
-		}, {
-			type: ApplicationCommandOptionType.User,
-			name: Param.user,
-			description: "L'utilisateur dont il faut supprimer les messages",
-			required: false
-		}];
+		this.options = [
+			{
+				type: ApplicationCommandOptionType.Integer,
+				name: Param.nb,
+				description: "Le nombre de messages à supprimer",
+				minValue: 1,
+				maxValue: 100,
+				required: true
+			},
+			{
+				type: ApplicationCommandOptionType.User,
+				name: Param.user,
+				description:
+					"L'utilisateur dont il faut supprimer les messages",
+				required: false
+			}
+		];
 	}
 
 	async execute(interaction: ChatInputCommandInteraction<"cached">) {

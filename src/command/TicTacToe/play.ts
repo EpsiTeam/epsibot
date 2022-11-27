@@ -14,10 +14,12 @@ export async function play(interaction: CommandInteraction<"cached">) {
 
 	if (user1.id === user2.id) {
 		return interaction.reply({
-			embeds: [{
-				description: "Impossible de jouer contre soi-même",
-				color: EpsibotColor.error
-			}],
+			embeds: [
+				{
+					description: "Impossible de jouer contre soi-même",
+					color: EpsibotColor.error
+				}
+			],
 			ephemeral: true
 		});
 	}
@@ -31,18 +33,22 @@ export async function play(interaction: CommandInteraction<"cached">) {
 
 	if (!accepted) return;
 
-	const logger =
-		Logger.contextualize(interaction.guild, interaction.member.user);
+	const logger = Logger.contextualize(
+		interaction.guild,
+		interaction.member.user
+	);
 	logger.debug(`Started a TicTacToe game against ${user1.tag}`);
 
 	const game = new TicTacToeGame(user1, user2);
 	const firstPlayer = game.getPlayerTurn();
 
 	const gameMessage = await interaction.followUp({
-		embeds: [{
-			description: `La partie démarre, c'est ${firstPlayer} qui joue en premier car c'est lui qui a été défié`,
-			color: game.getPlayerColor(firstPlayer)
-		}],
+		embeds: [
+			{
+				description: `La partie démarre, c'est ${firstPlayer} qui joue en premier car c'est lui qui a été défié`,
+				color: game.getPlayerColor(firstPlayer)
+			}
+		],
 		components: game.getComponents(false)
 	});
 
@@ -53,10 +59,12 @@ export async function play(interaction: CommandInteraction<"cached">) {
 
 		if (!firstTurn) {
 			await gameMessage.edit({
-				embeds: [{
-					description: `Au tour de ${player} de jouer`,
-					color: game.getPlayerColor(player)
-				}],
+				embeds: [
+					{
+						description: `Au tour de ${player} de jouer`,
+						color: game.getPlayerColor(player)
+					}
+				],
 				components: game.getComponents(false)
 			});
 		} else {
@@ -76,28 +84,41 @@ export async function play(interaction: CommandInteraction<"cached">) {
 			game.play(parseInt(x, 10), parseInt(y, 10));
 		} catch (err) {
 			if (err instanceof Error) {
-				logger.error(`Something went wrong with TicTacToeGame: ${err.stack}`);
+				logger.error(
+					`Something went wrong with TicTacToeGame: ${err.stack}`
+				);
 				return gameMessage.edit({
-					embeds: [{
-						description: `Désolé, il y a eu une erreur avec la partie, considérons que c'est un match nul entre ${user1} et ${user2}`,
-						color: EpsibotColor.error
-					}],
+					embeds: [
+						{
+							description: `Désolé, il y a eu une erreur avec la partie, considérons que c'est un match nul entre ${user1} et ${user2}`,
+							color: EpsibotColor.error
+						}
+					],
 					components: []
 				});
-			} {
-				logger.error(`Something went wrong with TicTacToeGame with unknown error: ${err}`);
+			}
+			{
+				logger.error(
+					`Something went wrong with TicTacToeGame with unknown error: ${err}`
+				);
 			}
 		}
 	}
 
 	const winner = game.winner;
-	const result = winner ? `${winner} remporte la partie !` :  "C'est un match nul !";
+	const result = winner
+		? `${winner} remporte la partie !`
+		: "C'est un match nul !";
 
 	return gameMessage.edit({
-		embeds: [{
-			description: `Résultat de la partie de morpion entre ${user1} et ${user2}:\n${result}`,
-			color: winner ? game.getPlayerColor(winner) : EpsibotColor.warning
-		}],
+		embeds: [
+			{
+				description: `Résultat de la partie de morpion entre ${user1} et ${user2}:\n${result}`,
+				color: winner
+					? game.getPlayerColor(winner)
+					: EpsibotColor.warning
+			}
+		],
 		components: game.getComponents(true)
 	});
 }

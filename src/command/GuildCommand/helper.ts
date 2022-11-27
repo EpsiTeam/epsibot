@@ -22,10 +22,12 @@ Faire la commande  \`!bonjour 'à tous' "de boire de l'eau"\` affichera \`Bonjou
 
 export function timeoutEmbed(name: string): InteractionReplyOptions {
 	return {
-		embeds: [{
-			description: `Pas de réponse, création de la commande \`${name}\` annulée`,
-			color: EpsibotColor.error
-		}],
+		embeds: [
+			{
+				description: `Pas de réponse, création de la commande \`${name}\` annulée`,
+				color: EpsibotColor.error
+			}
+		],
 		ephemeral: false
 	};
 }
@@ -33,13 +35,16 @@ export function timeoutEmbed(name: string): InteractionReplyOptions {
 export function commandFields(
 	command: CustomCommand | CustomEmbedCommand
 ): EmbedField[] {
-	return [{
-		name: "Pour admins seulement:",
-		value: command.adminOnly ? "Oui" : "Non",
-		inline: false
-	}, {
-		name: "Supprime le message qui appelle la commande:",
-		value: command.autoDelete ? "Oui" : "Non",
-		inline: false
-	}];
+	return [
+		{
+			name: "Pour admins seulement:",
+			value: command.adminOnly ? "Oui" : "Non",
+			inline: false
+		},
+		{
+			name: "Supprime le message qui appelle la commande:",
+			value: command.autoDelete ? "Oui" : "Non",
+			inline: false
+		}
+	];
 }

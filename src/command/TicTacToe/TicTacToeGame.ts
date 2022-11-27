@@ -1,13 +1,16 @@
-import { User, resolveColor, ActionRowData, MessageActionRowComponentData, ComponentType, ButtonStyle } from "discord.js";
+import {
+	User,
+	resolveColor,
+	ActionRowData,
+	MessageActionRowComponentData,
+	ComponentType,
+	ButtonStyle
+} from "discord.js";
 
 type playedCell = "X" | "O";
 type emptyCell = "";
 type cell = playedCell | emptyCell;
-type gameState = [
-	[cell, cell, cell],
-	[cell, cell, cell],
-	[cell, cell, cell]
-]
+type gameState = [[cell, cell, cell], [cell, cell, cell], [cell, cell, cell]];
 
 export class TicTacToeGame {
 	#winner: User | undefined;
@@ -62,9 +65,9 @@ export class TicTacToeGame {
 		return this.state.flat().every(this.isPlayedCell);
 	}
 
-	getComponents(locked: boolean):
-		ActionRowData<MessageActionRowComponentData>[] {
-
+	getComponents(
+		locked: boolean
+	): ActionRowData<MessageActionRowComponentData>[] {
 		const components: ActionRowData<MessageActionRowComponentData>[] = [];
 
 		for (const [x, line] of this.state.entries()) {
@@ -142,10 +145,8 @@ export class TicTacToeGame {
 
 		// Check antidiagonal
 		if (
-			( // only if last play in antidiagonal
-				(x === 1 && y === 1) ||
-				Math.abs(x - y) === 2
-			) &&
+			// only if last play in antidiagonal
+			((x === 1 && y === 1) || Math.abs(x - y) === 2) &&
 			this.state[0][2] === player &&
 			this.state[1][1] === player &&
 			this.state[2][0] === player

@@ -14,7 +14,9 @@ export async function executeCommand(
 
 	// Only if command is in guild
 	if (!interaction.inCachedGuild()) {
-		Logger.error(`${interaction.commandName} not executed in a guild (or guild not in cache)`);
+		Logger.error(
+			`${interaction.commandName} not executed in a guild (or guild not in cache)`
+		);
 		return;
 	}
 
@@ -22,12 +24,16 @@ export async function executeCommand(
 	const command = commandManager.commands.get(interaction.commandName);
 
 	if (!command) {
-		logger.error(`Tried to retrieve command ${interaction.commandName} from CommandManager, but it does not exist`);
+		logger.error(
+			`Tried to retrieve command ${interaction.commandName} from CommandManager, but it does not exist`
+		);
 		return;
 	}
 
 	const subcommand = interaction.options.getSubcommand(false);
-	const fullCommand = subcommand ? `/${command.name}/${subcommand}` : `/${command.name}`;
+	const fullCommand = subcommand
+		? `/${command.name}/${subcommand}`
+		: `/${command.name}`;
 
 	try {
 		await command.execute(interaction);
@@ -36,7 +42,9 @@ export async function executeCommand(
 		if (err instanceof Error) {
 			logger.error(`Error on command ${fullCommand}: ${err.stack}`);
 		} else {
-			logger.error(`Error on command ${fullCommand} with unknown error: ${err}`);
+			logger.error(
+				`Error on command ${fullCommand} with unknown error: ${err}`
+			);
 		}
 	}
 }

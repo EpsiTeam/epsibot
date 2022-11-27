@@ -12,10 +12,13 @@ export async function disable(interaction: CommandInteraction<"cached">) {
 
 	if (!autorole) {
 		return interaction.reply({
-			embeds: [{
-				description: "Il n'y avait pas de rôle automatique configuré",
-				color: EpsibotColor.warning
-			}],
+			embeds: [
+				{
+					description:
+						"Il n'y avait pas de rôle automatique configuré",
+					color: EpsibotColor.warning
+				}
+			],
 			ephemeral: true
 		});
 	}
@@ -32,10 +35,12 @@ export async function disable(interaction: CommandInteraction<"cached">) {
 	}
 
 	return interaction.reply({
-		embeds: [{
-			description: message,
-			color: EpsibotColor.success
-		}],
+		embeds: [
+			{
+				description: message,
+				color: EpsibotColor.success
+			}
+		],
 		ephemeral: true
 	});
 }

@@ -17,5 +17,4 @@ export class autorole1647895656037 implements MigrationInterface {
 			DROP TABLE "auto_role"
 		`);
 	}
-
 }

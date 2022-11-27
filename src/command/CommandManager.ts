@@ -39,11 +39,12 @@ export class CommandManager {
 		// Setting all commands
 		for (const guild of guilds) {
 			if (!guild.members.me?.permissions.has("Administrator")) {
-				Logger.error("Epsibot don't have the Administrator permission", guild);
-			} else {
-				promisesSetCommands.push(
-					guild.commands.set(this.commandList)
+				Logger.error(
+					"Epsibot don't have the Administrator permission",
+					guild
 				);
+			} else {
+				promisesSetCommands.push(guild.commands.set(this.commandList));
 			}
 		}
 		// Waiting for pending change
