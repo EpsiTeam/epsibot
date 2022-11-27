@@ -4,14 +4,19 @@
 	"description": "Light discord bot for epsilon needs",
 	"main": "built/main.js",
 	"scripts": {
+		"start": "npm run build && clear && npm run start:builded",
+		"start:builded": "node --enable-source-maps -r dotenv/config built/main.js",
+		"build": "npm run check && npm run build:unsafe && echo 'Build finished'",
+		"build:unsafe": "rm -rf built/ && tsc",
+		"check": "npm run prettier && npm run eslint",
 		"prettier": "prettier -w .",
 		"eslint": "eslint --fix src/",
-		"check": "npm run prettier && npm run eslint",
-		"build": "rm -rf built/ && npm run check && tsc && echo 'Build finished'",
-		"start": "npm run build && clear && npm run start:builded",
 		"clean": "rm -rf built/ logs/",
-		"migrate": "typeorm migration:run",
-		"start:builded": "node --enable-source-maps -r dotenv/config built/main.js",
+		"typeorm": "typeorm -d built/database/DBConnection.js",
+		"migrate": "npm run build:unsafe && npm run typeorm migration:run",
+		"migrate:show": "npm run build:unsafe && npm run typeorm migration:show",
+		"generate": "npm run build:unsafe && npm run typeorm migration:generate -p true src/database/migration/todo && npm run prettier",
+		"synclog": "npm run build:unsafe && npm run typeorm schema:log",
 		"test": "echo 'Sorry, there is no tests for now'"
 	},
 	"private": true,
@@ -19,23 +24,24 @@
 	"license": "ISC",
 	"type": "module",
 	"dependencies": {
-		"discord.js": "14.6.0",
-		"typescript": "4.9.3",
-		"typeorm": "0.3.10",
-		"better-sqlite3": "7.6.2",
 		"@types/node": "18.11.9",
+		"better-sqlite3": "7.6.2",
 		"chalk": "5.1.2",
 		"date-fns": "2.29.3",
+		"discord.js": "14.6.0",
 		"dotenv": "16.0.3",
-		"reflect-metadata": "0.1.13"
+		"reflect-metadata": "0.1.13",
+		"typeorm": "0.3.10",
+		"typescript": "4.9.3"
 	},
 	"devDependencies": {
-		"eslint": "8.28.0",
-		"prettier": "2.8.0",
 		"@typescript-eslint/eslint-plugin": "5.44.0",
 		"@typescript-eslint/parser": "5.44.0",
+		"eslint": "8.28.0",
 		"eslint-config-prettier": "8.5.0",
-		"eslint-plugin-import": "2.26.0"
+		"eslint-plugin-import": "2.26.0",
+		"prettier": "2.8.0",
+		"ts-node": "^10.9.1"
 	},
 	"engines": {
 		"node": ">=16.16.0"

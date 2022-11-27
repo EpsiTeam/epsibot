@@ -7,13 +7,13 @@
 		"module": "ESNext",
 		"moduleResolution": "NodeNext",
 		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
 		// Options for TS checks (we want clean TS)
 		"strict": true,
 		"noImplicitReturns": true,
 		"noImplicitAny": true,
 		"noImplicitThis": true,
 		"strictNullChecks": true,
-		//"esModuleInterop": true,
 		// TS will produce sourceMap, to know the mapping between js and ts files
 		"sourceMap": true,
 		// Enabling the importing of JSON

@@ -1,13 +1,13 @@
 import { ChatInputCommandInteraction } from "discord.js";
-import { ChannelLog } from "../../entity/ChannelLog.js";
+import { ChannelLog } from "../../database/entity/ChannelLog.js";
 import {
 	getChannelLogType,
 	getLogDescription,
 	GuildLogType
 } from "./channel-log-type.js";
-import { logType } from "../../entity/ChannelLog.js";
+import { logType } from "../../database/entity/ChannelLog.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
-import { DBConnection } from "../../DBConnection.js";
+import { DBConnection } from "../../database/DBConnection.js";
 
 export enum EnableParam {
 	logType = "log_type",

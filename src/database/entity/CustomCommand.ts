@@ -2,8 +2,8 @@ import { Column, Entity, PrimaryColumn } from "typeorm";
 
 @Entity()
 export class CustomCommand {
-	static maxNameLength = 50;
-	static maxResponseLength = 2000;
+	static maxNameLength = 50 as const;
+	static maxResponseLength = 2000 as const;
 
 	constructor(
 		guildId: string,
@@ -18,7 +18,7 @@ export class CustomCommand {
 		this.adminOnly = adminOnly;
 		this.autoDelete = autoDelete;
 
-		if (this.name.length > CustomCommand.maxNameLength) {
+		if (this.name?.length > CustomCommand.maxNameLength) {
 			throw Error("Name too long");
 		}
 	}

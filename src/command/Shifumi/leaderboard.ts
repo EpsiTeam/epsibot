@@ -7,8 +7,8 @@ import {
 	GuildMember,
 	MessageEditOptions
 } from "discord.js";
-import { DBConnection } from "../../DBConnection.js";
-import { ShifumiScore } from "../../entity/ShifumiScore.js";
+import { DBConnection } from "../../database/DBConnection.js";
+import { ShifumiScore } from "../../database/entity/ShifumiScore.js";
 import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
 import { Logger } from "../../utils/logger/Logger.js";
 

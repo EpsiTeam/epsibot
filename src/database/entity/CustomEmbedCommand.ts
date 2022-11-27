@@ -5,8 +5,8 @@ import { CustomCommand } from "./CustomCommand.js";
 @Entity()
 export class CustomEmbedCommand {
 	static maxNameLength = CustomCommand.maxNameLength;
-	static maxTitleLength = 256;
-	static maxDescriptionLength = 4096;
+	static maxTitleLength = 256 as const;
+	static maxDescriptionLength = 4096 as const;
 
 	constructor(
 		guildId: string,
@@ -27,13 +27,15 @@ export class CustomEmbedCommand {
 		this.adminOnly = adminOnly;
 		this.autoDelete = autoDelete;
 
-		if (this.name.length > CustomEmbedCommand.maxNameLength) {
+		if (this.name?.length > CustomEmbedCommand.maxNameLength) {
 			throw Error("Name too long");
 		}
-		if (this.title.length > CustomEmbedCommand.maxTitleLength) {
+		if (this.title?.length > CustomEmbedCommand.maxTitleLength) {
 			throw Error("Title too long");
 		}
-		if (this.description.length > CustomEmbedCommand.maxDescriptionLength) {
+		if (
+			this.description?.length > CustomEmbedCommand.maxDescriptionLength
+		) {
 			throw Error("Description too long");
 		}
 	}

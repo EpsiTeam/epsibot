@@ -2,7 +2,7 @@ import {
 	ApplicationCommandOptionType,
 	ChatInputCommandInteraction
 } from "discord.js";
-import { QueueElement } from "../../entity/QueueElement.js";
+import { QueueElement } from "../../database/entity/QueueElement.js";
 import { Command } from "../Command.js";
 import { add, AddParam } from "./add.js";
 import { cancel, CancelParams } from "./cancel.js";

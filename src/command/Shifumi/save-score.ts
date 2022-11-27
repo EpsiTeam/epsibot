@@ -1,5 +1,5 @@
-import { DBConnection } from "../../DBConnection.js";
-import { ShifumiScore } from "../../entity/ShifumiScore.js";
+import { DBConnection } from "../../database/DBConnection.js";
+import { ShifumiScore } from "../../database/entity/ShifumiScore.js";
 import { ShifumiGame } from "./ShifumiGame.js";
 
 export async function saveScore(guildId: string, game: ShifumiGame) {
@@ -37,11 +37,9 @@ async function updateOne(
 ) {
 	const repo = DBConnection.getRepository(ShifumiScore);
 
-	const existing = await repo.findOne({
-		where: {
-			guildId,
-			userId
-		}
+	const existing = await repo.findOneBy({
+		guildId,
+		userId
 	});
 
 	if (!existing) {
