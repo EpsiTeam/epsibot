@@ -2,7 +2,7 @@ import { DMChannel, NonThreadGuildBasedChannel } from "discord.js";
 import { getRepository } from "typeorm";
 import { ChannelLog } from "../database/entity/ChannelLog.js";
 import { IgnoredChannel } from "../database/entity/IgnoredChannel.js";
-import { Logger } from "../utils/logger/Logger.js";
+import { Logger } from "../util/Logger.js";
 
 export async function channelDeleted(
 	channel: DMChannel | NonThreadGuildBasedChannel

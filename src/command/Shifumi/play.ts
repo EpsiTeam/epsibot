@@ -4,8 +4,8 @@ import {
 	ComponentType,
 	DiscordAPIError
 } from "discord.js";
-import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
-import { Logger } from "../../utils/logger/Logger.js";
+import { EpsibotColor } from "../../util/color/EpsibotColor.js";
+import { Logger } from "../../util/Logger.js";
 import { saveScore } from "./save-score.js";
 import { ShifumiChoice, ShifumiGame } from "./ShifumiGame.js";
 

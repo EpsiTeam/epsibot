@@ -10,6 +10,8 @@ import { Help } from "./Help/Help.js";
 import { CommandManager } from "./CommandManager.js";
 import { Shifumi } from "./Shifumi/Shifumi.js";
 import { Queue } from "./Queue/Queue.js";
+import { GuildCommandList } from "./GuildCommandList/GuildCommandList.js";
+import { QueueList } from "./QueueList/QueueList.js";
 
 /**
  * CommandManager will read this list to create all commands,
@@ -24,8 +26,10 @@ export function instanciateCommands(manager: CommandManager): Command[] {
 		new Shifumi(),
 		new GuildLog(),
 		new GuildCommand(),
+		new GuildCommandList(),
 		new GuildAutoRole(),
 		new Queue(),
+		new QueueList(),
 		new Purge(),
 		new InviteLink()
 	];

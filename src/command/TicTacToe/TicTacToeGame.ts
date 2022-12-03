@@ -46,10 +46,10 @@ export class TicTacToeGame {
 
 	play(x: number, y: number) {
 		if (this.#winner) {
-			throw Error("Impossible to play when the game is won");
+			throw new Error("Impossible to play when the game is won");
 		}
 		if (!this.isEmtpyCell(this.state[x][y])) {
-			throw Error("Cell is not playable");
+			throw new Error("Cell is not playable");
 		}
 
 		this.state[x][y] = this.turn;
@@ -97,7 +97,9 @@ export class TicTacToeGame {
 		if (user.id === this.playerX.id) return resolveColor("Blue");
 		if (user.id === this.playerO.id) return resolveColor("Green");
 
-		throw Error("Unknown player, impossible to get corresponding color");
+		throw new Error(
+			"Unknown player, impossible to get corresponding color"
+		);
 	}
 
 	private getButtonStyle(cell: cell) {
@@ -162,7 +164,7 @@ export class TicTacToeGame {
 		if (player === "X") return this.playerX;
 		if (player === "O") return this.playerO;
 
-		throw Error("Unknown player");
+		throw new Error("Unknown player");
 	}
 
 	private switchTurn() {
@@ -171,7 +173,7 @@ export class TicTacToeGame {
 		} else if (this.turn === "O") {
 			this.turn = "X";
 		} else {
-			throw Error("Turn not switched");
+			throw new Error("Turn not switched");
 		}
 	}
 

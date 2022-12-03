@@ -1,5 +1,5 @@
 import { Guild } from "discord.js";
-import { Logger } from "../utils/logger/Logger.js";
+import { Logger } from "../util/Logger.js";
 import { Command } from "./Command.js";
 import { instanciateCommands } from "./instanciate-command.js";
 

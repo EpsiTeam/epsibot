@@ -1,7 +1,7 @@
 import { EmbedField, InteractionReplyOptions } from "discord.js";
 import { CustomCommand } from "../../database/entity/CustomCommand.js";
 import { CustomEmbedCommand } from "../../database/entity/CustomEmbedCommand.js";
-import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
+import { EpsibotColor } from "../../util/color/EpsibotColor.js";
 
 export const helpArgument = `
 

@@ -3,8 +3,8 @@ import { ChannelType, Collection, Message, PartialMessage } from "discord.js";
 import { DBConnection } from "../database/DBConnection.js";
 import { ChannelLog } from "../database/entity/ChannelLog.js";
 import { IgnoredChannel } from "../database/entity/IgnoredChannel.js";
-import { EpsibotColor } from "../utils/color/EpsibotColor.js";
-import { Logger } from "../utils/logger/Logger.js";
+import { EpsibotColor } from "../util/color/EpsibotColor.js";
+import { Logger } from "../util/Logger.js";
 
 /**
  * Log a deleted message

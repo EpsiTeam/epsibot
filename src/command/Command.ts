@@ -1,12 +1,13 @@
 import {
-	ApplicationCommandOptionData,
+	APIApplicationCommandOption,
 	ApplicationCommandType,
 	ChatInputApplicationCommandData,
 	ChatInputCommandInteraction,
 	CommandInteraction,
-	PermissionResolvable
+	RESTPostAPIChatInputApplicationCommandsJSONBody
 } from "discord.js";
-import { EpsibotColor } from "../utils/color/EpsibotColor.js";
+import { EpsibotColor } from "../util/color/EpsibotColor.js";
+import { EnvVariable } from "../util/EnvVariable.js";
 
 /**
  * This is the base class for all commands,
@@ -16,82 +17,91 @@ export abstract class Command implements ChatInputApplicationCommandData {
 	/**
 	 * Name of the command, users will be able to use /name
 	 */
-	readonly name: string;
+	abstract readonly name: string;
 	/**
 	 * Description of the command, users will be able to see this in
 	 * the list of commands
 	 */
-	readonly description: string;
+	abstract readonly description: string;
+	/**
+	 * The special permissions needed to execute this command (null if default is for everyone)
+	 */
+	abstract readonly defaultPermission: bigint | null;
+	/**
+	 * Options for this command (parameters, subcommand and so and so)
+	 */
+	abstract readonly options: APIApplicationCommandOption[];
 	/**
 	 * Type of the command, CHAT_INPUT being a slash command
 	 */
 	readonly type = ApplicationCommandType.ChatInput;
 	/**
-	 * Options for this command (parameters, subcommand and so and so)
-	 */
-	options?: ApplicationCommandOptionData[];
-	/**
 	 * Who can access to this command
 	 */
-	availableTo: "everyone" | "owner" = "everyone";
-	/**
-	 * The special permissions needed to execute this command
-	 */
-	needPermissions: PermissionResolvable[] = [];
+	readonly availableTo: "everyone" | "owner" = "everyone";
 
-	constructor(name: string, description: string) {
-		this.name = name;
-		this.description = description;
+	get ownerOnly(): boolean {
+		return this.availableTo === "owner";
 	}
 
-	public get defaultPermission(): boolean {
-		return this.availableTo === "everyone";
+	buildCommandData(): RESTPostAPIChatInputApplicationCommandsJSONBody {
+		return {
+			name: this.name,
+			description: this.description,
+			type: this.type,
+			default_member_permissions: this.defaultPermission?.toString(),
+			dm_permission: false,
+			options: this.options
+		};
 	}
 
 	/**
-	 * Will check the permissions of the member that executed a slash command
-	 * againt `this.needPermissions`
-	 * @param interaction The slash command interaction
-	 * @returns true is the member can execute this command, false otherwise
+	 * Will check if the command is for owners only
+	 * @returns true if the user can use this command, false otherwise
 	 */
-	hasPermissions(interaction: CommandInteraction<"cached">): boolean {
-		if (!interaction.channel) {
-			throw Error(
-				`Command ${interaction.commandName} not executed in a channel, or the channel was not in the cache`
-			);
+	private async userCanUseCommand(
+		interaction: CommandInteraction<"cached">
+	): Promise<boolean> {
+		if (this.availableTo === "everyone") {
+			return true;
 		}
 
-		const memberPerms = interaction.member.permissionsIn(
-			interaction.channel
-		);
+		if (EnvVariable.owners.includes(interaction.user.id)) {
+			return true;
+		}
 
-		return memberPerms.has(this.needPermissions);
-	}
-
-	/**
-	 * Will send a message about not having enough permission
-	 * to execute a command
-	 * @param interaction The slash command interaction
-	 */
-	async wrongPermissions(interaction: CommandInteraction<"cached">) {
-		return interaction.reply({
-			embeds: [
-				{
-					title: "Action impossible",
-					description:
-						"Permissions insuffisantes pour lancer cette commande",
-					color: EpsibotColor.error
-				}
-			],
-			ephemeral: true
-		});
+		// If we're here it means this is an owner only command, and the user is not an owner
+		return false;
 	}
 
 	/**
 	 * Execute the command
 	 * @param interaction Slash command interaction that called this command
 	 */
-	abstract execute(
+	protected abstract execute(
 		interaction: ChatInputCommandInteraction<"cached">
 	): Promise<unknown>;
+
+	/**
+	 * Execute the command while checking for owner permission
+	 */
+	async checkAndExecute(
+		interaction: ChatInputCommandInteraction<"cached">
+	): Promise<unknown> {
+		if (await this.userCanUseCommand(interaction)) {
+			return this.execute(interaction);
+		}
+
+		return interaction.reply({
+			embeds: [
+				{
+					title: "Action impossible",
+					description:
+						"Cette commande est réservé aux owners d'epsibot",
+					color: EpsibotColor.error
+				}
+			],
+			ephemeral: true
+		});
+	}
 }

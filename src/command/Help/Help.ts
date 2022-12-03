@@ -1,9 +1,10 @@
 import {
+	APIApplicationCommandBasicOption,
 	ApplicationCommandOptionData,
-	ApplicationCommandOptionType as CmdType,
+	ApplicationCommandOptionType,
 	ChatInputCommandInteraction
 } from "discord.js";
-import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
+import { EpsibotColor } from "../../util/color/EpsibotColor.js";
 import { Command } from "../Command.js";
 import { CommandManager } from "../CommandManager.js";
 
@@ -12,18 +13,24 @@ enum HelpParam {
 }
 
 export class Help extends Command {
-	constructor(readonly manager: CommandManager) {
-		super("help", "Affiche toutes les commandes disponibles");
+	name = "help";
 
-		this.options = [
-			{
-				type: CmdType.Boolean,
-				name: HelpParam.everyone,
-				description:
-					"Est-ce que le message qui affiche l'aide doit s'afficher pour tout le monde ?",
-				required: false
-			}
-		];
+	description = "Affiche toutes les commandes disponibles";
+
+	defaultPermission = null;
+
+	options: APIApplicationCommandBasicOption[] = [
+		{
+			type: ApplicationCommandOptionType.Boolean,
+			name: HelpParam.everyone,
+			description:
+				"Est-ce que le message qui affiche l'aide doit s'afficher pour tout le monde ?",
+			required: false
+		}
+	];
+
+	constructor(readonly manager: CommandManager) {
+		super();
 	}
 
 	async execute(interaction: ChatInputCommandInteraction<"cached">) {
@@ -38,21 +45,28 @@ export class Help extends Command {
 
 			text += `\n\n\`/${command.name}\`: ${command.description}`;
 
-			for (const subcommand of command.options ?? []) {
+			for (const subcommand of command.options) {
 				if (
-					subcommand.type !== CmdType.Subcommand &&
-					subcommand.type !== CmdType.SubcommandGroup
+					subcommand.type !==
+						ApplicationCommandOptionType.Subcommand &&
+					subcommand.type !==
+						ApplicationCommandOptionType.SubcommandGroup
 				) {
 					continue;
 				}
 
 				const subcommands: ApplicationCommandOptionData[] = [];
 
-				if (subcommand.type === CmdType.Subcommand) {
+				if (
+					subcommand.type === ApplicationCommandOptionType.Subcommand
+				) {
 					subcommands.push(subcommand);
 				} else {
 					for (const subsubcommand of subcommand.options ?? []) {
-						if (subsubcommand.type === CmdType.Subcommand)
+						if (
+							subsubcommand.type ===
+							ApplicationCommandOptionType.Subcommand
+						)
 							subcommands.push(subsubcommand);
 					}
 				}

@@ -1,8 +1,8 @@
 import { format, formatDuration, intervalToDuration } from "date-fns";
 import { ChannelType, GuildMember, PartialGuildMember } from "discord.js";
 import { ChannelLog } from "../database/entity/ChannelLog.js";
-import { Logger } from "../utils/logger/Logger.js";
-import { EpsibotColor } from "../utils/color/EpsibotColor.js";
+import { Logger } from "../util/Logger.js";
+import { EpsibotColor } from "../util/color/EpsibotColor.js";
 import { DBConnection } from "../database/DBConnection.js";
 import fr from "date-fns/locale/fr/index.js";
 
@@ -27,7 +27,7 @@ export async function logMemberJoined(member: GuildMember) {
 	const channel = await guild.channels.fetch(channelLog.channelId);
 
 	if (!channel || channel.type !== ChannelType.GuildText) {
-		throw Error(
+		throw new Error(
 			`Impossible to send logs on channel ${channel}, maybe it has been deleted or modified`
 		);
 	}
@@ -69,7 +69,7 @@ export async function logMemberLeft(member: GuildMember | PartialGuildMember) {
 	const channel = await guild.channels.fetch(channelLog.channelId);
 
 	if (!channel || channel.type !== ChannelType.GuildText) {
-		throw Error(
+		throw new Error(
 			`Impossible to send logs on channel ${channel}, maybe it has been deleted or modified`
 		);
 	}

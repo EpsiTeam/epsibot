@@ -5,7 +5,7 @@ import {
 	PartialGuildMember,
 	Role
 } from "discord.js";
-import { Logger } from "../utils/logger/Logger.js";
+import { Logger } from "../util/Logger.js";
 
 export async function botCheckAdmin(guild: Guild): Promise<void> {
 	if (!guild.members.me) return;

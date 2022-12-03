@@ -1,6 +1,6 @@
 import { Interaction } from "discord.js";
 import { CommandManager } from "../command/CommandManager.js";
-import { Logger } from "../utils/logger/Logger.js";
+import { Logger } from "../util/Logger.js";
 
 /**
  * Handle the execution of a slash command
@@ -36,7 +36,7 @@ export async function executeCommand(
 		: `/${command.name}`;
 
 	try {
-		await command.execute(interaction);
+		await command.checkAndExecute(interaction);
 		logger.debug(`Executed command ${fullCommand}`);
 	} catch (err) {
 		if (err instanceof Error) {

@@ -4,16 +4,18 @@ import {
 	ComponentType,
 	OAuth2Scopes
 } from "discord.js";
-import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
+import { EpsibotColor } from "../../util/color/EpsibotColor.js";
 import { Command } from "../Command.js";
 
 export class InviteLink extends Command {
-	constructor() {
-		super(
-			"invite_link",
-			"Permet d'obtenir le lien pour m'inviter sur un autre serveur"
-		);
-	}
+	name = "invite_link";
+
+	description =
+		"Permet d'obtenir le lien pour m'inviter sur un autre serveur";
+
+	defaultPermission = null;
+
+	options = [];
 
 	async execute(interaction: ChatInputCommandInteraction<"cached">) {
 		const link = interaction.client.generateInvite({

@@ -6,7 +6,7 @@ import {
 	TextBasedChannel,
 	User
 } from "discord.js";
-import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
+import { EpsibotColor } from "../../util/color/EpsibotColor.js";
 
 export enum PurgeParam {
 	nb = "nb_to_delete",
@@ -17,7 +17,7 @@ export async function purge(
 	interaction: ChatInputCommandInteraction<"cached">
 ) {
 	if (!interaction.channel) {
-		throw Error("Channel is undefined while trying to purge");
+		throw new Error("Channel is undefined while trying to purge");
 	}
 
 	const nb = interaction.options.getInteger(PurgeParam.nb, true);

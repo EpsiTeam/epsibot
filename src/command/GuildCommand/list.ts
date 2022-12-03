@@ -11,8 +11,8 @@ import {
 import { DBConnection } from "../../database/DBConnection.js";
 import { CustomCommand } from "../../database/entity/CustomCommand.js";
 import { CustomEmbedCommand } from "../../database/entity/CustomEmbedCommand.js";
-import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
-import { Logger } from "../../utils/logger/Logger.js";
+import { EpsibotColor } from "../../util/color/EpsibotColor.js";
+import { Logger } from "../../util/Logger.js";
 import { commandFields } from "./helper.js";
 
 enum ButtonAction {

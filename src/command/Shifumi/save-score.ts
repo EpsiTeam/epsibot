@@ -27,7 +27,7 @@ export async function saveScore(guildId: string, game: ShifumiGame) {
 		]);
 	}
 
-	throw Error("Don't know who win this shifumi game, can't save score");
+	throw new Error("Don't know who win this shifumi game, can't save score");
 }
 
 async function updateOne(

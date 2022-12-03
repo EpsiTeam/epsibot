@@ -1,12 +1,12 @@
-import { checkStartup } from "./check-startup.js";
 import { Client, GatewayIntentBits } from "discord.js";
-import { subscribeDiscordEvents } from "./subscribe-discord-events.js";
-import { Logger } from "./utils/logger/Logger.js";
-import { EnvVariables } from "./utils/env/EnvVariables.js";
+import { subscribeDiscordEvents } from "./util/subscribe-discord-events.js";
+import { Logger } from "./util/Logger.js";
+import { EnvVariable } from "./util/EnvVariable.js";
 import { DBConnection } from "./database/DBConnection.js";
 
-// Stopping node if there is unexpected config
-checkStartup();
+// Initialize Logger
+Logger.initialize(!EnvVariable.production);
+Logger.info(`Epsibot v${EnvVariable.version} starting`);
 
 /*
 	This is a function that will call itself
@@ -18,7 +18,7 @@ try {
 	await DBConnection.initialize();
 	Logger.info("DB connection created");
 } catch (err) {
-	throw Error(`Failed to create DB connection: ${err}`);
+	throw new Error(`Failed to create DB connection: ${err}`);
 }
 
 const client = new Client({
@@ -31,7 +31,7 @@ const client = new Client({
 	presence: {
 		activities: [
 			{
-				name: `v${EnvVariables.version}`
+				name: `v${EnvVariable.version}`
 			}
 		]
 	}
@@ -42,11 +42,11 @@ subscribeDiscordEvents(client);
 
 try {
 	Logger.debug("Logging in to Discord...");
-	await client.login(EnvVariables.discordToken);
+	await client.login(EnvVariable.discordToken);
 } catch (err) {
 	if (err instanceof Error) {
-		throw Error(`Failed to log to Discord: ${err.stack}`);
+		throw new Error(`Failed to log to Discord: ${err.stack}`);
 	} else {
-		throw Error(`Failed to log to Discord with unknown error: ${err}`);
+		throw new Error(`Failed to log to Discord with unknown error: ${err}`);
 	}
 }

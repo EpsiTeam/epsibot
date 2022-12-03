@@ -2,8 +2,8 @@ import { ChatInputCommandInteraction } from "discord.js";
 import { DBConnection } from "../../database/DBConnection.js";
 import { CustomCommand } from "../../database/entity/CustomCommand.js";
 import { CustomEmbedCommand } from "../../database/entity/CustomEmbedCommand.js";
-import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
-import { confirm } from "../../utils/confirm/confirm.js";
+import { EpsibotColor } from "../../util/color/EpsibotColor.js";
+import { confirm } from "../../util/confirm/confirm.js";
 
 export enum RemoveParam {
 	name = "name"

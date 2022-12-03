@@ -1,8 +1,8 @@
 import { CommandInteraction, ComponentType } from "discord.js";
-import { Logger } from "../../utils/logger/Logger.js";
+import { Logger } from "../../util/Logger.js";
 import { TicTacToeGame } from "./TicTacToeGame.js";
-import { confirm } from "../../utils/confirm/confirm.js";
-import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
+import { confirm } from "../../util/confirm/confirm.js";
+import { EpsibotColor } from "../../util/color/EpsibotColor.js";
 
 export enum PlayParam {
 	user = "user"

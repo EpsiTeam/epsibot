@@ -1,8 +1,8 @@
 import { CommandInteraction } from "discord.js";
 import { DBConnection } from "../../database/DBConnection.js";
 import { QueueElement } from "../../database/entity/QueueElement.js";
-import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
-import { confirm } from "../../utils/confirm/confirm.js";
+import { EpsibotColor } from "../../util/color/EpsibotColor.js";
+import { confirm } from "../../util/confirm/confirm.js";
 import { removeElement } from "./remove.js";
 
 export async function done(interaction: CommandInteraction<"cached">) {
