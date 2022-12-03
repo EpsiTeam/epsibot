@@ -2,9 +2,9 @@ import { Message } from "discord.js";
 import { DBConnection } from "../database/DBConnection.js";
 import { CustomCommand } from "../database/entity/CustomCommand.js";
 import { CustomEmbedCommand } from "../database/entity/CustomEmbedCommand.js";
-import { EpsibotColor } from "../utils/color/EpsibotColor.js";
-import { fillArguments } from "../utils/custom-command/command-argument.js";
-import { Logger } from "../utils/logger/Logger.js";
+import { EpsibotColor } from "../util/color/EpsibotColor.js";
+import { fillArguments } from "../util/custom-command/command-argument.js";
+import { Logger } from "../util/Logger.js";
 
 /**
  * Will check if a custom command should be executed on a message,

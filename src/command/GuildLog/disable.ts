@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, CommandInteraction } from "discord.js";
 import { DBConnection } from "../../database/DBConnection.js";
 import { ChannelLog, logType } from "../../database/entity/ChannelLog.js";
-import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
+import { EpsibotColor } from "../../util/color/EpsibotColor.js";
 import {
 	GuildLogType,
 	getChannelLogType,

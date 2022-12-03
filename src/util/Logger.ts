@@ -159,7 +159,7 @@ export class Logger {
 
 	private static check(instance?: Logger): asserts instance {
 		if (!instance) {
-			throw Error(
+			throw new Error(
 				"Logger was used before initializing it, you must first call Logger.initialize()"
 			);
 		}

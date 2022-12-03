@@ -1,6 +1,6 @@
 import { Guild } from "discord.js";
 import { CommandManager } from "../command/CommandManager.js";
-import { Logger } from "../utils/logger/Logger.js";
+import { Logger } from "../util/Logger.js";
 
 export async function botInvited(commandManager: CommandManager, guild: Guild) {
 	const logger = Logger.contextualize(guild);

@@ -6,7 +6,7 @@ import {
 	GuildLogType
 } from "./channel-log-type.js";
 import { logType } from "../../database/entity/ChannelLog.js";
-import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
+import { EpsibotColor } from "../../util/color/EpsibotColor.js";
 import { DBConnection } from "../../database/DBConnection.js";
 
 export enum EnableParam {

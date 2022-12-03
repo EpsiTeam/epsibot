@@ -28,15 +28,15 @@ export class CustomEmbedCommand {
 		this.autoDelete = autoDelete;
 
 		if (this.name?.length > CustomEmbedCommand.maxNameLength) {
-			throw Error("Name too long");
+			throw new Error("Name too long");
 		}
 		if (this.title?.length > CustomEmbedCommand.maxTitleLength) {
-			throw Error("Title too long");
+			throw new Error("Title too long");
 		}
 		if (
 			this.description?.length > CustomEmbedCommand.maxDescriptionLength
 		) {
-			throw Error("Description too long");
+			throw new Error("Description too long");
 		}
 	}
 

@@ -22,12 +22,14 @@ export class ShifumiGame {
 		readonly turnsToWin: number
 	) {
 		if (turnsToWin < 1)
-			throw Error("Can't start a shifumi game with less than one game");
+			throw new Error(
+				"Can't start a shifumi game with less than one game"
+			);
 	}
 
 	play(user: GuildMember, choice: ShifumiChoice) {
 		if (this.gameFinished())
-			throw Error("Game finished, can't play anymore");
+			throw new Error("Game finished, can't play anymore");
 
 		const index = this.getPlayerIndex(user);
 
@@ -65,14 +67,18 @@ export class ShifumiGame {
 
 	getTurnWinner(): GuildMember | null {
 		if (!this.turnFinished())
-			throw Error("Turn is not finished, impossible to determine winner");
+			throw new Error(
+				"Turn is not finished, impossible to determine winner"
+			);
 
 		return this.turnWinner;
 	}
 
 	getTurnLoser(): GuildMember | null {
 		if (!this.turnFinished())
-			throw Error("Turn is not finished, impossible to determine loser");
+			throw new Error(
+				"Turn is not finished, impossible to determine loser"
+			);
 
 		return this.turnLoser;
 	}
@@ -147,7 +153,8 @@ export class ShifumiGame {
 	private getPlayerIndex(user: GuildMember) {
 		const index = this.players.findIndex((player) => player.id === user.id);
 
-		if (index === -1) throw Error("This user can't play on this shifumi");
+		if (index === -1)
+			throw new Error("This user can't play on this shifumi");
 
 		return index;
 	}

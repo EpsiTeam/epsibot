@@ -19,7 +19,7 @@ export class CustomCommand {
 		this.autoDelete = autoDelete;
 
 		if (this.name?.length > CustomCommand.maxNameLength) {
-			throw Error("Name too long");
+			throw new Error("Name too long");
 		}
 	}
 

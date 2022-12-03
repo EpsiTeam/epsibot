@@ -76,7 +76,7 @@ export async function confirm(
 	} = options;
 
 	if (ephemeral && userId !== interaction.member.id) {
-		throw Error(
+		throw new Error(
 			"You can't set a confirm message as ephemeral if you want this user to see it!"
 		);
 	}

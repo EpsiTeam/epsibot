@@ -1,8 +1,8 @@
 import { ChatInputCommandInteraction } from "discord.js";
 import { DBConnection } from "../../database/DBConnection.js";
 import { QueueElement } from "../../database/entity/QueueElement.js";
-import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
-import { Logger } from "../../utils/logger/Logger.js";
+import { EpsibotColor } from "../../util/color/EpsibotColor.js";
+import { Logger } from "../../util/Logger.js";
 
 export enum AddParam {
 	requester = "requester",

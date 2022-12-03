@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction } from "discord.js";
 import { DBConnection } from "../../database/DBConnection.js";
 import { IgnoredChannel } from "../../database/entity/IgnoredChannel.js";
-import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
+import { EpsibotColor } from "../../util/color/EpsibotColor.js";
 
 export enum IgnoreParam {
 	channel = "channel",

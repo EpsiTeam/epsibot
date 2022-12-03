@@ -9,9 +9,9 @@ import {
 import { DBConnection } from "../../database/DBConnection.js";
 import { CustomCommand } from "../../database/entity/CustomCommand.js";
 import { CustomEmbedCommand } from "../../database/entity/CustomEmbedCommand.js";
-import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
-import { SelectMenuColor } from "../../utils/color/SelectMenuColor.js";
-import { confirm } from "../../utils/confirm/confirm.js";
+import { EpsibotColor } from "../../util/color/EpsibotColor.js";
+import { SelectMenuColor } from "../../util/color/SelectMenuColor.js";
+import { confirm } from "../../util/confirm/confirm.js";
 import { timeoutEmbed, helpArgument, commandFields } from "./helper.js";
 
 export async function addEmbed(
@@ -21,7 +21,7 @@ export async function addEmbed(
 	autoDelete: boolean
 ) {
 	if (!interaction.channel) {
-		throw Error("Channel doesn't exist");
+		throw new Error("Channel doesn't exist");
 	}
 
 	const collectorOption: AwaitMessagesOptions = {
@@ -50,7 +50,7 @@ export async function addEmbed(
 
 	const msgTitle = answer.first();
 	if (!msgTitle) {
-		throw Error("Collector returned with empty collection");
+		throw new Error("Collector returned with empty collection");
 	}
 	const title = msgTitle.content;
 	if (title.length == 0 || title.length > CustomEmbedCommand.maxTitleLength) {
@@ -85,7 +85,7 @@ export async function addEmbed(
 
 	const msgDescription = answer.first();
 	if (!msgDescription) {
-		throw Error("Collector returned with empty collection");
+		throw new Error("Collector returned with empty collection");
 	}
 	const description = msgDescription.content;
 	if (
@@ -135,7 +135,7 @@ export async function addEmbed(
 
 		const msgImage = answer.first();
 		if (!msgImage) {
-			throw Error("Collector returned with empty collection");
+			throw new Error("Collector returned with empty collection");
 		}
 		const attachment = msgImage.attachments.first();
 		if (

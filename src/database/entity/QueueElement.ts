@@ -22,11 +22,11 @@ export class QueueElement {
 		this.hiddenInformation = hiddenInformation;
 
 		if (this.requester?.length > QueueElement.maxRequesterLength)
-			throw Error("Requester too long");
+			throw new Error("Requester too long");
 		if (this.request?.length > QueueElement.maxRequestLength)
-			throw Error("Request too long");
+			throw new Error("Request too long");
 		if (this.hiddenInformation?.length > QueueElement.maxInformationLength)
-			throw Error("Hidden information too long");
+			throw new Error("Hidden information too long");
 	}
 
 	@PrimaryGeneratedColumn("uuid") id: number;

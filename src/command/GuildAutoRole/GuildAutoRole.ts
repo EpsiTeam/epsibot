@@ -1,6 +1,8 @@
 import {
+	APIApplicationCommandSubcommandOption,
 	ApplicationCommandOptionType,
-	ChatInputCommandInteraction
+	ChatInputCommandInteraction,
+	PermissionFlagsBits
 } from "discord.js";
 import { Command } from "../Command.js";
 import { disable } from "./disable.js";
@@ -14,47 +16,40 @@ enum Subcommand {
 }
 
 export class GuildAutoRole extends Command {
-	constructor() {
-		super(
-			"autorole",
-			"Gère le rôle assigné automatiquement aux nouveaux membres"
-		);
+	name = "autorole";
 
-		this.needPermissions = ["Administrator"];
+	description = "Gère le rôle assigné automatiquement aux nouveaux membres";
 
-		this.options = [
-			{
-				type: ApplicationCommandOptionType.Subcommand,
-				name: Subcommand.info,
-				description: "Affiche quel rôle est automatiquement assigné"
-			},
-			{
-				type: ApplicationCommandOptionType.Subcommand,
-				name: Subcommand.enable,
-				description: "Active le rôle automatique",
-				options: [
-					{
-						type: ApplicationCommandOptionType.Role,
-						name: EnableParam.role,
-						description:
-							"Rôle à assigner automatiquement aux nouveaux membres",
-						required: true
-					}
-				]
-			},
-			{
-				type: ApplicationCommandOptionType.Subcommand,
-				name: Subcommand.disable,
-				description: "Désactive le rôle automatique"
-			}
-		];
-	}
+	defaultPermission = PermissionFlagsBits.Administrator;
+
+	options: APIApplicationCommandSubcommandOption[] = [
+		{
+			type: ApplicationCommandOptionType.Subcommand,
+			name: Subcommand.info,
+			description: "Affiche quel rôle est automatiquement assigné"
+		},
+		{
+			type: ApplicationCommandOptionType.Subcommand,
+			name: Subcommand.enable,
+			description: "Active le rôle automatique",
+			options: [
+				{
+					type: ApplicationCommandOptionType.Role,
+					name: EnableParam.role,
+					description:
+						"Rôle à assigner automatiquement aux nouveaux membres",
+					required: true
+				}
+			]
+		},
+		{
+			type: ApplicationCommandOptionType.Subcommand,
+			name: Subcommand.disable,
+			description: "Désactive le rôle automatique"
+		}
+	];
 
 	async execute(interaction: ChatInputCommandInteraction<"cached">) {
-		if (!this.hasPermissions(interaction)) {
-			return this.wrongPermissions(interaction);
-		}
-
 		const subcommand = interaction.options.getSubcommand();
 
 		if (subcommand === Subcommand.info) return info(interaction);
@@ -63,6 +58,6 @@ export class GuildAutoRole extends Command {
 
 		if (subcommand === Subcommand.disable) return disable(interaction);
 
-		throw Error(`Unexpected subcommand ${subcommand}`);
+		throw new Error(`Unexpected subcommand ${subcommand}`);
 	}
 }

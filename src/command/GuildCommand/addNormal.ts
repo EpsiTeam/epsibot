@@ -2,8 +2,8 @@ import { Collection, CommandInteraction, Message } from "discord.js";
 import { DBConnection } from "../../database/DBConnection.js";
 import { CustomCommand } from "../../database/entity/CustomCommand.js";
 import { CustomEmbedCommand } from "../../database/entity/CustomEmbedCommand.js";
-import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
-import { Logger } from "../../utils/logger/Logger.js";
+import { EpsibotColor } from "../../util/color/EpsibotColor.js";
+import { Logger } from "../../util/Logger.js";
 import { timeoutEmbed, helpArgument, commandFields } from "./helper.js";
 
 export async function addNormal(
@@ -13,7 +13,7 @@ export async function addNormal(
 	autoDelete: boolean
 ) {
 	if (!interaction.channel) {
-		throw Error("Channel doesn't exist");
+		throw new Error("Channel doesn't exist");
 	}
 
 	await interaction.followUp({
@@ -41,7 +41,7 @@ export async function addNormal(
 
 	const msgAnswer = answer.first();
 	if (!msgAnswer) {
-		throw Error("Collector returned with empty collection");
+		throw new Error("Collector returned with empty collection");
 	}
 	const response = msgAnswer.content;
 	Logger.debug(response);

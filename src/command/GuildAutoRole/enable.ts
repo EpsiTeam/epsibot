@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction } from "discord.js";
 import { DBConnection } from "../../database/DBConnection.js";
 import { AutoRole } from "../../database/entity/AutoRole.js";
-import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
+import { EpsibotColor } from "../../util/color/EpsibotColor.js";
 
 export enum EnableParam {
 	role = "role"
@@ -25,7 +25,9 @@ export async function enable(
 	}
 
 	if (!interaction.guild.members.me) {
-		throw Error("guild.me is null, no idea why (has the bot been kicked?)");
+		throw new Error(
+			"guild.me is null, no idea why (has the bot been kicked?)"
+		);
 	}
 
 	const highestRole = interaction.guild.members.me.roles.highest;

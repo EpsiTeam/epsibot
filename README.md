@@ -17,11 +17,11 @@ Clonez ce projet, et créez un fichier `.env` à la racine du projet contenant:
 
 ```env
 PRODUCTION=false
+APPLICATION_ID=<app_id>
+DEV_GUILD_ID=<server_id>
 DISCORD_TOKEN=<token>
 OWNERS="<ownerId1>,<ownerId2>"
 ```
-
-Remplissez `DISCORD_TOKEN` par un token d'application discord, et `OWNERS` par une liste de user ID discord.
 
 Epsibot ne sera pas content si les variables d'environnement ne sont pas bien setup (voir [Variables d'environnement](#variables-denvironnement) pour le détail).
 
@@ -30,6 +30,7 @@ Il faut une version de node supérieur ou égal à 16.16.0 pour pouvoir lancer l
 ```sh
 npm i
 npm run migrate
+npm run register
 ```
 
 Après ça, tout devrait être prêt pour lancer Epsibot.<br>
@@ -50,11 +51,14 @@ D'autres script npm sont définis, faites `npm run` pour voir la liste disponibl
 
 -   discord.js: `13.6.0` -> `14.6.0`
 -   typeorm: `0.2.41` -> `0.3.10`
+-   epsibot peut deployer ses commandes sur un seul serveur ou globalement, suivant si il est en mode production ou non
 
 # Variables d'environnement
 
-| Nom             | Type     | Exemple                   | Description                                                                                                                              |
-| --------------- | -------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `PRODUCTION`    | boolean  | false                     | Change la couleur des logs                                                                                                               |
-| `DISCORD_TOKEN` | string   | s0m3-s3cr37               | Le token discord du bot, à récupérer depuis le [developer portal](https://discord.com/developers/applications) en créant une application |
-| `OWNERS`        | string[] | "discord_id1,discord_id2" | Les ID discord des propriétaires de l'instance du bot, ces utilisateurs pourront utiliser certaines commandes spéciales                  |
+| Nom              | Type     | Exemple                   | Description                                                                                                                              |
+| ---------------- | -------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `PRODUCTION`     | boolean  | false                     | Change comment sont déployé les commandes et la couleur des logs                                                                         |
+| `APPLICATION_ID` | string   | 867545446879866466        | L'application ID du bot, à récupérer depuis le [developer portal](https://discord.com/developers/applications) en créant une application |
+| `DISCORD_TOKEN`  | string   | s0m3-s3cr37               | Le token discord du bot, à récupérer depuis le [developer portal](https://discord.com/developers/applications) en créant une application |
+| `DEV_GUILD_ID`   | string   | 684654654685479884        | L'ID du serveur discord de développement (peut être vide si `PRODUCTION = true`)                                                         |
+| `OWNERS`         | string[] | "discord_id1,discord_id2" | Les ID discord des propriétaires de l'instance du bot, ces utilisateurs pourront utiliser certaines commandes spéciales                  |

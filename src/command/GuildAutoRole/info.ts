@@ -1,7 +1,7 @@
 import { ColorResolvable, CommandInteraction } from "discord.js";
 import { DBConnection } from "../../database/DBConnection.js";
 import { AutoRole } from "../../database/entity/AutoRole.js";
-import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
+import { EpsibotColor } from "../../util/color/EpsibotColor.js";
 
 export async function info(interaction: CommandInteraction<"cached">) {
 	const autorole = await DBConnection.getRepository(AutoRole).findOneBy({

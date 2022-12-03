@@ -1,8 +1,9 @@
 import {
+	APIApplicationCommandBasicOption,
 	ApplicationCommandOptionType,
 	ChatInputCommandInteraction
 } from "discord.js";
-import { EpsibotColor } from "../../utils/color/EpsibotColor.js";
+import { EpsibotColor } from "../../util/color/EpsibotColor.js";
 import { Command } from "../Command.js";
 import { text } from "./guide-text.js";
 
@@ -11,19 +12,21 @@ enum GuideParam {
 }
 
 export class Guide extends Command {
-	constructor() {
-		super("guide", "Affiche un guide général pour m'utiliser");
+	name = "guide";
 
-		this.options = [
-			{
-				type: ApplicationCommandOptionType.Boolean,
-				name: GuideParam.everyone,
-				description:
-					"Est-ce que le message qui affiche le guide doit s'afficher pour tout le monde ?",
-				required: false
-			}
-		];
-	}
+	description = "Affiche un guide général pour m'utiliser";
+
+	defaultPermission = null;
+
+	options: APIApplicationCommandBasicOption[] = [
+		{
+			type: ApplicationCommandOptionType.Boolean,
+			name: GuideParam.everyone,
+			description:
+				"Est-ce que le message qui affiche le guide doit s'afficher pour tout le monde ?",
+			required: false
+		}
+	];
 
 	async execute(interaction: ChatInputCommandInteraction<"cached">) {
 		const everyone =
