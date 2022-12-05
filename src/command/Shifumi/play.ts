@@ -1,8 +1,7 @@
 import {
 	ButtonStyle,
 	ChatInputCommandInteraction,
-	ComponentType,
-	DiscordAPIError
+	ComponentType
 } from "discord.js";
 import { EpsibotColor } from "../../util/color/EpsibotColor.js";
 import { Logger } from "../../util/Logger.js";
@@ -19,7 +18,7 @@ export async function play(interaction: ChatInputCommandInteraction<"cached">) {
 	const user1 = interaction.member;
 	const user2 = interaction.options.getMember(PlayParam.user);
 	const turnsToWin =
-		interaction.options.getNumber(PlayParam.turnsToWin, false) ?? 3;
+		interaction.options.getNumber(PlayParam.turnsToWin, false) ?? 1;
 
 	if (!user2) {
 		return interaction.reply({
@@ -100,22 +99,22 @@ export async function play(interaction: ChatInputCommandInteraction<"cached">) {
 	});
 
 	collector.on("collect", async (click) => {
-		try {
-			await click.deferUpdate();
+		await click.deferUpdate();
 
-			// Shouldn't happen
-			if (game.gameFinished()) return;
+		// Shouldn't happen
+		if (game.gameFinished()) return;
 
-			game.play(click.member, click.customId as ShifumiChoice);
+		game.play(click.member, click.customId as ShifumiChoice);
 
-			if (game.turnFinished()) {
-				await saveScore(interaction.guildId, game);
-			}
+		if (game.turnFinished()) {
+			await saveScore(interaction.guildId, game);
+		}
 
-			if (game.gameFinished()) {
-				collector.stop();
-			} else {
-				await click.update({
+		if (game.gameFinished()) {
+			collector.stop();
+		} else {
+			await message
+				.edit({
 					embeds: [
 						{
 							title,
@@ -123,23 +122,8 @@ export async function play(interaction: ChatInputCommandInteraction<"cached">) {
 							color: EpsibotColor.question
 						}
 					]
-				});
-			}
-		} catch (err) {
-			if (err instanceof DiscordAPIError) {
-				if (err.code === 10008) {
-					// Message deleted
-					logger.info(
-						"Can't update shifumi because message has been deleted"
-					);
-				} else {
-					logger.error(`Impossible to update shifumi: ${err.stack}`);
-				}
-			} else {
-				logger.error(
-					`Impossible to update shifumi with unknown error: ${err}`
-				);
-			}
+				})
+				.catch(() => undefined);
 		}
 	});
 
