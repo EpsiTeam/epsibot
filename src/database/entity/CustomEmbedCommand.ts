@@ -6,7 +6,7 @@ import { CustomCommand } from "./CustomCommand.js";
 export class CustomEmbedCommand {
 	static maxNameLength = CustomCommand.maxNameLength;
 	static maxTitleLength = 256 as const;
-	static maxDescriptionLength = 4096 as const;
+	static maxDescriptionLength = 4000 as const;
 
 	constructor(
 		guildId: string,

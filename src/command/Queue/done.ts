@@ -24,11 +24,9 @@ export async function done(interaction: CommandInteraction<"cached">) {
 		});
 	}
 
-	const confirmation = await confirm(interaction, {
+	const { answer: confirmation } = await confirm(interaction, {
 		description: `Marquer comme terminée la demande de ${element.requester} ? (${element.request})`,
-		labelYes: "Oui",
-		labelNo: "Non en fait j'ai pas fini",
-		returnOnTimout: false
+		labelNo: "Non en fait j'ai pas fini"
 	});
 
 	if (!confirmation) return;

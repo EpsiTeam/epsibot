@@ -5,7 +5,7 @@
 		// Options for the compiler (we compile for node)
 		"target": "ESNext",
 		"module": "ESNext",
-		"moduleResolution": "NodeNext",
+		"moduleResolution": "Node",
 		"allowSyntheticDefaultImports": true,
 		"esModuleInterop": true,
 		// Options for TS checks (we want clean TS)

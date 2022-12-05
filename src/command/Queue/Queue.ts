@@ -33,7 +33,7 @@ export class Queue extends Command {
 		{
 			type: ApplicationCommandOptionType.Subcommand,
 			name: Subcommand.list,
-			description: "Affiche la file d'attente"
+			description: "Affiche la file d'attente (équivalent à /queue_list)"
 		},
 		{
 			type: ApplicationCommandOptionType.Subcommand,

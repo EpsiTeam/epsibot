@@ -47,7 +47,7 @@ export class SelectMenuColor {
 		type: ComponentType.ActionRow,
 		components: [
 			{
-				type: ComponentType.SelectMenu,
+				type: ComponentType.StringSelect,
 				options: colorOptions,
 				minValues: 1,
 				maxValues: 1,
