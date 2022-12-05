@@ -23,7 +23,7 @@ export async function help(interaction: ChatInputCommandInteraction<"cached">) {
 					Pour mettre plusieurs mots dans un seul paramètre d'une commande, il faut entourer les mots de \`'\` ou \`"\`
 					__Exemple__:
 					Imaginons une commande \`!bonjour\` qui répond \`Bonjour $0, n'oubliez pas $1 !\`
-					Faire la commande  \`!bonjour 'à tous' "de boire de l'eau"\` affichera \`Bonjour à tous, n'oubliez pas de boire de l'eau\`
+					Faire la commande  \`!bonjour "à tous" "de boire de l'eau"\` affichera \`Bonjour à tous, n'oubliez pas de boire de l'eau\`
 					(\`$0\` sera remplacé par \`à tous\`, et \`$1\` sera remplacé par \`de boire de l'eau\`)`,
 				color: EpsibotColor.info
 			}

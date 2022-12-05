@@ -136,32 +136,28 @@ export async function confirm(
 		click.reply({
 			embeds: [
 				{
-					description: `Cette question est destinée à <@${userId}>`
+					description: `Cette question est destinée à <@${userId}>`,
+					color: EpsibotColor.error
 				}
 			],
 			ephemeral: true
 		});
 	});
 
-	let answer: boolean | undefined = undefined;
-	let click: ButtonInteraction<"cached"> | undefined = undefined;
-
-	try {
-		click = await messageConfirm.awaitMessageComponent({
+	const click = await messageConfirm
+		.awaitMessageComponent({
 			componentType: ComponentType.Button,
 			filter: (click) => click.user.id === userId,
 			time: timeout
-		});
-		answer = click.customId === ButtonAction.yes;
-		if (deferButtonInteraction) await click.deferUpdate();
-	} catch (err) {
-		// The timeout has been reached
-	}
+		})
+		.catch(() => undefined);
+	const answer = click ? click.customId === ButtonAction.yes : undefined;
+	if (deferButtonInteraction) await click?.deferUpdate();
 
 	await messageConfirm
 		.edit({
 			components:
-				answer === null
+				answer === undefined
 					? []
 					: [
 							{
