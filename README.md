@@ -8,7 +8,7 @@
 
 # A propos
 
-Epsibot est un bot discord qui ne fait rien de mieux que tout ceux qui existent déjà, mais fait à notre sauce.<br>
+Epsibot est un bot discord qui ne fait rien de mieux que tout ceux qui existent déjà, mais fait à notre sauce !<br>
 Epsibot parle seulement français, mais tout le code et les commentaires sont en anglais.
 
 # Installation
@@ -45,13 +45,16 @@ D'autres script npm sont définis, faites `npm run` pour voir la liste disponibl
 
 ### Added
 
--   prettier `2.8.0` ajouté au projet pour garantir un formatage cohérent partout
+-   `/command help` pour voir l'aide sur les paramètres des commandes custom
+-   Ce changelog a été ajouté au readme
+-   `prettier` `2.8.0` ajouté au projet pour garantir un formatage cohérent partout
 
 ### Changed
 
--   discord.js: `13.6.0` -> `14.6.0`
--   typeorm: `0.2.41` -> `0.3.10`
--   epsibot peut deployer ses commandes sur un seul serveur ou globalement, suivant si il est en mode production ou non
+-   `/command add` utilise maintenant les modals, on peut donc ajouter une commande custom sans n'avoir à envoyer aucun message
+-   Epsibot peut deployer ses commandes sur un seul serveur ou globalement, suivant si il est en mode production ou non
+-   `discord.js`: `13.6.0` -> `14.6.0`
+-   `typeorm`: `0.2.41` -> `0.3.10`
 
 # Variables d'environnement
 
