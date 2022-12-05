@@ -61,11 +61,10 @@ export async function remove(
 		});
 	}
 
-	const confirmDelete = await confirm(interaction, {
+	const { answer: confirmDelete } = await confirm(interaction, {
 		description: `Confirmer la suppression de la commande \`${name}\``,
 		labelYes: "Ok",
-		labelNo: "Annuler",
-		returnOnTimout: false
+		labelNo: "Annuler"
 	});
 
 	if (!confirmDelete) return;

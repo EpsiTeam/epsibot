@@ -4,7 +4,8 @@ import {
 	CommandInteraction,
 	ComponentType,
 	InteractionReplyOptions,
-	Message
+	Message,
+	ModalSubmitInteraction
 } from "discord.js";
 import { EpsibotColor } from "../color/EpsibotColor.js";
 
@@ -21,7 +22,9 @@ enum ButtonAction {
  * timeout is reached
  */
 export async function confirm(
-	interaction: CommandInteraction<"cached">,
+	interaction:
+		| CommandInteraction<"cached">
+		| ModalSubmitInteraction<"cached">,
 	options: {
 		/**
 		 * Description of the message sent
@@ -53,17 +56,20 @@ export async function confirm(
 		 */
 		timeout?: number;
 		/**
-		 * Set this if you want to return a default value after
-		 * a timeout instead of null
-		 */
-		returnOnTimout?: boolean;
-		/**
 		 * Should the message be hidden?<br>
 		 * Default to true
 		 */
 		ephemeral?: boolean;
+		/**
+		 * Should the button interaction be deferred?<br>
+		 * Default to true
+		 */
+		deferButtonInteraction?: boolean;
 	}
-): Promise<boolean | null> {
+): Promise<{
+	answer: boolean | undefined;
+	answerInteraction: ButtonInteraction<"cached"> | undefined;
+}> {
 	const {
 		description,
 		color = EpsibotColor.question,
@@ -71,8 +77,8 @@ export async function confirm(
 		labelYes = "Oui",
 		labelNo = "Non",
 		timeout = 60_000,
-		returnOnTimout = null,
-		ephemeral = true
+		ephemeral = true,
+		deferButtonInteraction = true
 	} = options;
 
 	if (ephemeral && userId !== interaction.member.id) {
@@ -121,47 +127,62 @@ export async function confirm(
 		messageConfirm = await interaction.reply(messageContent);
 	}
 
-	let answer: boolean | null;
-	let click: ButtonInteraction | undefined = undefined;
+	const wrongUserCollector = messageConfirm.createMessageComponentCollector({
+		componentType: ComponentType.Button,
+		filter: (click) => click.user.id !== userId,
+		time: timeout + 60_000
+	});
+	wrongUserCollector.on("collect", (click) => {
+		click.reply({
+			embeds: [
+				{
+					description: `Cette question est destinée à <@${userId}>`
+				}
+			],
+			ephemeral: true
+		});
+	});
+
+	let answer: boolean | undefined = undefined;
+	let click: ButtonInteraction<"cached"> | undefined = undefined;
 
 	try {
 		click = await messageConfirm.awaitMessageComponent({
 			componentType: ComponentType.Button,
-			filter: (click) => click.member.id === userId,
+			filter: (click) => click.user.id === userId,
 			time: timeout
 		});
 		answer = click.customId === ButtonAction.yes;
-		await click.deferUpdate();
+		if (deferButtonInteraction) await click.deferUpdate();
 	} catch (err) {
-		answer = returnOnTimout;
+		// The timeout has been reached
 	}
 
-	if (answer === null) {
-		await interaction.webhook.editMessage(messageConfirm, {
-			components: []
-		});
-	} else {
-		await interaction.webhook.editMessage(messageConfirm, {
-			components: [
-				{
-					type: ComponentType.ActionRow,
-					components: [
-						{
-							type: ComponentType.Button,
-							label: answer ? labelYes : labelNo,
-							style: answer
-								? ButtonStyle.Success
-								: ButtonStyle.Success,
-							customId: answer
-								? ButtonAction.yes
-								: ButtonAction.no,
-							disabled: true
-						}
-					]
-				}
-			]
-		});
-	}
+	await messageConfirm
+		.edit({
+			components:
+				answer === null
+					? []
+					: [
+							{
+								type: ComponentType.ActionRow,
+								components: [
+									{
+										type: ComponentType.Button,
+										label: answer ? labelYes : labelNo,
+										style: answer
+											? ButtonStyle.Success
+											: ButtonStyle.Danger,
+										customId: answer
+											? ButtonAction.yes
+											: ButtonAction.no,
+										disabled: true
+									}
+								]
+							}
+					  ]
+		})
+		.catch(() => undefined);
 
-	return answer;
+	return { answer, answerInteraction: click };
 }

@@ -25,15 +25,15 @@
 	"license": "ISC",
 	"type": "module",
 	"dependencies": {
-		"@types/node": "18.11.9",
+		"discord.js": "14.7.1",
 		"better-sqlite3": "7.6.2",
+		"typeorm": "0.3.10",
+		"typescript": "4.9.3",
+		"@types/node": "18.11.9",
 		"chalk": "5.1.2",
 		"date-fns": "2.29.3",
-		"discord.js": "14.6.0",
 		"dotenv": "16.0.3",
-		"reflect-metadata": "0.1.13",
-		"typeorm": "0.3.10",
-		"typescript": "4.9.3"
+		"reflect-metadata": "0.1.13"
 	},
 	"devDependencies": {
 		"@typescript-eslint/eslint-plugin": "5.44.0",
@@ -42,13 +42,10 @@
 		"eslint-config-prettier": "8.5.0",
 		"eslint-plugin-import": "2.26.0",
 		"prettier": "2.8.0",
-		"ts-node": "^10.9.1"
+		"ts-node": "10.9.1"
 	},
 	"engines": {
 		"node": ">=16.16.0"
-	},
-	"overrides": {
-		"discord-api-types": "0.37.14"
 	},
 	"prettier": {
 		"tabWidth": 4,

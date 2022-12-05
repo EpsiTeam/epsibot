@@ -24,10 +24,9 @@ export async function play(interaction: CommandInteraction<"cached">) {
 		});
 	}
 
-	const accepted = await confirm(interaction, {
+	const { answer: accepted } = await confirm(interaction, {
 		description: `${user2} défie ${user1} à une partie de morpion\nEst-ce que ${user1} accepte le challenge ?`,
 		userId: user1.id,
-		returnOnTimout: false,
 		ephemeral: false
 	});
 
@@ -58,15 +57,17 @@ export async function play(interaction: CommandInteraction<"cached">) {
 		const player = game.getPlayerTurn();
 
 		if (!firstTurn) {
-			await gameMessage.edit({
-				embeds: [
-					{
-						description: `Au tour de ${player} de jouer`,
-						color: game.getPlayerColor(player)
-					}
-				],
-				components: game.getComponents(false)
-			});
+			await gameMessage
+				.edit({
+					embeds: [
+						{
+							description: `Au tour de ${player} de jouer`,
+							color: game.getPlayerColor(player)
+						}
+					],
+					components: game.getComponents(false)
+				})
+				.catch(() => undefined);
 		} else {
 			firstTurn = false;
 		}
@@ -87,15 +88,17 @@ export async function play(interaction: CommandInteraction<"cached">) {
 				logger.error(
 					`Something went wrong with TicTacToeGame: ${err.stack}`
 				);
-				return gameMessage.edit({
-					embeds: [
-						{
-							description: `Désolé, il y a eu une erreur avec la partie, considérons que c'est un match nul entre ${user1} et ${user2}`,
-							color: EpsibotColor.error
-						}
-					],
-					components: []
-				});
+				return gameMessage
+					.edit({
+						embeds: [
+							{
+								description: `Désolé, il y a eu une erreur avec la partie, considérons que c'est un match nul entre ${user1} et ${user2}`,
+								color: EpsibotColor.error
+							}
+						],
+						components: []
+					})
+					.catch(() => undefined);
 			}
 			{
 				logger.error(
@@ -110,15 +113,17 @@ export async function play(interaction: CommandInteraction<"cached">) {
 		? `${winner} remporte la partie !`
 		: "C'est un match nul !";
 
-	return gameMessage.edit({
-		embeds: [
-			{
-				description: `Résultat de la partie de morpion entre ${user1} et ${user2}:\n${result}`,
-				color: winner
-					? game.getPlayerColor(winner)
-					: EpsibotColor.warning
-			}
-		],
-		components: game.getComponents(true)
-	});
+	return gameMessage
+		.edit({
+			embeds: [
+				{
+					description: `Résultat de la partie de morpion entre ${user1} et ${user2}:\n${result}`,
+					color: winner
+						? game.getPlayerColor(winner)
+						: EpsibotColor.warning
+				}
+			],
+			components: game.getComponents(true)
+		})
+		.catch(() => undefined);
 }

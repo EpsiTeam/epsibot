@@ -1,85 +1,129 @@
-import { Collection, CommandInteraction, Message } from "discord.js";
+import {
+	ChatInputCommandInteraction,
+	ComponentType,
+	ModalComponentData,
+	TextInputStyle
+} from "discord.js";
 import { DBConnection } from "../../database/DBConnection.js";
 import { CustomCommand } from "../../database/entity/CustomCommand.js";
 import { CustomEmbedCommand } from "../../database/entity/CustomEmbedCommand.js";
 import { EpsibotColor } from "../../util/color/EpsibotColor.js";
-import { Logger } from "../../util/Logger.js";
-import { timeoutEmbed, helpArgument, commandFields } from "./helper.js";
+import { confirm } from "../../util/confirm/confirm.js";
+import { commandFields } from "./help.js";
+
+enum ModalParams {
+	id = "ModalAddCustomCommand",
+	name = "CustomCommandName",
+	text = "CustomCommandText"
+}
 
 export async function addNormal(
-	interaction: CommandInteraction<"cached">,
-	name: string,
+	interaction: ChatInputCommandInteraction<"cached">,
 	adminOnly: boolean,
 	autoDelete: boolean
 ) {
-	if (!interaction.channel) {
-		throw new Error("Channel doesn't exist");
-	}
-
-	await interaction.followUp({
-		embeds: [
+	await interaction.showModal({
+		customId: ModalParams.id,
+		title: "Nouvelle commande custom",
+		components: [
 			{
-				description: `Quel sera la réponse affiché par la commande \`${name}\` ?${helpArgument}`,
-				color: EpsibotColor.question
+				type: ComponentType.ActionRow,
+				components: [
+					{
+						customId: ModalParams.name,
+						type: ComponentType.TextInput,
+						label: "Nom de la commande",
+						style: TextInputStyle.Short,
+						required: true,
+						maxLength: CustomCommand.maxNameLength
+					}
+				]
+			},
+			{
+				type: ComponentType.ActionRow,
+				components: [
+					{
+						customId: ModalParams.text,
+						label: "Réponse de la commande",
+						type: ComponentType.TextInput,
+						style: TextInputStyle.Paragraph,
+						required: true,
+						maxLength: CustomCommand.maxResponseLength,
+						placeholder:
+							"Faire '/command help' pour voir comment rajouter des paramètres"
+					}
+				]
 			}
-		],
-		ephemeral: false
-	});
+		]
+	} as ModalComponentData);
 
-	let answer: Collection<string, Message<boolean>>;
+	const result = await interaction
+		.awaitModalSubmit({
+			filter: (modalInteraction) => {
+				return (
+					modalInteraction.customId === ModalParams.id &&
+					modalInteraction.user.id === interaction.user.id
+				);
+			},
+			time: 60 * 60_000 // 1h
+		})
+		.catch(() => null);
 
-	try {
-		answer = await interaction.channel.awaitMessages({
-			filter: (msg) => msg.author.id === interaction.member.id,
-			max: 1,
-			time: 60_000,
-			errors: ["time"]
-		});
-	} catch (err) {
-		return interaction.followUp(timeoutEmbed(name));
+	if (result === null) {
+		return;
 	}
+	await result.deferReply({ ephemeral: true });
 
-	const msgAnswer = answer.first();
-	if (!msgAnswer) {
-		throw new Error("Collector returned with empty collection");
-	}
-	const response = msgAnswer.content;
-	Logger.debug(response);
-	if (
-		response.length == 0 ||
-		response.length > CustomCommand.maxResponseLength
-	) {
-		await msgAnswer.react("❌");
-		return interaction.followUp({
-			embeds: [
-				{
-					title: `Création de la commande \`${name}\` annulée`,
-					description: `La réponse choisie a une taille de ${response.length}, la taille doit être entre 1 et ${CustomCommand.maxResponseLength} caractères`,
-					color: EpsibotColor.error
-				}
-			],
-			ephemeral: false
-		});
-	}
-	await msgAnswer.react("✅");
+	const name = result.fields.getTextInputValue(ModalParams.name);
+	const text = result.fields.getTextInputValue(ModalParams.text);
 
-	const [command] = await Promise.all([
-		DBConnection.getRepository(CustomCommand).save(
-			new CustomCommand(
-				interaction.guildId,
-				name,
-				response,
-				adminOnly,
-				autoDelete
-			)
-		),
-		DBConnection.getRepository(CustomEmbedCommand).delete({
+	// Checking if command already exists
+	const [oldCommand, oldEmbedCommand] = await Promise.all([
+		DBConnection.getRepository(CustomCommand).findOneBy({
+			guildId: interaction.guildId,
+			name
+		}),
+		DBConnection.getRepository(CustomEmbedCommand).findOneBy({
 			guildId: interaction.guildId,
 			name
 		})
 	]);
 
-	return interaction.followUp({
+	if (oldCommand || oldEmbedCommand) {
+		// Command already exists
+		const { answer: replace } = await confirm(result, {
+			description: `La commmande \`${name}\` existe déjà, faut il la remplacer ?`,
+			color: EpsibotColor.warning
+		});
+
+		if (!replace) {
+			return;
+		} else {
+			// Deleting old command
+			await Promise.all([
+				DBConnection.getRepository(CustomCommand).delete({
+					name,
+					guildId: interaction.guildId
+				}),
+				DBConnection.getRepository(CustomEmbedCommand).delete({
+					name,
+					guildId: interaction.guildId
+				})
+			]);
+		}
+	}
+
+	const command = await DBConnection.getRepository(CustomCommand).save(
+		new CustomCommand(
+			interaction.guildId,
+			name,
+			text,
+			adminOnly,
+			autoDelete
+		)
+	);
+
+	return result.followUp({
 		embeds: [
 			{
 				title: `Commande \`${command.name}\` créée, elle répondra:`,
@@ -88,6 +132,6 @@ export async function addNormal(
 				color: EpsibotColor.success
 			}
 		],
-		ephemeral: false
+		ephemeral: true
 	});
 }

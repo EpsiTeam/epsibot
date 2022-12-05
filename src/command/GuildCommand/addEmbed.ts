@@ -1,10 +1,9 @@
 import {
-	CommandInteraction,
-	Collection,
-	Message,
 	ColorResolvable,
-	AwaitMessagesOptions,
-	ComponentType
+	ComponentType,
+	ChatInputCommandInteraction,
+	ModalComponentData,
+	TextInputStyle
 } from "discord.js";
 import { DBConnection } from "../../database/DBConnection.js";
 import { CustomCommand } from "../../database/entity/CustomCommand.js";
@@ -12,165 +11,169 @@ import { CustomEmbedCommand } from "../../database/entity/CustomEmbedCommand.js"
 import { EpsibotColor } from "../../util/color/EpsibotColor.js";
 import { SelectMenuColor } from "../../util/color/SelectMenuColor.js";
 import { confirm } from "../../util/confirm/confirm.js";
-import { timeoutEmbed, helpArgument, commandFields } from "./helper.js";
+import { isValidImageUrl } from "../../util/custom-command/url.js";
+import { timeoutEmbed, commandFields } from "./help.js";
+
+enum ModalParams {
+	id = "ModalAddCustomEmbedCommand",
+	name = "CustomCommandName",
+	title = "CustomCommandTitle",
+	description = "CustomCommandDescription",
+	image = "CustomCommandImage"
+}
 
 export async function addEmbed(
-	interaction: CommandInteraction<"cached">,
-	name: string,
+	interaction: ChatInputCommandInteraction<"cached">,
 	adminOnly: boolean,
 	autoDelete: boolean
 ) {
-	if (!interaction.channel) {
-		throw new Error("Channel doesn't exist");
-	}
-
-	const collectorOption: AwaitMessagesOptions = {
-		filter: (msg) => msg.author.id === interaction.member.id,
-		max: 1,
-		time: 60_000,
-		errors: ["time"]
-	};
-
-	await interaction.followUp({
-		embeds: [
+	await interaction.showModal({
+		customId: ModalParams.id,
+		title: "Nouvelle commande custom embed",
+		components: [
 			{
-				description: `Quel sera le **titre** affiché pour la commande \`${name}\` ?`,
-				color: EpsibotColor.question
+				type: ComponentType.ActionRow,
+				components: [
+					{
+						customId: ModalParams.name,
+						type: ComponentType.TextInput,
+						label: "Nom de la commande embed",
+						style: TextInputStyle.Short,
+						required: true,
+						maxLength: CustomEmbedCommand.maxNameLength
+					}
+				]
+			},
+			{
+				type: ComponentType.ActionRow,
+				components: [
+					{
+						customId: ModalParams.title,
+						type: ComponentType.TextInput,
+						label: "Titre de l'embed'",
+						style: TextInputStyle.Short,
+						required: true,
+						maxLength: CustomEmbedCommand.maxNameLength,
+						placeholder: "Voir '/command help'"
+					}
+				]
+			},
+			{
+				type: ComponentType.ActionRow,
+				components: [
+					{
+						customId: ModalParams.description,
+						label: "Description de l'embed'",
+						type: ComponentType.TextInput,
+						style: TextInputStyle.Paragraph,
+						required: true,
+						maxLength: CustomEmbedCommand.maxDescriptionLength,
+						placeholder:
+							"Faire '/command help' pour voir comment rajouter des paramètres"
+					}
+				]
+			},
+			{
+				type: ComponentType.ActionRow,
+				components: [
+					{
+						customId: ModalParams.image,
+						label: "URL de l'image de l'embed",
+						type: ComponentType.TextInput,
+						style: TextInputStyle.Short,
+						required: false,
+						placeholder:
+							"Laisser vide pour ne pas avoir d'image dans l'embed"
+					}
+				]
 			}
 		]
-	});
+	} as ModalComponentData);
 
-	let answer: Collection<string, Message<boolean>>;
+	const result = await interaction
+		.awaitModalSubmit({
+			filter: (modalInteraction) => {
+				return (
+					modalInteraction.customId === ModalParams.id &&
+					modalInteraction.user.id === interaction.user.id
+				);
+			},
+			time: 60 * 60_000 // 1h
+		})
+		.catch(() => null);
 
-	try {
-		answer = await interaction.channel.awaitMessages(collectorOption);
-	} catch (err) {
-		return interaction.followUp(timeoutEmbed(name));
+	if (result === null) {
+		return;
 	}
+	await result.deferReply({ ephemeral: true });
 
-	const msgTitle = answer.first();
-	if (!msgTitle) {
-		throw new Error("Collector returned with empty collection");
-	}
-	const title = msgTitle.content;
-	if (title.length == 0 || title.length > CustomEmbedCommand.maxTitleLength) {
-		await msgTitle.react("❌");
-		return interaction.followUp({
+	const name = result.fields.getTextInputValue(ModalParams.name);
+	const title = result.fields.getTextInputValue(ModalParams.title);
+	const description = result.fields.getTextInputValue(
+		ModalParams.description
+	);
+	const image = result.fields.getTextInputValue(ModalParams.image);
+
+	if (!isValidImageUrl(image)) {
+		return result.followUp({
 			embeds: [
 				{
-					title: `Création de la commande \`${name}\` annulée`,
-					description: `Le titre choisi a une taille de ${title.length}, la taille doit être entre 1 et ${CustomEmbedCommand.maxTitleLength} caractères`,
-					color: EpsibotColor.error
-				}
-			]
-		});
-	}
-	await msgTitle.react("✅");
-
-	await interaction.followUp({
-		embeds: [
-			{
-				description: `Quel sera la **description** affichée pour la commande \`${name}\` ?${helpArgument}`,
-				color: EpsibotColor.question
-			}
-		],
-		ephemeral: false
-	});
-
-	try {
-		answer = await interaction.channel.awaitMessages(collectorOption);
-	} catch (err) {
-		return interaction.followUp(timeoutEmbed(name));
-	}
-
-	const msgDescription = answer.first();
-	if (!msgDescription) {
-		throw new Error("Collector returned with empty collection");
-	}
-	const description = msgDescription.content;
-	if (
-		description.length == 0 ||
-		description.length > CustomEmbedCommand.maxDescriptionLength
-	) {
-		await msgDescription.react("❌");
-		return interaction.followUp({
-			embeds: [
-				{
-					title: `Création de la commande \`${name}\` annulée`,
-					description: `La description choisie a une taille de ${description.length}, la taille doit être entre 1 et ${CustomEmbedCommand.maxDescriptionLength} caractères`,
+					description: `\`${image}\` n'est pas une URL valide`,
 					color: EpsibotColor.error
 				}
 			],
-			ephemeral: false
+			ephemeral: true
 		});
 	}
-	await msgDescription.react("✅");
 
-	const hasImage = await confirm(interaction, {
-		description: `Est-ce que la commande \`${name}\` doit contenir une image ?`,
-		ephemeral: false
-	});
+	// Checking if command already exists
+	const [oldCommand, oldEmbedCommand] = await Promise.all([
+		DBConnection.getRepository(CustomCommand).findOneBy({
+			guildId: interaction.guildId,
+			name
+		}),
+		DBConnection.getRepository(CustomEmbedCommand).findOneBy({
+			guildId: interaction.guildId,
+			name
+		})
+	]);
 
-	if (hasImage === null) {
-		return interaction.followUp(timeoutEmbed(name));
-	}
-
-	let image = "";
-	if (hasImage) {
-		await interaction.followUp({
-			embeds: [
-				{
-					description: `Quelle sera l'image affichée pour la commande \`${name}\` ?`,
-					color: EpsibotColor.question
-				}
-			],
-			ephemeral: false
+	if (oldCommand || oldEmbedCommand) {
+		// Command already exists
+		const { answer: replace } = await confirm(result, {
+			description: `La commmande \`${name}\` existe déjà, faut il la remplacer ?`,
+			color: EpsibotColor.warning
 		});
 
-		try {
-			answer = await interaction.channel.awaitMessages(collectorOption);
-		} catch (err) {
-			return interaction.followUp(timeoutEmbed(name));
+		if (!replace) {
+			return;
+		} else {
+			// Deleting old command
+			await Promise.all([
+				DBConnection.getRepository(CustomCommand).delete({
+					name,
+					guildId: interaction.guildId
+				}),
+				DBConnection.getRepository(CustomEmbedCommand).delete({
+					name,
+					guildId: interaction.guildId
+				})
+			]);
 		}
-
-		const msgImage = answer.first();
-		if (!msgImage) {
-			throw new Error("Collector returned with empty collection");
-		}
-		const attachment = msgImage.attachments.first();
-		if (
-			!attachment ||
-			!attachment.contentType ||
-			!attachment.contentType.startsWith("image")
-		) {
-			await msgImage.react("❌");
-			return interaction.followUp({
-				embeds: [
-					{
-						description: `Création de la commande \`${name}\` annulée, une image était attendue`,
-						color: EpsibotColor.error
-					}
-				],
-				ephemeral: false
-			});
-		}
-
-		image = attachment.url;
-		await msgImage.react("✅");
 	}
 
-	const hasColor = await confirm(interaction, {
+	const { answer: hasColor } = await confirm(result, {
 		description: `Est-ce que la commande \`${name}\` doit avoir une couleur spécifique ?`,
-		ephemeral: false
+		ephemeral: true
 	});
 
-	if (hasColor === null) {
-		return interaction.followUp(timeoutEmbed(name));
+	if (hasColor === undefined) {
+		return result.followUp(timeoutEmbed(name));
 	}
 
 	let color: ColorResolvable = EpsibotColor.default;
 	if (hasColor) {
-		const msgColor = await interaction.followUp({
+		const msgColor = await result.followUp({
 			embeds: [
 				{
 					description: `Choisissez la couleur pour la commande \`${name}\``,
@@ -178,14 +181,14 @@ export async function addEmbed(
 				}
 			],
 			components: [SelectMenuColor.actionRow],
-			ephemeral: false
+			ephemeral: true
 		});
 
 		try {
 			const selectResponse = await msgColor.awaitMessageComponent({
-				filter: (click) => click.user.id === interaction.member.id,
+				filter: (click) => click.user.id === interaction.user.id,
 				time: 60_000,
-				componentType: ComponentType.SelectMenu
+				componentType: ComponentType.StringSelect
 			});
 			const colorOption = selectResponse.values;
 			color = colorOption[0] as ColorResolvable;
@@ -196,7 +199,7 @@ export async function addEmbed(
 						type: ComponentType.ActionRow,
 						components: [
 							{
-								type: ComponentType.SelectMenu,
+								type: ComponentType.StringSelect,
 								placeholder: colorOption[0],
 								options: [
 									{
@@ -212,30 +215,23 @@ export async function addEmbed(
 				]
 			});
 		} catch (err) {
-			return interaction.followUp(timeoutEmbed(name));
+			return result.followUp(timeoutEmbed(name));
 		}
 	}
 
-	const [command] = await Promise.all([
-		DBConnection.getRepository(CustomEmbedCommand).save(
-			new CustomEmbedCommand(
-				interaction.guildId,
-				name,
-				title,
-				description,
-				image,
-				color,
-				adminOnly,
-				autoDelete
-			)
-		),
-		DBConnection.getRepository(CustomCommand).delete({
-			guildId: interaction.guildId,
-			name
-		})
-	]);
-
-	return interaction.followUp({
+	const command = await DBConnection.getRepository(CustomEmbedCommand).save(
+		new CustomEmbedCommand(
+			interaction.guildId,
+			name,
+			title,
+			description,
+			image,
+			color,
+			adminOnly,
+			autoDelete
+		)
+	);
+	return result.followUp({
 		embeds: [
 			{
 				title: `Commande embed \`${command.name}\` créée`,
@@ -247,6 +243,6 @@ export async function addEmbed(
 			},
 			command.createEmbed()
 		],
-		ephemeral: false
+		ephemeral: true
 	});
 }

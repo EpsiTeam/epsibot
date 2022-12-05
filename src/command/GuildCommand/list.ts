@@ -2,7 +2,7 @@ import {
 	ActionRowData,
 	APIEmbed,
 	ButtonStyle,
-	CommandInteraction,
+	ChatInputCommandInteraction,
 	ComponentType,
 	DiscordAPIError,
 	MessageActionRowComponentData,
@@ -13,14 +13,14 @@ import { CustomCommand } from "../../database/entity/CustomCommand.js";
 import { CustomEmbedCommand } from "../../database/entity/CustomEmbedCommand.js";
 import { EpsibotColor } from "../../util/color/EpsibotColor.js";
 import { Logger } from "../../util/Logger.js";
-import { commandFields } from "./helper.js";
+import { commandFields } from "./help.js";
 
 enum ButtonAction {
 	previous = "previous",
 	next = "next"
 }
 
-export async function list(interaction: CommandInteraction<"cached">) {
+export async function list(interaction: ChatInputCommandInteraction<"cached">) {
 	const logger = Logger.contextualize(
 		interaction.guild,
 		interaction.member.user
@@ -33,7 +33,8 @@ export async function list(interaction: CommandInteraction<"cached">) {
 				color: EpsibotColor.info
 			}
 		],
-		fetchReply: true
+		fetchReply: true,
+		ephemeral: true
 	});
 
 	const [normalCommands, embedCommands] = await Promise.all([
@@ -51,15 +52,17 @@ export async function list(interaction: CommandInteraction<"cached">) {
 	)).concat(embedCommands);
 
 	if (commands.length === 0) {
-		return message.edit({
-			embeds: [
-				{
-					description:
-						"Il n'y a aucune commande custom sur ce serveur\n`/command add` permet de créer une nouvelle commande custom",
-					color: EpsibotColor.warning
-				}
-			]
-		});
+		return message
+			.edit({
+				embeds: [
+					{
+						description:
+							"Il n'y a aucune commande custom sur ce serveur\n`/command add` permet de créer une nouvelle commande custom",
+						color: EpsibotColor.warning
+					}
+				]
+			})
+			.catch(() => undefined);
 	}
 
 	let currentIndex = 0;
@@ -129,49 +132,13 @@ export async function list(interaction: CommandInteraction<"cached">) {
 			if (currentIndex < 0) currentIndex = commands.length - 1;
 		}
 
-		try {
-			await click.deferUpdate();
-			await message.edit(showList(currentIndex));
-		} catch (err) {
-			if (err instanceof DiscordAPIError) {
-				if (err.code === 10008) {
-					// Message deleted
-					logger.info(
-						"Can't update list because message has been deleted"
-					);
-				} else {
-					logger.error(`Impossible to update list: ${err.stack}`);
-				}
-			} else {
-				logger.error(
-					`Impossible to update list with unknown error: ${err}`
-				);
-			}
-		}
+		await click.deferUpdate();
+		await message.edit(showList(currentIndex)).catch(() => undefined);
 	});
 
 	collector.on("end", async () => {
-		try {
-			await message.edit({
-				components: []
-			});
-		} catch (err) {
-			if (err instanceof DiscordAPIError) {
-				if (err.code === 10008) {
-					// Message deleted
-					logger.info(
-						"Can't end list because message has been deleted"
-					);
-				} else {
-					logger.error(`Impossible to end collector: ${err.stack}`);
-				}
-			} else {
-				logger.error(
-					`Impossible to end collector with unknown error: ${err}`
-				);
-			}
-		}
+		await message.edit({ components: [] }).catch(() => undefined);
 	});
 
-	return message.edit(showList(currentIndex));
+	return message.edit(showList(currentIndex)).catch(() => undefined);
 }

@@ -43,15 +43,17 @@ export async function leaderboard(interaction: CommandInteraction<"cached">) {
 	});
 
 	if (allScores.length === 0) {
-		return message.edit({
-			embeds: [
-				{
-					description:
-						"Il n'y a aucun score de shifumi sur ce serveur\n`/shifumi play` permet de jouer, les scores sont enregistrés automatiquement",
-					color: EpsibotColor.warning
-				}
-			]
-		});
+		return message
+			.edit({
+				embeds: [
+					{
+						description:
+							"Il n'y a aucun score de shifumi sur ce serveur\n`/shifumi play` permet de jouer, les scores sont enregistrés automatiquement",
+						color: EpsibotColor.warning
+					}
+				]
+			})
+			.catch(() => undefined);
 	}
 
 	// Splitting the scores into sub arrays,
@@ -140,49 +142,17 @@ export async function leaderboard(interaction: CommandInteraction<"cached">) {
 			if (currentIndex < 0) currentIndex = subscores.length - 1;
 		}
 
-		try {
-			await click.deferUpdate();
-			await message.edit(await showList(currentIndex));
-		} catch (err) {
-			if (err instanceof DiscordAPIError) {
-				if (err.code === 10008) {
-					// Message deleted
-					logger.info(
-						"Can't update list because message has been deleted"
-					);
-				} else {
-					logger.error(`Impossible to update list: ${err.stack}`);
-				}
-			} else {
-				logger.error(
-					`Impossible to update list with unknown error: ${err}`
-				);
-			}
-		}
+		await click.deferUpdate();
+		await message.edit(await showList(currentIndex)).catch(() => undefined);
 	});
 
 	collector.on("end", async () => {
-		try {
-			await message.edit({
+		await message
+			.edit({
 				components: []
-			});
-		} catch (err) {
-			if (err instanceof DiscordAPIError) {
-				if (err.code === 10008) {
-					// Message deleted
-					logger.info(
-						"Can't end list because message has been deleted"
-					);
-				} else {
-					logger.error(`Impossible to end collector: ${err.stack}`);
-				}
-			} else {
-				logger.error(
-					`Impossible to end collector with unknown error: ${err}`
-				);
-			}
-		}
+			})
+			.catch(() => undefined);
 	});
 
-	return message.edit(await showList(currentIndex));
+	return message.edit(await showList(currentIndex)).catch(() => undefined);
 }

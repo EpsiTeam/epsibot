@@ -35,11 +35,8 @@ export async function cancel(
 		});
 	}
 
-	const confirmation = await confirm(interaction, {
-		description: `Confirmer la suppression de la demande de ${element.requester} en position ${position} (${element.request})`,
-		labelYes: "Oui",
-		labelNo: "Non",
-		returnOnTimout: false
+	const { answer: confirmation } = await confirm(interaction, {
+		description: `Confirmer la suppression de la demande de ${element.requester} en position ${position} (${element.request})`
 	});
 
 	if (!confirmation) return;

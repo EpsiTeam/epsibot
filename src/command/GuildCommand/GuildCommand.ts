@@ -8,11 +8,13 @@ import { Command } from "../Command.js";
 import { list } from "./list.js";
 import { add, AddParam } from "./add.js";
 import { remove, RemoveParam } from "./remove.js";
+import { help } from "./help.js";
 
 enum Subcommand {
 	list = "list",
 	add = "add",
-	remove = "remove"
+	remove = "remove",
+	help = "help"
 }
 
 export class GuildCommand extends Command {
@@ -26,7 +28,8 @@ export class GuildCommand extends Command {
 		{
 			type: ApplicationCommandOptionType.Subcommand,
 			name: Subcommand.list,
-			description: "Liste les commandes custom existantes"
+			description:
+				"Liste les commandes custom existantes (équivalent à /command_list)"
 		},
 		{
 			type: ApplicationCommandOptionType.Subcommand,
@@ -34,30 +37,23 @@ export class GuildCommand extends Command {
 			description: "Ajoute une commande custom",
 			options: [
 				{
-					type: ApplicationCommandOptionType.String,
-					name: AddParam.name,
-					description:
-						"Nom de la commande custom à ajouter, tout message qui commencera par ce nom appelera cette commande",
-					required: true
-				},
-				{
 					type: ApplicationCommandOptionType.Boolean,
 					name: AddParam.embed,
 					description:
-						"Est-ce que la command doit s'afficher dans un embed ?",
-					required: true
+						"Est-ce que la command doit s'afficher dans un embed ? Faux par défaut",
+					required: false
 				},
 				{
 					type: ApplicationCommandOptionType.Boolean,
 					name: AddParam.adminOnly,
 					description:
-						"Est-ce que seulement les admins pourront lancer cete commande custom ?"
+						"Est-ce que seulement les admins pourront lancer cete commande custom ? Faux par défaut"
 				},
 				{
 					type: ApplicationCommandOptionType.Boolean,
 					name: AddParam.autoDelete,
 					description:
-						"Est-ce que le message qui active la commande doit être supprimé automatiquement ?"
+						"Est-ce que le message qui active la commande doit être supprimé automatiquement ? Faux par défaut"
 				}
 			]
 		},
@@ -73,17 +69,28 @@ export class GuildCommand extends Command {
 					required: true
 				}
 			]
+		},
+		{
+			type: ApplicationCommandOptionType.Subcommand,
+			name: Subcommand.help,
+			description:
+				"Affiche l'aide pour envoyer des paramètres aux commandes custom"
 		}
 	];
 
 	async execute(interaction: ChatInputCommandInteraction<"cached">) {
 		const subcommand = interaction.options.getSubcommand();
 
-		if (subcommand === Subcommand.list) return list(interaction);
-
-		if (subcommand === Subcommand.add) return add(interaction);
-
-		if (subcommand === Subcommand.remove) return remove(interaction);
+		switch (subcommand) {
+			case Subcommand.list:
+				return list(interaction);
+			case Subcommand.add:
+				return add(interaction);
+			case Subcommand.remove:
+				return remove(interaction);
+			case Subcommand.help:
+				return help(interaction);
+		}
 
 		throw new Error(`Unexpected subcommand ${subcommand}`);
 	}

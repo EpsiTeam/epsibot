@@ -14,6 +14,7 @@ export enum PlayParam {
 	turnsToWin = "nb_turns_to_win"
 }
 
+// FIXME the shifumi is currently broken
 export async function play(interaction: ChatInputCommandInteraction<"cached">) {
 	const user1 = interaction.member;
 	const user2 = interaction.options.getMember(PlayParam.user);
@@ -151,8 +152,8 @@ export async function play(interaction: ChatInputCommandInteraction<"cached">) {
 			color = EpsibotColor.warning;
 		}
 
-		try {
-			await message.edit({
+		await message
+			.edit({
 				embeds: [
 					{
 						title,
@@ -161,23 +162,8 @@ export async function play(interaction: ChatInputCommandInteraction<"cached">) {
 					}
 				],
 				components: []
-			});
-		} catch (err) {
-			if (err instanceof DiscordAPIError) {
-				if (err.code === 10008) {
-					// Message deleted
-					logger.info(
-						"Can't end shifumi because message has been deleted"
-					);
-				} else {
-					logger.error(`Impossible to end shifumi: ${err.stack}`);
-				}
-			} else {
-				logger.error(
-					`Impossible to update shifumi with unknown error: ${err}`
-				);
-			}
-		}
+			})
+			.catch(() => undefined);
 	});
 
 	return message;
