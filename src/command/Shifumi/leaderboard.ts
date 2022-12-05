@@ -3,14 +3,12 @@ import {
 	ButtonStyle,
 	CommandInteraction,
 	ComponentType,
-	DiscordAPIError,
 	GuildMember,
 	MessageEditOptions
 } from "discord.js";
 import { DBConnection } from "../../database/DBConnection.js";
 import { ShifumiScore } from "../../database/entity/ShifumiScore.js";
 import { EpsibotColor } from "../../util/color/EpsibotColor.js";
-import { Logger } from "../../util/Logger.js";
 
 enum ButtonAction {
 	previous = "previous",
@@ -18,11 +16,6 @@ enum ButtonAction {
 }
 
 export async function leaderboard(interaction: CommandInteraction<"cached">) {
-	const logger = Logger.contextualize(
-		interaction.guild,
-		interaction.member.user
-	);
-
 	const message = await interaction.reply({
 		embeds: [
 			{

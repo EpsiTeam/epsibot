@@ -4,7 +4,6 @@ import {
 	ButtonStyle,
 	ChatInputCommandInteraction,
 	ComponentType,
-	DiscordAPIError,
 	MessageActionRowComponentData,
 	MessageEditOptions
 } from "discord.js";
@@ -12,7 +11,6 @@ import { DBConnection } from "../../database/DBConnection.js";
 import { CustomCommand } from "../../database/entity/CustomCommand.js";
 import { CustomEmbedCommand } from "../../database/entity/CustomEmbedCommand.js";
 import { EpsibotColor } from "../../util/color/EpsibotColor.js";
-import { Logger } from "../../util/Logger.js";
 import { commandFields } from "./help.js";
 
 enum ButtonAction {
@@ -21,11 +19,6 @@ enum ButtonAction {
 }
 
 export async function list(interaction: ChatInputCommandInteraction<"cached">) {
-	const logger = Logger.contextualize(
-		interaction.guild,
-		interaction.member.user
-	);
-
 	const message = await interaction.reply({
 		embeds: [
 			{
