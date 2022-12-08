@@ -2,7 +2,7 @@
  _____         _ _       _
 |   __|___ ___|_| |_ ___| |_
 |   __| . |_ -| | . | . |  _|
-|_____|  _|___|_|___|___|_|  v2.5.1
+|_____|  _|___|_|___|___|_|  v2.6.0
       |_|
 ```
 
@@ -41,11 +41,22 @@ D'autres script npm sont définis, faites `npm run` pour voir la liste disponibl
 
 # Changelog
 
+## v2.6.0
+
+### Added
+
+-   `/command edit` pour éditer une commande custom. Plus besoin d'avoir à supprimer et recréer une commande, on peut directement la modifier !
+
+### Changed
+
+-   `/command add` la sélection de couleur d'un embed a été revu pour être plus intuitive
+
 ## v2.5.1
 
 ### Fixed
 
 -   `/shifumi play` ne fonctionnait plus depuis la version `2.5.0`, c'est maintenant corrigé
+-   `/command list` était aussi cassé
 
 ## v2.5.0
 

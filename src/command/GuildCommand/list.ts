@@ -45,8 +45,8 @@ export async function list(interaction: ChatInputCommandInteraction<"cached">) {
 	)).concat(embedCommands);
 
 	if (commands.length === 0) {
-		return message
-			.edit({
+		return interaction.webhook
+			.editMessage(message, {
 				embeds: [
 					{
 						description:
@@ -126,12 +126,18 @@ export async function list(interaction: ChatInputCommandInteraction<"cached">) {
 		}
 
 		await click.deferUpdate();
-		await message.edit(showList(currentIndex)).catch(() => undefined);
+		await interaction.webhook
+			.editMessage(message, showList(currentIndex))
+			.catch(() => undefined);
 	});
 
 	collector.on("end", async () => {
-		await message.edit({ components: [] }).catch(() => undefined);
+		await interaction.webhook
+			.editMessage(message, { components: [] })
+			.catch(() => undefined);
 	});
 
-	return message.edit(showList(currentIndex)).catch(() => undefined);
+	return interaction.webhook
+		.editMessage(message, showList(currentIndex))
+		.catch(() => undefined);
 }

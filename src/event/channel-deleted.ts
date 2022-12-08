@@ -1,5 +1,5 @@
 import { DMChannel, NonThreadGuildBasedChannel } from "discord.js";
-import { getRepository } from "typeorm";
+import { DBConnection } from "../database/DBConnection.js";
 import { ChannelLog } from "../database/entity/ChannelLog.js";
 import { IgnoredChannel } from "../database/entity/IgnoredChannel.js";
 import { Logger } from "../util/Logger.js";
@@ -16,10 +16,10 @@ export async function channelDeleted(
 		);
 
 		await Promise.all([
-			getRepository(ChannelLog).delete({
+			DBConnection.getRepository(ChannelLog).delete({
 				channelId: channel.id
 			}),
-			getRepository(IgnoredChannel).delete({
+			DBConnection.getRepository(IgnoredChannel).delete({
 				channelId: channel.id
 			})
 		]);

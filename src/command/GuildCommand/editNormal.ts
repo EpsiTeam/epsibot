@@ -5,14 +5,14 @@ import {
 	ModalComponentData,
 	TextInputStyle
 } from "discord.js";
-import { DBConnection } from "../../database/DBConnection.js";
 import { CustomCommand } from "../../database/entity/CustomCommand.js";
 import { EpsibotColor } from "../../util/color/EpsibotColor.js";
-import { confirm } from "../../util/confirm/confirm.js";
 import {
 	deleteCommandFromName,
 	getCommandFromName
 } from "../../util/custom-command/db-query.js";
+import { confirm } from "../../util/confirm/confirm.js";
+import { DBConnection } from "../../database/DBConnection.js";
 import { commandFields } from "./help.js";
 
 enum ModalParams {
@@ -20,8 +20,9 @@ enum ModalParams {
 	text = "CustomCommandText"
 }
 
-export async function addNormal(
+export async function editNormal(
 	interaction: ChatInputCommandInteraction<"cached">,
+	command: CustomCommand,
 	adminOnly: boolean,
 	autoDelete: boolean
 ) {
@@ -40,7 +41,8 @@ export async function addNormal(
 						label: "Nom de la commande",
 						style: TextInputStyle.Short,
 						required: true,
-						maxLength: CustomCommand.maxNameLength
+						maxLength: CustomCommand.maxNameLength,
+						value: command.name
 					}
 				]
 			},
@@ -55,7 +57,8 @@ export async function addNormal(
 						required: true,
 						maxLength: CustomCommand.maxResponseLength,
 						placeholder:
-							"Faire '/command help' pour voir comment rajouter des paramètres"
+							"Faire '/command help' pour voir comment rajouter des paramètres",
+						value: command.response
 					}
 				]
 			}
@@ -82,25 +85,26 @@ export async function addNormal(
 	const name = result.fields.getTextInputValue(ModalParams.name);
 	const text = result.fields.getTextInputValue(ModalParams.text);
 
-	// Checking if command already exists
-	const oldCommand = await getCommandFromName(interaction.guildId, name);
+	if (name !== command.name) {
+		const oldCommand = await getCommandFromName(interaction.guildId, name);
+		if (oldCommand) {
+			const { answer: replace } = await confirm(result, {
+				description: `Renommage de \`${command.name}\` en \`${name}\` -> il y avait déjà une commande nommée \`${name}\`, faut il la remplacer ?`,
+				color: EpsibotColor.warning
+			});
 
-	if (oldCommand) {
-		// Command already exists
-		const { answer: replace } = await confirm(result, {
-			description: `La commmande \`${name}\` existe déjà, faut il la remplacer ?`,
-			color: EpsibotColor.warning
-		});
-
-		if (!replace) {
-			return;
-		} else {
-			// Deleting old command
-			await deleteCommandFromName(interaction.guildId, name);
+			if (!replace) {
+				return;
+			}
 		}
 	}
 
-	const command = await DBConnection.getRepository(CustomCommand).save(
+	await deleteCommandFromName(interaction.guildId, command.name);
+	if (name !== command.name) {
+		await deleteCommandFromName(interaction.guildId, name);
+	}
+
+	const edited = await DBConnection.getRepository(CustomCommand).save(
 		new CustomCommand(
 			interaction.guildId,
 			name,
@@ -113,9 +117,9 @@ export async function addNormal(
 	return result.followUp({
 		embeds: [
 			{
-				title: `Commande \`${command.name}\` créée, elle répondra:`,
-				description: command.response,
-				fields: commandFields(command),
+				title: `Commande \`${edited.name}\` modifiée, elle répondra:`,
+				description: edited.response,
+				fields: commandFields(edited),
 				color: EpsibotColor.success
 			}
 		],
