@@ -27,21 +27,21 @@
 	"dependencies": {
 		"discord.js": "14.7.1",
 		"better-sqlite3": "7.6.2",
-		"typeorm": "0.3.10",
-		"typescript": "4.9.3",
-		"@types/node": "18.11.9",
-		"chalk": "5.1.2",
+		"typeorm": "0.3.11",
+		"typescript": "4.9.4",
+		"@types/node": "18.11.12",
+		"chalk": "5.2.0",
 		"date-fns": "2.29.3",
 		"dotenv": "16.0.3",
 		"reflect-metadata": "0.1.13"
 	},
 	"devDependencies": {
-		"@typescript-eslint/eslint-plugin": "5.44.0",
-		"@typescript-eslint/parser": "5.44.0",
-		"eslint": "8.28.0",
+		"@typescript-eslint/eslint-plugin": "5.46.0",
+		"@typescript-eslint/parser": "5.46.0",
+		"eslint": "8.29.0",
 		"eslint-config-prettier": "8.5.0",
 		"eslint-plugin-import": "2.26.0",
-		"prettier": "2.8.0",
+		"prettier": "2.8.1",
 		"ts-node": "10.9.1"
 	},
 	"engines": {
