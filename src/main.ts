@@ -8,18 +8,8 @@ import { DBConnection } from "./database/DBConnection.js";
 Logger.initialize(!EnvVariable.production);
 Logger.info(`Epsibot v${EnvVariable.version} starting`);
 
-/*
-	This is a function that will call itself
-	using this because we can't use async/await at top level.
-	I mean we could with some tweaks of TS configs but I'm too lazy to do that
-	just for this file
-*/
-try {
-	await DBConnection.initialize();
-	Logger.info("DB connection created");
-} catch (err) {
-	throw new Error(`Failed to create DB connection: ${err}`);
-}
+await DBConnection.initialize();
+Logger.info("DB connection created");
 
 process.on("SIGINT", async () => {
 	// Workaround to not screw log because of the ^C in the terminal
