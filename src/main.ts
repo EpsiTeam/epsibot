@@ -21,6 +21,15 @@ try {
 	throw new Error(`Failed to create DB connection: ${err}`);
 }
 
+process.on("SIGINT", async () => {
+	// Workaround to not screw log because of the ^C in the terminal
+	console.log();
+	Logger.info("Closing DB connection...");
+	await DBConnection.destroy();
+	Logger.done("Goodbye!");
+	process.exit();
+});
+
 const client = new Client({
 	intents: [
 		GatewayIntentBits.Guilds,
