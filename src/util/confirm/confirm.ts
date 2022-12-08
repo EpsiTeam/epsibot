@@ -154,8 +154,8 @@ export async function confirm(
 	const answer = click ? click.customId === ButtonAction.yes : undefined;
 	if (deferButtonInteraction) await click?.deferUpdate();
 
-	await messageConfirm
-		.edit({
+	await interaction.webhook
+		.editMessage(messageConfirm, {
 			components:
 				answer === undefined
 					? []

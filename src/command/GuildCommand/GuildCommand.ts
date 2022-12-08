@@ -9,10 +9,12 @@ import { list } from "./list.js";
 import { add, AddParam } from "./add.js";
 import { remove, RemoveParam } from "./remove.js";
 import { help } from "./help.js";
+import { edit, EditParam } from "./edit.js";
 
 enum Subcommand {
 	list = "list",
 	add = "add",
+	edit = "edit",
 	remove = "remove",
 	help = "help"
 }
@@ -59,6 +61,31 @@ export class GuildCommand extends Command {
 		},
 		{
 			type: ApplicationCommandOptionType.Subcommand,
+			name: Subcommand.edit,
+			description: "Modifie une commande custom",
+			options: [
+				{
+					type: ApplicationCommandOptionType.String,
+					name: EditParam.name,
+					description: "Commande à modifier",
+					required: true
+				},
+				{
+					type: ApplicationCommandOptionType.Boolean,
+					name: EditParam.adminOnly,
+					description:
+						"Est-ce que seulement les admins pourront lancer cete commande custom ?"
+				},
+				{
+					type: ApplicationCommandOptionType.Boolean,
+					name: EditParam.autoDelete,
+					description:
+						"Est-ce que le message qui active la commande doit être supprimé automatiquement ?"
+				}
+			]
+		},
+		{
+			type: ApplicationCommandOptionType.Subcommand,
 			name: Subcommand.remove,
 			description: "Supprime une commande custom",
 			options: [
@@ -86,6 +113,8 @@ export class GuildCommand extends Command {
 				return list(interaction);
 			case Subcommand.add:
 				return add(interaction);
+			case Subcommand.edit:
+				return edit(interaction);
 			case Subcommand.remove:
 				return remove(interaction);
 			case Subcommand.help:

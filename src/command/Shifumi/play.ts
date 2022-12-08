@@ -13,7 +13,6 @@ export enum PlayParam {
 	turnsToWin = "nb_turns_to_win"
 }
 
-// FIXME the shifumi is currently broken
 export async function play(interaction: ChatInputCommandInteraction<"cached">) {
 	const user1 = interaction.member;
 	const user2 = interaction.options.getMember(PlayParam.user);
@@ -128,7 +127,7 @@ export async function play(interaction: ChatInputCommandInteraction<"cached">) {
 	});
 
 	collector.on("end", async () => {
-		let color = EpsibotColor.success;
+		let color: number = EpsibotColor.success;
 		let waiting = "";
 		if (!game.gameFinished()) {
 			waiting =
