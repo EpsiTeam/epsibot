@@ -19,40 +19,6 @@ export async function add(interaction: ChatInputCommandInteraction<"cached">) {
 	);
 	let position = 1;
 
-	if (requester.length > QueueElement.maxRequesterLength) {
-		return interaction.reply({
-			embeds: [
-				{
-					description: `Le requester doit faire moins de ${QueueElement.maxRequesterLength} caractères !`,
-					color: EpsibotColor.error
-				}
-			],
-			ephemeral: true
-		});
-	}
-	if (request.length > QueueElement.maxRequestLength) {
-		return interaction.reply({
-			embeds: [
-				{
-					description: `La request doit faire moins de ${QueueElement.maxRequestLength} caractères !`,
-					color: EpsibotColor.error
-				}
-			],
-			ephemeral: true
-		});
-	}
-	if (hiddenInformation.length > QueueElement.maxInformationLength) {
-		return interaction.reply({
-			embeds: [
-				{
-					description: `Les informations complémentaires doivent faire moins de ${QueueElement.maxInformationLength} caractères !`,
-					color: EpsibotColor.error
-				}
-			],
-			ephemeral: true
-		});
-	}
-
 	const repo = DBConnection.getRepository(QueueElement);
 
 	// Finding the position to set

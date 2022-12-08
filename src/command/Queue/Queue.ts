@@ -49,6 +49,7 @@ export class Queue extends Command {
 					type: ApplicationCommandOptionType.String,
 					name: AddParam.requester,
 					description: "Auteur de la demande",
+					max_length: QueueElement.maxRequesterLength,
 					required: true
 				},
 				{
@@ -56,6 +57,7 @@ export class Queue extends Command {
 					name: AddParam.request,
 					description:
 						"Description de la demande (visible pour tous)",
+					max_length: QueueElement.maxRequestLength,
 					required: true
 				},
 				{
@@ -63,6 +65,7 @@ export class Queue extends Command {
 					name: AddParam.hiddenInformation,
 					description:
 						"Informations supplémentaires, cachées de tous",
+					max_length: QueueElement.maxInformationLength,
 					required: true
 				}
 			]
