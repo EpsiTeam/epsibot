@@ -19,14 +19,7 @@ enum ButtonAction {
 }
 
 export async function list(interaction: ChatInputCommandInteraction<"cached">) {
-	const message = await interaction.reply({
-		embeds: [
-			{
-				description: "Construction de la liste en cours...",
-				color: EpsibotColor.info
-			}
-		],
-		fetchReply: true,
+	const message = await interaction.deferReply({
 		ephemeral: true
 	});
 
@@ -45,8 +38,8 @@ export async function list(interaction: ChatInputCommandInteraction<"cached">) {
 	)).concat(embedCommands);
 
 	if (commands.length === 0) {
-		return interaction.webhook
-			.editMessage(message, {
+		return interaction
+			.editReply({
 				embeds: [
 					{
 						description:
@@ -126,18 +119,14 @@ export async function list(interaction: ChatInputCommandInteraction<"cached">) {
 		}
 
 		await click.deferUpdate();
-		await interaction.webhook
-			.editMessage(message, showList(currentIndex))
+		await interaction
+			.editReply(showList(currentIndex))
 			.catch(() => undefined);
 	});
 
 	collector.on("end", async () => {
-		await interaction.webhook
-			.editMessage(message, { components: [] })
-			.catch(() => undefined);
+		await interaction.editReply({ components: [] }).catch(() => undefined);
 	});
 
-	return interaction.webhook
-		.editMessage(message, showList(currentIndex))
-		.catch(() => undefined);
+	return interaction.editReply(showList(currentIndex)).catch(() => undefined);
 }
