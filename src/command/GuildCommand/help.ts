@@ -49,16 +49,15 @@ export function commandFields(
 ): EmbedField[] {
 	return [
 		{
-			name: "Type de réponse",
-			value:
-				command instanceof CustomCommand
-					? "Réponse normale"
-					: "Réponse dans un embed",
+			name: "Type de réponse:",
+			value: command instanceof CustomCommand ? "Normale" : "Embed",
 			inline: false
 		},
 		{
-			name: "Pour admins seulement:",
-			value: command.adminOnly ? "Oui" : "Non",
+			name: "Réservé au rôle:",
+			value: command.roleNeeded
+				? `<@&${command.roleNeeded}>`
+				: "@everyone",
 			inline: false
 		},
 		{

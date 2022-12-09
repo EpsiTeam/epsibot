@@ -9,13 +9,13 @@ export class CustomCommand {
 		guildId: string,
 		name: string,
 		response: string,
-		adminOnly: boolean,
+		roleNeeded: string,
 		autoDelete: boolean
 	) {
 		this.guildId = guildId;
 		this.name = name;
 		this.response = response;
-		this.adminOnly = adminOnly;
+		this.roleNeeded = roleNeeded;
 		this.autoDelete = autoDelete;
 
 		if (this.name?.length > CustomCommand.maxNameLength) {
@@ -29,7 +29,7 @@ export class CustomCommand {
 
 	@Column() response: string;
 
-	@Column() adminOnly: boolean;
+	@Column() roleNeeded: string;
 
 	@Column() autoDelete: boolean;
 }

@@ -23,7 +23,7 @@ enum ModalParams {
 export async function editNormal(
 	interaction: ChatInputCommandInteraction<"cached">,
 	command: CustomCommand,
-	adminOnly: boolean,
+	roleNeeded: string,
 	autoDelete: boolean
 ) {
 	const modalId = randomUUID();
@@ -109,7 +109,7 @@ export async function editNormal(
 			interaction.guildId,
 			name,
 			text,
-			adminOnly,
+			roleNeeded,
 			autoDelete
 		)
 	);

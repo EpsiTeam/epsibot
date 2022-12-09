@@ -31,7 +31,7 @@ enum ModalParams {
 export async function editEmbed(
 	interaction: ChatInputCommandInteraction<"cached">,
 	command: CustomEmbedCommand,
-	adminOnly: boolean,
+	roleNeeded: string,
 	autoDelete: boolean
 ) {
 	const modalId = randomUUID();
@@ -226,7 +226,7 @@ export async function editEmbed(
 			description,
 			image,
 			color,
-			adminOnly,
+			roleNeeded,
 			autoDelete
 		)
 	);

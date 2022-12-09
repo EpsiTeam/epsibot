@@ -46,10 +46,10 @@ export class GuildCommand extends Command {
 					required: false
 				},
 				{
-					type: ApplicationCommandOptionType.Boolean,
-					name: AddParam.adminOnly,
+					type: ApplicationCommandOptionType.Role,
+					name: AddParam.roleNeeded,
 					description:
-						"Est-ce que seulement les admins pourront lancer cete commande custom ? Faux par défaut"
+						"Quel rôle doit-on avoir pour lancer la commande ? @everyone par défaut"
 				},
 				{
 					type: ApplicationCommandOptionType.Boolean,
@@ -71,10 +71,10 @@ export class GuildCommand extends Command {
 					required: true
 				},
 				{
-					type: ApplicationCommandOptionType.Boolean,
-					name: EditParam.adminOnly,
+					type: ApplicationCommandOptionType.Role,
+					name: EditParam.roleNeeded,
 					description:
-						"Est-ce que seulement les admins pourront lancer cete commande custom ?"
+						"Quel rôle doit-on avoir pour lancer la commande ? @everyone par défaut"
 				},
 				{
 					type: ApplicationCommandOptionType.Boolean,

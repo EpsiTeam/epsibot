@@ -8,12 +8,13 @@ import { editNormal } from "./editNormal.js";
 
 export enum EditParam {
 	name = "name",
-	adminOnly = "admin_only",
+	roleNeeded = "role",
 	autoDelete = "auto_delete"
 }
 export async function edit(interaction: ChatInputCommandInteraction<"cached">) {
 	const name = interaction.options.getString(EditParam.name, true);
-	let adminOnly = interaction.options.getBoolean(EditParam.adminOnly);
+	let roleNeeded =
+		interaction.options.getRole(EditParam.roleNeeded)?.id ?? null;
 	let autoDelete = interaction.options.getBoolean(EditParam.autoDelete);
 
 	// Get existing command
@@ -31,13 +32,13 @@ export async function edit(interaction: ChatInputCommandInteraction<"cached">) {
 		});
 	}
 
-	if (adminOnly === null) adminOnly = command.adminOnly;
+	if (roleNeeded === null) roleNeeded = command.roleNeeded;
 	if (autoDelete === null) autoDelete = command.autoDelete;
 
 	if (command instanceof CustomCommand)
-		return editNormal(interaction, command, adminOnly, autoDelete);
+		return editNormal(interaction, command, roleNeeded, autoDelete);
 	if (command instanceof CustomEmbedCommand)
-		return editEmbed(interaction, command, adminOnly, autoDelete);
+		return editEmbed(interaction, command, roleNeeded, autoDelete);
 
 	throw new Error(
 		`The custom command ${name} was neither a CustomCommand nor a CustomEmbedCommand`

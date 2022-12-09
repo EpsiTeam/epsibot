@@ -50,20 +50,20 @@ export async function executeCustomCommand(message: Message) {
 	// No custom command in this message!
 	if (!choosenCommand) return;
 
-	if (
-		choosenCommand.adminOnly &&
-		!message.member.permissions.has("Administrator")
-	) {
-		await message.reply({
-			embeds: [
-				{
-					description:
-						"Cette commande est réservée aux administrateurs",
-					color: EpsibotColor.error
-				}
-			]
-		});
-		return;
+	// If this command needs a special role we have to check for it
+	if (choosenCommand.roleNeeded) {
+		// No check if user is an admin
+		if (!message.member.permissions.has("Administrator")) {
+			// Checking the role
+			if (
+				!message.member.roles.cache.some(
+					(role) => role.id === choosenCommand?.roleNeeded
+				)
+			) {
+				// The user does not have this role, no command for you
+				return;
+			}
+		}
 	}
 
 	let content: string;
