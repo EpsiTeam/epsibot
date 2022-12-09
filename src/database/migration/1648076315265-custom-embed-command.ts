@@ -13,7 +13,8 @@ export class customEmbedCommand1648076315265 implements MigrationInterface {
 				"image" varchar,
 				"color" integer NOT NULL,
 				"adminOnly" boolean NOT NULL,
-				"autoDelete" boolean NOT NULL, PRIMARY KEY ("guildId", "name")
+				"autoDelete" boolean NOT NULL,
+				PRIMARY KEY ("guildId", "name")
 			)
 		`);
 	}

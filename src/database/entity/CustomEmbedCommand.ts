@@ -15,7 +15,7 @@ export class CustomEmbedCommand {
 		description: string,
 		image: string,
 		color: ColorResolvable,
-		adminOnly: boolean,
+		roleNeeded: string,
 		autoDelete: boolean
 	) {
 		this.guildId = guildId;
@@ -24,7 +24,7 @@ export class CustomEmbedCommand {
 		this.description = description;
 		this.image = image;
 		this.color = resolveColor(color);
-		this.adminOnly = adminOnly;
+		this.roleNeeded = roleNeeded;
 		this.autoDelete = autoDelete;
 
 		if (this.name?.length > CustomEmbedCommand.maxNameLength) {
@@ -52,7 +52,7 @@ export class CustomEmbedCommand {
 
 	@Column() color: number;
 
-	@Column() adminOnly: boolean;
+	@Column() roleNeeded: string;
 
 	@Column() autoDelete: boolean;
 

@@ -2,7 +2,7 @@
  _____         _ _       _
 |   __|___ ___|_| |_ ___| |_
 |   __| . |_ -| | . | . |  _|
-|_____|  _|___|_|___|___|_|  v2.6.0
+|_____|  _|___|_|___|___|_|  v2.7.0
       |_|
 ```
 
@@ -40,6 +40,13 @@ Vous pouvez aussi utiliser `npm run start:builded` pour lancer Epsibot sans rég
 D'autres script npm sont définis, faites `npm run` pour voir la liste disponible.
 
 # Changelog
+
+## v2.7.0
+
+### Changed
+
+-   `/command add` on peut limiter ceux qui peuvent utiliser une commande custom par un rôle. Les admins peuvent toujours utiliser les commandes custom
+-   `/command edit` a été modifié pour suivre les changements sur `/command add`
 
 ## v2.6.0
 
