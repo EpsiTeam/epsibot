@@ -1,0 +1,25 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+    check:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checking out the repo
+              uses: actions/checkout@v3
+
+            - name: Setup node 18
+              uses: actions/setup-node@v3
+              with:
+                  node-version: "18"
+                  cache: "npm"
+
+            - name: Installing dependencies
+              run: npm ci
+
+            - name: Checking eslint & prettier
+              run: npm run check
+
+            - name: Typescript checking
+              run: npm run build:ci
