@@ -8,6 +8,7 @@
 		"start:builded": "node --enable-source-maps -r dotenv/config built/main.js",
 		"build": "npm run check && npm run build:unsafe && echo 'Build finished'",
 		"build:unsafe": "rm -rf built/ && tsc",
+		"build:ci": "tsc --noEmit",
 		"register": "npm run build && node --enable-source-maps -r dotenv/config built/script/register-commands.js",
 		"fix": "npm run prettier && eslint --fix src",
 		"check": "eslint src/ && prettier -c .",
