@@ -10,7 +10,7 @@
 		"build:unsafe": "rm -rf built/ && tsc",
 		"register": "npm run build && node --enable-source-maps -r dotenv/config built/script/register-commands.js",
 		"fix": "npm run prettier && eslint --fix src",
-		"check": "eslint src/",
+		"check": "eslint src/ && prettier -c .",
 		"prettier": "prettier -w .",
 		"clean": "rm -rf built/ logs/",
 		"typeorm": "typeorm -d built/database/DBConnection.js",
