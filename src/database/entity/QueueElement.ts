@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
@@ -14,7 +15,7 @@ export class QueueElement {
 		request: string,
 		hiddenInformation: string
 	) {
-		this.id = 0;
+		this.id = randomUUID();
 		this.guildId = guildId;
 		this.position = position;
 		this.requester = requester;
@@ -29,7 +30,7 @@ export class QueueElement {
 			throw new Error("Hidden information too long");
 	}
 
-	@PrimaryGeneratedColumn("uuid") id: number;
+	@PrimaryGeneratedColumn("uuid") id: string;
 
 	@Column() guildId: string;
 
