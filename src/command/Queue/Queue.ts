@@ -12,6 +12,7 @@ import { done } from "./done.js";
 import { list } from "./list.js";
 import { move, MoveParams } from "./move.js";
 import { admin } from "./admin.js";
+import { edit, EditParam } from "./edit.js";
 
 enum Subcommand {
 	list = "list",
@@ -19,7 +20,8 @@ enum Subcommand {
 	done = "done",
 	cancel = "cancel",
 	move = "move",
-	admin = "admin"
+	admin = "admin",
+	edit = "edit"
 }
 
 export class Queue extends Command {
@@ -112,6 +114,44 @@ export class Queue extends Command {
 			type: ApplicationCommandOptionType.Subcommand,
 			name: Subcommand.admin,
 			description: "Affiche la file complète"
+		},
+		{
+			type: ApplicationCommandOptionType.Subcommand,
+			name: Subcommand.edit,
+			description: "Modifie un élément de la file",
+			options: [
+				{
+					type: ApplicationCommandOptionType.Integer,
+					name: EditParam.position,
+					description: "Élément de la file à modifier",
+					min_value: 1,
+					max_value: QueueElement.maxElements,
+					required: true
+				},
+				{
+					type: ApplicationCommandOptionType.String,
+					name: EditParam.requester,
+					description: "Auteur de la demande",
+					max_length: QueueElement.maxRequesterLength,
+					required: false
+				},
+				{
+					type: ApplicationCommandOptionType.String,
+					name: EditParam.request,
+					description:
+						"Description de la demande (visible pour tous)",
+					max_length: QueueElement.maxRequestLength,
+					required: false
+				},
+				{
+					type: ApplicationCommandOptionType.String,
+					name: EditParam.hiddenInformation,
+					description:
+						"Informations supplémentaires, cachées de tous",
+					max_length: QueueElement.maxInformationLength,
+					required: false
+				}
+			]
 		}
 	];
 
@@ -129,6 +169,8 @@ export class Queue extends Command {
 		if (subcommand == Subcommand.move) return move(interaction);
 
 		if (subcommand == Subcommand.admin) return admin(interaction);
+
+		if (subcommand === Subcommand.edit) return edit(interaction);
 
 		throw new Error(`Unexpected subcommand ${subcommand}`);
 	}

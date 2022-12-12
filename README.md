@@ -2,7 +2,7 @@
  _____         _ _       _
 |   __|___ ___|_| |_ ___| |_
 |   __| . |_ -| | . | . |  _|
-|_____|  _|___|_|___|___|_|  v2.7.1
+|_____|  _|___|_|___|___|_|  v2.8.0
       |_|
 ```
 
@@ -41,7 +41,15 @@ D'autres script npm sont définis, faites `npm run` pour voir la liste disponibl
 
 # Changelog
 
-## v2.7.1
+## v2.8.0
+
+### Added
+
+-   `/queue edit` pour éditer un élément de la file
+
+### Fixed
+
+-   `/queue add` était complètement cassé depuis un moment, ça devrait être résolu
 
 ### Changed
 
