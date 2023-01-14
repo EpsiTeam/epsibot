@@ -2,7 +2,7 @@
  _____         _ _       _
 |   __|___ ___|_| |_ ___| |_
 |   __| . |_ -| | . | . |  _|
-|_____|  _|___|_|___|___|_|  v2.8.0
+|_____|  _|___|_|___|___|_|  v2.8.1
       |_|
 ```
 
@@ -40,6 +40,12 @@ Vous pouvez aussi utiliser `npm run start:builded` pour lancer Epsibot sans rég
 D'autres script npm sont définis, faites `npm run` pour voir la liste disponible.
 
 # Changelog
+
+## v2.8.1
+
+### Changed
+
+-   Des upgrades mineures des dépendances
 
 ## v2.8.0
 
