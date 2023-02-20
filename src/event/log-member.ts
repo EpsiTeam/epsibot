@@ -105,6 +105,10 @@ function getMemberDuration(member: GuildMember | PartialGuildMember) {
 		}
 	);
 
+	if (!duration) {
+		return "immédiatement";
+	}
+
 	return `après être resté ${duration}`;
 }
 
