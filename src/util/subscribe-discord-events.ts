@@ -23,47 +23,47 @@ export function subscribeDiscordEvents(client: Client): void {
 	client.once(Events.ClientReady, async (client) => {
 		Logger.debug("Logged to Discord");
 
-		const listentoEvent = listenToEventBuilder(client);
+		const listenToEvent = listenToEventBuilder(client);
 		const commandManager = new CommandManager();
 
 		/* ------------------ EPSIBOT LIFECYCLE ------------------ */
 		// Epsibot has been invited to a new guild
-		listentoEvent(
+		listenToEvent(
 			Events.GuildCreate,
 			async (guild) => await botInvited(commandManager, guild)
 		);
 		// Epsibot has been removed from a guild
-		listentoEvent(Events.GuildDelete, botRemoved);
+		listenToEvent(Events.GuildDelete, botRemoved);
 		// Checking that the bot is still admin after updating him
-		listentoEvent(Events.GuildMemberUpdate, botUpdated);
+		listenToEvent(Events.GuildMemberUpdate, botUpdated);
 		// Checking that the bot is still admin after updating any role
-		listentoEvent(Events.GuildRoleUpdate, botRoleUpdated);
+		listenToEvent(Events.GuildRoleUpdate, botRoleUpdated);
 		// Cleaning some DB if a channel is delete
-		listentoEvent(Events.ChannelDelete, channelDeleted);
+		listenToEvent(Events.ChannelDelete, channelDeleted);
 
 		/* ------------------- LOGS IN CHANNEL ------------------- */
 		// Log a new member on guild
-		listentoEvent(Events.GuildMemberAdd, logMemberJoined);
+		listenToEvent(Events.GuildMemberAdd, logMemberJoined);
 		// Log a member that left a guild
-		listentoEvent(Events.GuildMemberRemove, logMemberLeft);
+		listenToEvent(Events.GuildMemberRemove, logMemberLeft);
 		// Log a deleted message
-		listentoEvent(Events.MessageDelete, logMessageDelete);
+		listenToEvent(Events.MessageDelete, logMessageDelete);
 		// Log bulk deleted messages
-		listentoEvent(Events.MessageBulkDelete, logBulkMessageDelete);
+		listenToEvent(Events.MessageBulkDelete, logBulkMessageDelete);
 		// Log an updated message
-		listentoEvent(Events.MessageUpdate, logMessageUpdate);
+		listenToEvent(Events.MessageUpdate, logMessageUpdate);
 
 		/* ------------------- COMMANDS ------------------- */
 		// Someone used a slash command
-		listentoEvent(Events.InteractionCreate, async (interaction) =>
+		listenToEvent(Events.InteractionCreate, async (interaction) =>
 			executeCommand(commandManager, interaction)
 		);
 		// A new message has been written, maybe a custom command?
-		listentoEvent(Events.MessageCreate, executeCustomCommand);
+		listenToEvent(Events.MessageCreate, executeCustomCommand);
 
 		/* ------------------------ OTHER ------------------------ */
 		// Adding the autorole
-		listentoEvent(Events.GuildMemberAdd, addAutorole);
+		listenToEvent(Events.GuildMemberAdd, addAutorole);
 
 		Logger.done("Epsibot fully ready");
 	});
