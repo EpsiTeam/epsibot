@@ -46,7 +46,6 @@ D'autres script npm sont définis, faites `npm run` pour voir la liste disponibl
 ### Fixed
 
 -   Toutes les slash commandes étaient en double lorsqu'on invitait Epsibot sur un nouveau serveur...
--   [WIP] Les droits par défauts des slash commandes n'étaient pas pris en compte
 -   [WIP] `/command list` avait un bug d'affichage sur les roles
 
 ### Added
