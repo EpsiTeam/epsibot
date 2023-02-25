@@ -2,7 +2,7 @@
  _____         _ _       _
 |   __|___ ___|_| |_ ___| |_
 |   __| . |_ -| | . | . |  _|
-|_____|  _|___|_|___|___|_|  v2.8.1
+|_____|  _|___|_|___|___|_|  v2.9.0
       |_|
 ```
 
@@ -41,11 +41,21 @@ D'autres script npm sont définis, faites `npm run` pour voir la liste disponibl
 
 # Changelog
 
-## v2.8.1
+## v2.9.0 [WIP]
+
+### Fixed
+
+-   Toutes les slash commandes étaient en double lorsqu'on invitait Epsibot sur un nouveau serveur...
+-   [WIP] Les droits par défauts des slash commandes n'étaient pas pris en compte
+-   [WIP] `/command list` avait un bug d'affichage sur les roles
+
+### Added
+
+-   Script pour supprimer toutes les slash commandes enregistrées
 
 ### Changed
 
--   Des upgrades mineures des dépendances
+-   Update de dépendances mineures
 
 ## v2.8.0
 
