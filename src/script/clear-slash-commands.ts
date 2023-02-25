@@ -1,9 +1,9 @@
 import { EnvVariable } from "../util/EnvVariable.js";
 import { Logger } from "../util/Logger.js";
-import { registerCommands } from "../util/register-commands.js";
+import { clearSlashCommands } from "../util/register-slash-commands.js";
 
 Logger.initialize(!EnvVariable.production);
 
-await registerCommands();
+await clearSlashCommands();
 
-Logger.done("Commands registered to discord");
+Logger.done("Slash commands cleared");
