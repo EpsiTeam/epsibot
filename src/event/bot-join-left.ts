@@ -1,5 +1,6 @@
 import { Guild } from "discord.js";
 import { CommandManager } from "../command/CommandManager.js";
+import { EnvVariable } from "../util/EnvVariable.js";
 import { Logger } from "../util/Logger.js";
 
 export async function botInvited(commandManager: CommandManager, guild: Guild) {
@@ -13,7 +14,8 @@ export async function botInvited(commandManager: CommandManager, guild: Guild) {
 			"Epsibot has been invited without admin permissions, leaving guild..."
 		);
 		try {
-			return guild.leave();
+			await guild.leave();
+			return;
 		} catch (err) {
 			if (err instanceof Error) {
 				logger.error(`Failed to leave guild: ${err.stack}`);
@@ -26,18 +28,11 @@ export async function botInvited(commandManager: CommandManager, guild: Guild) {
 		}
 	}
 
-	logger.info("Epsibot invited to new guild, registerings commands on it");
-	try {
-		return commandManager.registerCommands([guild]);
-	} catch (err) {
-		if (err instanceof Error) {
-			logger.error(`Failed to register commands: ${err.stack}`);
-		} else {
-			logger.error(
-				`Failed to register commands with unknown error: ${err}`
-			);
-		}
-		return;
+	logger.info("Epsibot invited to new guild");
+	if (!EnvVariable.production) {
+		logger.debug(
+			"Epsibot is in dev mode, slash commands won't be registered on this new guild"
+		);
 	}
 }
 
