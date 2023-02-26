@@ -33,11 +33,12 @@ export class Shifumi extends Command {
 					required: true
 				},
 				{
-					type: ApplicationCommandOptionType.Number,
+					type: ApplicationCommandOptionType.Integer,
 					name: PlayParam.turnsToWin,
 					description:
 						"Le nombre de tours qu'un joueur doit gagner pour gagner la partie (1 par défaut)",
 					min_value: 1,
+					max_value: 10,
 					required: false
 				}
 			]

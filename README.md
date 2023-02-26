@@ -54,6 +54,7 @@ D'autres script npm sont définis, faites `npm run` pour voir la liste disponibl
 
 ### Changed
 
+-   `/shifumi play` a maintenant une limite de 10 rounds, sinon les games étaient un peu trop longues
 -   Update de dépendances mineures
 
 ## v2.8.0
