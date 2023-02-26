@@ -10,15 +10,19 @@ export enum AddParam {
 
 export async function add(interaction: ChatInputCommandInteraction<"cached">) {
 	const embed = interaction.options.getBoolean(AddParam.embed) ?? false;
-
-	const neededRole =
-		interaction.options.getRole(AddParam.roleNeeded)?.id ?? "";
+	const role = interaction.options.getRole(AddParam.roleNeeded);
 	const autoDelete =
 		interaction.options.getBoolean(AddParam.autoDelete) ?? false;
 
+	let roleNeeded = "";
+	// Saving the role if it's not @everyone
+	if (role && role.id !== interaction.guild.roles.everyone.id) {
+		roleNeeded = role.id;
+	}
+
 	if (embed) {
-		return addEmbed(interaction, neededRole, autoDelete);
+		return addEmbed(interaction, roleNeeded, autoDelete);
 	} else {
-		return addNormal(interaction, neededRole, autoDelete);
+		return addNormal(interaction, roleNeeded, autoDelete);
 	}
 }

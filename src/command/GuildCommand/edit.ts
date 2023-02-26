@@ -13,8 +13,7 @@ export enum EditParam {
 }
 export async function edit(interaction: ChatInputCommandInteraction<"cached">) {
 	const name = interaction.options.getString(EditParam.name, true);
-	let roleNeeded =
-		interaction.options.getRole(EditParam.roleNeeded)?.id ?? null;
+	const role = interaction.options.getRole(EditParam.roleNeeded);
 	let autoDelete = interaction.options.getBoolean(EditParam.autoDelete);
 
 	// Get existing command
@@ -32,7 +31,18 @@ export async function edit(interaction: ChatInputCommandInteraction<"cached">) {
 		});
 	}
 
-	if (roleNeeded === null) roleNeeded = command.roleNeeded;
+	// Base case we keep the role of the previous command
+	let roleNeeded = command.roleNeeded;
+	if (role) {
+		if (role.id === interaction.guild.roles.everyone.id) {
+			// If the user specified the @everyone role, we clear the role needed
+			roleNeeded = "";
+		} else {
+			// Last case, we update with what the user gave
+			roleNeeded = role.id;
+		}
+	}
+
 	if (autoDelete === null) autoDelete = command.autoDelete;
 
 	if (command instanceof CustomCommand)
