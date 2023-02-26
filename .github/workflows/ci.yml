@@ -18,8 +18,11 @@ jobs:
             - name: Installing dependencies
               run: npm ci
 
-            - name: Checking eslint & prettier
-              run: npm run check
+            - name: Checking format
+              run: npm run ci:format-check
 
-            - name: Typescript checking
-              run: npm run build:ci
+            - name: Checking linter
+              run: npm run ci:linter-check
+
+            - name: Checking typescript
+              run: npm run ci:ts-check
