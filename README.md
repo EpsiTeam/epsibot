@@ -41,12 +41,12 @@ D'autres script npm sont définis, faites `npm run` pour voir la liste disponibl
 
 # Changelog
 
-## v2.9.0 [WIP]
+## v2.9.0
 
 ### Fixed
 
 -   Toutes les slash commandes étaient en double lorsqu'on invitait Epsibot sur un nouveau serveur...
--   [WIP] `/command list` avait un bug d'affichage sur les roles
+-   `/command list`, `/command add` et `/command edit` avait un bug d'affichage sur le role @everyone si il était spécifié à la main
 
 ### Added
 
