@@ -17,7 +17,7 @@ export async function play(interaction: ChatInputCommandInteraction<"cached">) {
 	const user1 = interaction.member;
 	const user2 = interaction.options.getMember(PlayParam.user);
 	const turnsToWin =
-		interaction.options.getNumber(PlayParam.turnsToWin, false) ?? 1;
+		interaction.options.getInteger(PlayParam.turnsToWin, false) ?? 1;
 
 	if (!user2) {
 		return interaction.reply({
