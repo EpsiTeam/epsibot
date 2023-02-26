@@ -10,7 +10,7 @@ Les versions essaient de respecter le [semver](https://semver.org/)
 -   Du ménage a été fait dans les scripts npm, dans le but que tout soit plus clair. Si c'est pas plus clair, c'est que c'est raté
 -   Le changelog est désormais dans un fichier séparé pour éviter de polluer le readme
 
-## [2.9.0] - 2023-02-26 #139
+## [2.9.0] - 2023-02-26 [#139](https://github.com/EpsiTeam/epsibot/pull/139)
 
 ### Fixed
 
@@ -26,13 +26,13 @@ Les versions essaient de respecter le [semver](https://semver.org/)
 -   `/shifumi play` a maintenant une limite de 10 rounds, sinon les games étaient un peu trop longues
 -   Update de dépendances mineures
 
-## [2.8.1] - 2023-01-14 #104
+## [2.8.1] - 2023-01-14 [#104](https://github.com/EpsiTeam/epsibot/pull/104)
 
 ### Changed
 
 -   Update de dépendances mineures
 
-## [2.8.0] - 2022-12-12 #85
+## [2.8.0] - 2022-12-12 [#85](https://github.com/EpsiTeam/epsibot/pull/85)
 
 ### Added
 
