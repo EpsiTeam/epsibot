@@ -11,6 +11,9 @@ function showError(env: string) {
 	return `Environment variable ${env} not found, make sure you created a .env file at the root of the project containing this variable. Read the README.md for more information`;
 }
 
+// The following will be executed when something import this file,
+// checking all environment variables
+
 ["PRODUCTION", "APPLICATION_ID", "DISCORD_TOKEN", "OWNERS"].map((env) => {
 	if (!process.env[env]) throw new Error(showError(env));
 });
