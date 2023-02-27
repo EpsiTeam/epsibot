@@ -4,13 +4,10 @@ import {
 	Routes,
 	Snowflake
 } from "discord.js";
-import { CommandManager } from "../command/CommandManager.js";
-import { EnvVariable } from "./EnvVariable.js";
-import { Logger } from "./Logger.js";
-
-function getRest() {
-	return new REST({ version: "10" }).setToken(EnvVariable.discordToken);
-}
+import { CommandManager } from "../../command/CommandManager.js";
+import { EnvVariable } from "../EnvVariable.js";
+import { Logger } from "../Logger.js";
+import { getRest } from "./get-rest.js";
 
 async function registerOnGuild(
 	guildId: Snowflake,
@@ -52,30 +49,4 @@ export async function registerSlashCommands() {
 	}
 
 	return registerOnGuild(EnvVariable.devGuildId, commands, rest);
-}
-
-export async function clearSlashCommands() {
-	const rest = getRest();
-
-	if (EnvVariable.production) {
-		Logger.info(`Clearing all global slash commands`);
-
-		return rest.put(Routes.applicationCommands(EnvVariable.applicationId), {
-			body: []
-		});
-	}
-
-	Logger.info(
-		`Clearing all slash commands on guild ${EnvVariable.devGuildId}`
-	);
-
-	return rest.put(
-		Routes.applicationGuildCommands(
-			EnvVariable.applicationId,
-			EnvVariable.devGuildId
-		),
-		{
-			body: []
-		}
-	);
 }

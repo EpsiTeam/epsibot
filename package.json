@@ -21,6 +21,8 @@
 		"    // fix": "Run the formatter and fix what the linter can fix",
 		"fix": "prettier -w . && eslint --fix src",
 		"/* EPSIBOT LIFECYCLE */": "-----------------------------------------",
+		"    // cmd:check": "Check how many slash commands are registered globally and locally on this client",
+		"cmd:check": "npm run build && node --enable-source-maps -r dotenv/config built/script/check-slash-commands.js",
 		"    // cmd:register": "Register slash commands, globally if PRODUCTION is set to true, otherwise only on the DEV_GUILD_ID",
 		"cmd:register": "npm run build && node --enable-source-maps -r dotenv/config built/script/register-slash-commands.js",
 		"    // cmd:clear": "Clear slash commands, globally if PRODUCTION is set to true, otherwise only on the DEV_GUILD_ID",

@@ -5,6 +5,10 @@ Les versions essaient de respecter le [semver](https://semver.org/)
 
 ## [2.10.0] - [Unreleased]
 
+### Added
+
+-   `npm run cmd:check` lance un checkup complet des slash commandes, pour être sûr qu'elles sont enregistré au bon endroit suivant les variables d'environnement
+
 ### Changed
 
 -   Du ménage a été fait dans les scripts npm, dans le but que tout soit plus clair. Si c'est pas plus clair, c'est que c'est raté
