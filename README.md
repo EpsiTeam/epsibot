@@ -2,7 +2,7 @@
  _____         _ _       _
 |   __|___ ___|_| |_ ___| |_
 |   __| . |_ -| | . | . |  _|
-|_____|  _|___|_|___|___|_|  v2.9.0
+|_____|  _|___|_|___|___|_|  v2.10.0
       |_|
 ```
 
@@ -25,90 +25,24 @@ OWNERS="<ownerId1>,<ownerId2>"
 
 Epsibot ne sera pas content si les variables d'environnement ne sont pas bien setup (voir [Variables d'environnement](#variables-denvironnement) pour le détail).
 
-Il faut une version de node supérieur ou égal à 16.16.0 pour pouvoir lancer les commandes suivantes:
+Il faut une version de node supérieur ou égal à 16.16.0 pour pouvoir lancer Epsibot.
+Pour le lancer la première fois, utilisez ces commandes:
 
 ```sh
-npm i
-npm run migrate
-npm run register
+npm ci
+npm run init
 ```
 
-Après ça, tout devrait être prêt pour lancer Epsibot.<br>
-Vous pouvez le faire avec `npm start`.<br>
+Cela va créer la DB, enregistrer les slash commandes sur discord (en global si PRODUCTION=true, sur le serveur de dev (DEV_GUILD_ID) sinon) et lancer le bot.
+
+Après ça, tout pouvez lancer Epsibot avec juste `npm start`.<br>
 Vous pouvez aussi utiliser `npm run start:builded` pour lancer Epsibot sans régénérer les fichiers js, pour lancer le bot plus rapidement si aucune modification du code source n'a été faite.
 
 D'autres script npm sont définis, faites `npm run` pour voir la liste disponible.
 
 # Changelog
 
-## v2.9.0
-
-### Fixed
-
--   Toutes les slash commandes étaient en double lorsqu'on invitait Epsibot sur un nouveau serveur...
--   `/command list`, `/command add` et `/command edit` avait un bug d'affichage sur le role @everyone si il était spécifié à la main
-
-### Added
-
--   Script pour supprimer toutes les slash commandes enregistrées
-
-### Changed
-
--   `/shifumi play` a maintenant une limite de 10 rounds, sinon les games étaient un peu trop longues
--   Update de dépendances mineures
-
-## v2.8.0
-
-### Added
-
--   `/queue edit` pour éditer un élément de la file
-
-### Fixed
-
--   `/queue add` était complètement cassé depuis un moment, ça devrait être résolu
-
-### Changed
-
--   `better-sqlite3`: `7.6.2` -> `8.0.1`
-
-## v2.7.0
-
-### Changed
-
--   `/command add` on peut limiter ceux qui peuvent utiliser une commande custom par un rôle. Les admins peuvent toujours utiliser les commandes custom
--   `/command edit` a été modifié pour suivre les changements sur `/command add`
-
-## v2.6.0
-
-### Added
-
--   `/command edit` pour éditer une commande custom. Plus besoin d'avoir à supprimer et recréer une commande, on peut directement la modifier !
-
-### Changed
-
--   `/command add` la sélection de couleur d'un embed a été revu pour être plus intuitive
-
-## v2.5.1
-
-### Fixed
-
--   `/shifumi play` ne fonctionnait plus depuis la version `2.5.0`, c'est maintenant corrigé
--   `/command list` était aussi cassé
-
-## v2.5.0
-
-### Added
-
--   `/command help` pour voir l'aide sur les paramètres des commandes custom
--   Ce changelog a été ajouté au readme
--   `prettier` `2.8.0` ajouté au projet pour garantir un formatage cohérent partout
-
-### Changed
-
--   `/command add` utilise maintenant les modals, on peut donc ajouter une commande custom sans n'avoir à envoyer aucun message
--   Epsibot peut deployer ses commandes sur un seul serveur ou globalement, suivant si il est en mode production ou non
--   `discord.js`: `13.6.0` -> `14.6.0`
--   `typeorm`: `0.2.41` -> `0.3.10`
+Voir le fichier CHANGELOG.md
 
 # Variables d'environnement
 
