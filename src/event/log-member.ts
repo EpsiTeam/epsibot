@@ -51,7 +51,7 @@ export async function logMemberJoined(member: GuildMember) {
  */
 export async function logMemberLeft(member: GuildMember | PartialGuildMember) {
 	// Maybe it was Epsibot who left?
-	if (member.id === member.guild.members.me?.id) return;
+	if (member.id === member.client.user.id) return;
 
 	const guild = member.guild;
 
