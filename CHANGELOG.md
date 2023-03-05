@@ -3,7 +3,7 @@
 Ce changelog essaie de suivre le format de [keepachangelog.com](https://keepachangelog.com/en/1.0.0/)<br>
 Les versions essaient de respecter le [semver](https://semver.org/)
 
-## [2.10.0] - [Unreleased]
+## [2.10.0] - 2023-03-05
 
 ### Added
 
@@ -13,6 +13,10 @@ Les versions essaient de respecter le [semver](https://semver.org/)
 
 -   Du ménage a été fait dans les scripts npm, dans le but que tout soit plus clair. Si c'est pas plus clair, c'est que c'est raté
 -   Le changelog est désormais dans un fichier séparé pour éviter de polluer le readme
+
+### Fixed
+
+-   Epsibot pouvait planter en voulant log son propre départ :/
 
 ## [2.9.0] - 2023-02-26 [#139](https://github.com/EpsiTeam/epsibot/pull/139)
 
