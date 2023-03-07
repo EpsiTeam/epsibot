@@ -5,7 +5,7 @@ Les versions essaient de respecter le [semver](https://semver.org/)
 
 ## [2.10.1] - 2023-03-08
 
-### - Fixed
+### Fixed
 
 -   Epsibot pouvait rater des utilisateurs quittant un serveur, ça devrait être mieux maintenant
 
