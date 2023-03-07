@@ -3,7 +3,13 @@
 Ce changelog essaie de suivre le format de [keepachangelog.com](https://keepachangelog.com/en/1.0.0/)<br>
 Les versions essaient de respecter le [semver](https://semver.org/)
 
-## [2.10.0] - 2023-03-05
+## [2.10.1] - 2023-03-08
+
+### - Fixed
+
+-   Epsibot pouvait rater des utilisateurs quittant un serveur, ça devrait être mieux maintenant
+
+## [2.10.0] - 2023-03-05 [#147](https://github.com/EpsiTeam/epsibot/pull/147)
 
 ### Added
 
