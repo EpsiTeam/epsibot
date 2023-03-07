@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits } from "discord.js";
+import { Client, GatewayIntentBits, Partials } from "discord.js";
 import { subscribeDiscordEvents } from "./util/subscribe-discord-events.js";
 import { Logger } from "./util/Logger.js";
 import { EnvVariable } from "./util/EnvVariable.js";
@@ -27,6 +27,7 @@ const client = new Client({
 		GatewayIntentBits.GuildMessages,
 		GatewayIntentBits.MessageContent
 	],
+	partials: [Partials.GuildMember],
 	presence: {
 		activities: [
 			{
