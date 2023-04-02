@@ -3,7 +3,13 @@
 Ce changelog essaie de suivre le format de [keepachangelog.com](https://keepachangelog.com/en/1.0.0/)<br>
 Les versions essaient de respecter le [semver](https://semver.org/)
 
-## [2.10.2] - 2023-04-02
+## [WIP] - [unreleased]
+
+### Changed
+
+-   Rien pour l'instant
+
+## [2.10.2] - 2023-04-02 [#169](https://github.com/EpsiTeam/epsibot/pull/169)
 
 ### Changed
 
