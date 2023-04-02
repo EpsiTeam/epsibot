@@ -3,7 +3,13 @@
 Ce changelog essaie de suivre le format de [keepachangelog.com](https://keepachangelog.com/en/1.0.0/)<br>
 Les versions essaient de respecter le [semver](https://semver.org/)
 
-## [2.10.1] - 2023-03-08
+## [2.10.2] - 2023-04-02
+
+### Changed
+
+-   Update de dépendances mineures pour fix un bug avec `discord.js`
+
+## [2.10.1] - 2023-03-08 [#151](https://github.com/EpsiTeam/epsibot/pull/151)
 
 ### Fixed
 

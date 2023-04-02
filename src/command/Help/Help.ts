@@ -1,6 +1,6 @@
 import {
 	APIApplicationCommandBasicOption,
-	ApplicationCommandOptionData,
+	APIApplicationCommandOption,
 	ApplicationCommandOptionType,
 	ChatInputCommandInteraction
 } from "discord.js";
@@ -55,7 +55,7 @@ export class Help extends Command {
 					continue;
 				}
 
-				const subcommands: ApplicationCommandOptionData[] = [];
+				const subcommands: APIApplicationCommandOption[] = [];
 
 				if (
 					subcommand.type === ApplicationCommandOptionType.Subcommand
