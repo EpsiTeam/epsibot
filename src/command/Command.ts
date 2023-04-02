@@ -1,7 +1,6 @@
 import {
 	APIApplicationCommandOption,
 	ApplicationCommandType,
-	ChatInputApplicationCommandData,
 	ChatInputCommandInteraction,
 	CommandInteraction,
 	RESTPostAPIChatInputApplicationCommandsJSONBody
@@ -13,7 +12,7 @@ import { EnvVariable } from "../util/EnvVariable.js";
  * This is the base class for all commands,
  * they should all extends this one
  */
-export abstract class Command implements ChatInputApplicationCommandData {
+export abstract class Command {
 	/**
 	 * Name of the command, users will be able to use /name
 	 */

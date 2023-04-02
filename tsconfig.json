@@ -20,7 +20,9 @@
 		"resolveJsonModule": true,
 		// Needed for the ORM
 		"experimentalDecorators": true,
-		"emitDecoratorMetadata": true
+		"emitDecoratorMetadata": true,
+		// Skipping validation of dependencies (needed for discord.js)
+		"skipLibCheck": true
 	},
 	"include": ["./src/**/*"]
 }
