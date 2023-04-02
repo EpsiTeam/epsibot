@@ -23,7 +23,7 @@ export class CustomEmbedCommand {
 		this.title = title;
 		this.description = description;
 		this.image = image;
-		this.color = resolveColor(color);
+		this.color = resolveColor(color ?? "Default");
 		this.roleNeeded = roleNeeded;
 		this.autoDelete = autoDelete;
 
