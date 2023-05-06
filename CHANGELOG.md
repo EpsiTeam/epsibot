@@ -7,7 +7,7 @@ Les versions essaient de respecter le [semver](https://semver.org/)
 
 ### Changed
 
--   Rien pour l'instant
+-   Update de dépendances mineures
 
 ## [2.10.2] - 2023-04-02 [#169](https://github.com/EpsiTeam/epsibot/pull/169)
 
