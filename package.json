@@ -52,7 +52,7 @@
 	"type": "module",
 	"dependencies": {
 		"discord.js": "14.9.0",
-		"better-sqlite3": "8.2.0",
+		"better-sqlite3": "8.3.0",
 		"typeorm": "0.3.15",
 		"typescript": "5.0.4",
 		"@types/node": "18.15.11",
