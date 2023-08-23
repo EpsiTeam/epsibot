@@ -57,7 +57,7 @@
 		"typescript": "5.0.4",
 		"@types/node": "20.4.7",
 		"chalk": "5.2.0",
-		"date-fns": "2.29.3",
+		"date-fns": "2.30.0",
 		"dotenv": "16.0.3",
 		"reflect-metadata": "0.1.13"
 	},
