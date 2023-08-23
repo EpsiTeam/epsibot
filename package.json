@@ -54,7 +54,7 @@
 		"discord.js": "14.9.0",
 		"better-sqlite3": "8.5.1",
 		"typeorm": "0.3.15",
-		"typescript": "5.0.4",
+		"typescript": "5.1.6",
 		"@types/node": "20.4.7",
 		"chalk": "5.2.0",
 		"date-fns": "2.30.0",
